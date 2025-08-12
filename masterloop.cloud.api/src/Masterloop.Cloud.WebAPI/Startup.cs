@@ -1,4 +1,4 @@
-﻿using Masterloop.Cloud.BusinessLayer.Managers;
+using Masterloop.Cloud.BusinessLayer.Managers;
 using Masterloop.Cloud.BusinessLayer.Managers.Interfaces;
 using Masterloop.Cloud.BusinessLayer.Services.Firmware;
 using Masterloop.Cloud.BusinessLayer.Services.RMQ;
@@ -129,6 +129,7 @@ namespace Masterloop.Cloud.WebAPI
 
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddSingleton<IAuthorizationCodeStore, InMemoryAuthorizationCodeStore>();
             services.AddTransient<ForgotPasswordTemplates>();
             // Add Cross Domain Policies
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>

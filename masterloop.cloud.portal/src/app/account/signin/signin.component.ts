@@ -26,7 +26,6 @@ export class SigninComponent implements OnInit {
   ) {
     this.siteSettings.initTheme();
     this.credentials = new AuthenticationCredentials();
-    this.credentials.grantType = 'password';
   }
 
   private buildForm() {
