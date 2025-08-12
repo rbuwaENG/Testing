@@ -1,0 +1,80 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']">Devices </a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/general/',deviceId]" fxLayout="row"  fxLayoutAlign="start center">{{deviceId}}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+    <span style="margin: 0 10px;">/</span>
+    <span>Events Table</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+</mat-card-title>
+
+<mat-card-content>
+  <!-- tabs  -->
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabSelectedChanged()" class="history-panel">
+    <mat-tab *ngFor="let tab of tabs">
+      <ng-template mat-tab-label>{{tab.label}}</ng-template>
+      <!-- values table  -->
+
+      <div fxLayout="column" fxLayout.gt-xs="row" style="width: fit-content ; margin:auto" fxLayoutGap="10px" fxLayoutAlign="center center"
+        *ngIf="customDateSelected" style="margin-top: 15px">
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+          <label style="padding-bottom: 5px;">From</label>
+          <mat-form-field>
+            <input matInput [owlDateTime]="dt1" [(ngModel)]="customFrom" [owlDateTimeTrigger]="dt1" placeholder="Date Time">
+            <owl-date-time #dt1></owl-date-time>
+          </mat-form-field>
+        </div>
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+          <label style="padding-bottom: 5px;">To</label>
+          <!-- <input style="margin-top:3px;" [(ngModel)]="tab._to" ngui-datetime-picker /> -->
+          <mat-form-field>
+            <input matInput [owlDateTime]="dt2" [(ngModel)]="customTo" [owlDateTimeTrigger]="dt2" placeholder="Date Time">
+            <owl-date-time #dt2></owl-date-time>
+          </mat-form-field>
+        </div>
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center">
+          <button type="button" mat-raised-button color="primary"
+            (click)="searchHistory()" style="margin-bottom: 1.25em">Search</button>
+        </div>
+      </div>
+
+      <ngx-datatable class='material block event-table striped' [columns]="columns" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+        [rowHeight]="40" [rows]='eventsValues' [scrollbarV]="true" [scrollbarH]="true">
+
+        <ngx-datatable-column name="Timestamp" [width]="250" prop="Timestamp" ></ngx-datatable-column>
+        <ngx-datatable-column name="Origin" [width]="100" prop="ReceivedFromDevice" >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <span>{{ (value) ? 'Device' : 'Server' }} </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Category" [width]="120" prop="Category" >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <span style="padding: 3px; font-size: 12px" class="menu-badge mat-{{colors[value]}}"> {{ categories[value] }} </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Title" [width]="250" prop="Title" ></ngx-datatable-column>
+        <ngx-datatable-column name="Body" [width]="400" prop="Body" ></ngx-datatable-column>
+
+        <ngx-datatable-column
+    name=" "
+    [width]="50"
+    prop="Value"
+    [sortable] = "false"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <a mat-icon class="material-icons" (click)="open(eventsValues[rowIndex])">
+        open_in_new
+      </a>
+    </ng-template>
+  </ngx-datatable-column>
+      </ngx-datatable>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{column.name}} </strong>
+</ng-template>

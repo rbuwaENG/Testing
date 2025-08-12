@@ -1,0 +1,157 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']">Devices </a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/general/', deviceId]" fxLayout="row"  fxLayoutAlign="start center">{{ deviceId }}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+    <span style="margin: 0 10px;">/</span>
+    <span>Command History</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+</mat-card-title>
+
+<mat-card-content>
+  <!-- tabs  -->
+  <mat-tab-group
+    [(selectedIndex)]="selectedTabIndex"
+    (selectedTabChange)="onTabSelectedChanged()"
+    class="history-panel"
+  >
+    <mat-tab *ngFor="let tab of tabs">
+      <ng-template mat-tab-label>{{ tab.name }}</ng-template>
+      <!-- values table  -->
+
+      <div fxLayout="column" fxLayout.gt-xs="row" style="width: fit-content ; margin:auto" fxLayoutGap="10px" fxLayoutAlign="center center"
+        *ngIf="tab.showDateRangeSelector" style="margin-top: 15px">
+          <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+            <label style="padding-bottom: 5px;">From</label>
+            <mat-form-field>
+              <input matInput [owlDateTime]="dt1" [(ngModel)]="tab._from" [owlDateTimeTrigger]="dt1" placeholder="Date Time">
+              <owl-date-time #dt1></owl-date-time>
+            </mat-form-field>
+          </div>
+          <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+            <label style="padding-bottom: 5px;">To</label>
+            <!-- <input style="margin-top:3px;" [(ngModel)]="tab._to" ngui-datetime-picker /> -->
+            <mat-form-field>
+              <input matInput [owlDateTime]="dt2" [(ngModel)]="tab._to" [owlDateTimeTrigger]="dt2" placeholder="Date Time">
+              <owl-date-time #dt2></owl-date-time>
+            </mat-form-field>
+          </div>
+          <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center">
+            <button type="button" mat-raised-button color="primary"
+              (click)="onTabSelectedChanged()" style="margin-bottom: 1.25em">Search</button>
+          </div>
+        </div>
+      <!-- <ngx-datatable class='material block' [columns]="columns" 
+        [columnMode]="'force'" [headerHeight]="50" [rowHeight]="'force'" [footerHeight]="50"  [rows]='tab.values' 
+       [scrollbarH]="true" > -->
+      <ngx-datatable
+        class="material block command-history-table striped"
+        [columns]="columns"
+        [columnMode]="'force'"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="50"
+        [rows]="tab.values"
+        [scrollbarV]="true"
+        [scrollbarH]="true"
+      >
+        <ngx-datatable-column
+          name="Status"
+          prop="Status"
+          
+          [width]="100"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <span
+              *ngIf="value >= 0"
+              class="menu-badge mat-{{ statuses[value].class }}"
+              >{{ statuses[value].title }}</span
+            >
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Timestamp"
+          prop="Timestamp"
+          
+          [width]="200"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Name"
+          prop="Command Name"
+          
+          [width]="110"
+        >
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div mat-tooltip="{{ row.Id }}" tooltip-position="below">
+              {{ row.Id }}:{{ row.Name }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- <ngx-datatable-column name="Expires At" prop="ExpiresAt"  [width]="50"></ngx-datatable-column> -->
+        <ngx-datatable-column
+          name="Arguments"
+          prop="Arguments"
+          
+          [width]="150"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <!-- {{value.length}} -->
+            <ul>
+              <li *ngFor="let argument of value">
+                {{ argument.Name }}={{ argument.Value }}
+              </li>
+            </ul>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Delivered At"
+          prop="DeliveredAt"
+          
+          [width]="200"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Origin Application"
+          prop="OriginApplication"
+          
+          [width]="150"
+        ></ngx-datatable-column>
+
+        <ngx-datatable-column
+          name=""
+          prop=""
+          
+          [width]="80"
+          [sortable]="false"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-value="value"
+            let-row="row"
+            class="content"
+          >
+            <a
+              md-icon
+              class="material-icons"
+              style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+              (click)="open(tab.values[row.$$index])"
+            >
+              open_in_new
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- <ngx-datatable-column name="Was Accepted" prop="WasAccepted" >
+          <template let-value="value" ngx-datatable-cell-template>
+            <span class="column-delivered-at">{{value}}</span>
+          </template>
+        </ngx-datatable-column> -->
+      </ngx-datatable>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{ column.name }} </strong>
+</ng-template>

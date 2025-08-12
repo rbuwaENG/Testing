@@ -1,0 +1,35 @@
+@import "/src/assets/styles/scss/material.variables";
+
+mat-badge{
+  margin: 0 0 0 8px;
+  background-color: red;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 25%;
+}
+
+/* unvisited link */
+a:link {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+    color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+.block {
+  height: -webkit-calc(100vh - 200px);
+  height: -moz-calc(100vh - 200px);
+  height: calc(100vh - 200px); 
+} 

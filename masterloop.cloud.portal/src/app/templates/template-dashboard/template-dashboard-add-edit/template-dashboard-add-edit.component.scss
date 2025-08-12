@@ -1,0 +1,44 @@
+@import "/src/assets/styles/scss/material.variables";
+
+.dashboard-add-edit-form {
+    padding: 10px 0;
+}
+
+a:link {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+  
+  /* visited link */
+  a:visited {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+  
+  /* mouse over link */
+  a:hover {
+    color: dodgerblue;
+  }
+  
+  /* selected link */
+  a:active {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+
+  .dashboard-add-edit-form-field-wrapper {
+    margin: 0 5px;
+  }
+
+  .button-wrapper {
+    margin: 10px 5px;
+
+    .mat-warn {
+      margin-right: 10px;
+    }
+  }
+
+  #obsData {
+    max-width: 100%;
+  }
+
+  .set-default {
+    margin-left: 15px;
+  }

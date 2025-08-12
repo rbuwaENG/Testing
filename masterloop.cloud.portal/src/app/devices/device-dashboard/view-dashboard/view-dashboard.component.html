@@ -1,0 +1,66 @@
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div class="col" flex="1" fxLayout="row wrap" fxLayoutAlign="start end">
+    <div fxLayout="row wrap" fxLayoutAlign="start end">
+      <a [routerLink]="['/devices/all']" class="bc-link">Devices</a><span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/',MID]" fxLayout="row" fxLayoutAlign="start center" class="bc-link">
+        {{MID}}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a><span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/' + MID + '/dashboards']" class="bc-link">Dashboards</a><span style="margin: 0 10px;">/</span>
+      <span> {{ dashboardName }}</span>
+    </div>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <div class="device-filter-columns" fxLayout="row" fxLayoutAlign="end end">
+    <div *ngIf="!isLiveConnectionEnable" class="disconnected-lable">Disconnected</div>
+    <mat-checkbox class="set-default" [checked]="isLiveConnectionEnable" (change)='handleLiveConnectionChange($event)'>
+      Connect to live</mat-checkbox>
+    <!-- <form class="device-filter-search" appearance="fill">
+      <mat-form-field class="device-status-filter device-status-filter__dashboard">
+        <mat-label>Select Dashboard</mat-label>
+        <mat-select name="selectDashboard" [(ngModel)]="selectedDashboardValue"
+          (ngModelChange)="navigateToSelectedDashboard()">
+          <mat-option *ngFor="let dashboard of listOfDashboards" [value]="dashboard.Id">
+            {{dashboard.Name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form> -->
+  </div>
+</mat-card-title>
+<mat-grid-list [cols]="columns" [rowHeight]="rowHeight">
+  <mat-grid-tile *ngFor="let observation of observations; let i = index" 
+    [colspan]="observation.Placement.ColumnSpan"
+    [rowspan]="observation.Placement.RowSpan">
+    <div class="camms-live-charts" >
+      <div fxLayout="column" fxLayoutAlign="" class="draggable-div">
+        <div class="plot-chart-name bc-link">
+          <a [routerLink]="['/'+ observation.Url]" fxLayout="row" fxLayoutAlign="start center">
+            <p>{{observation.ObservationName}} <span class="unitname" *ngIf="observation.UnitName">in {{
+                observation.UnitName}} {{ observation.UnitAbbreviation }}</span></p>
+          </a>
+        </div>
+        <chart *ngIf="observation.ControlType == 'Plot' && observation.DataType !== 7" [options]="options"
+          (load)="saveChart($event.context, observation.Id, i)" style="width: 100%"></chart>
+        <chart *ngIf="observation.ControlType == 'Plot' && observation.DataType === 7" [options]="statOptions"
+          (load)="saveChart($event.context, observation.Id, i)" style="width: 100%"></chart>
+        <div *ngIf="observation.ControlType == 'Table'" class="dashboard-item-table" fxLayout="row">
+          <ngx-datatable *ngIf="observation.DataType !== 5 && observation.DataType !== 7"
+            class="material selection-cell block obs-table striped" [rows]="observation.data" [columnMode]="'force'"
+            [headerHeight]="0" [footerHeight]="0" [rowHeight]="40" [scrollbarH]="false"
+            [sorts]="[{ prop: 'Timestamp', dir: 'desc' }]">
+            <ngx-datatable-column name="Timestamp" [minWidth]="145" prop="Timestamp" [headerTemplate]="hdrTpl">
+              <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                <div>{{value}}</div>
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Value" prop="Value" [headerTemplate]="hdrTpl">
+              <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                <div class="long-text">{{value}}</div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+        <div *ngIf="observation.ControlType == 'Map'" id="map{{ i }}" style="width: 100%; height: 100%">a </div>
+      </div>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

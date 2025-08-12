@@ -1,0 +1,360 @@
+<div class="analyzer" fxLayout="column" fxLayoutAlign="stretch stretch">
+  <div class="template-header-panel">
+    <div style="margin-top: -25px;">
+      <h4>Template Analyzer Query</h4>
+    </div>
+    <div style="float: right;">
+      <button mat-icon-button (click)="downloadCSV()">
+        <mat-icon><i class="material-icons">file_download</i></mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="content" fxLayout="row" fxLayoutAlign="stretch stretch">
+    <!-- SideNav Options: Start  -->
+    <div
+      fxFlex="0 0 30px"
+    >
+      <div
+        id="options"
+        class="options-toggle"
+        [ngClass]="{
+          selected:
+            selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Chosen
+        }"
+        (click)="toggleOptionsTabShowingStatus(OptionsTabShowingStatus.Select)"
+      >
+        <b>Query</b>
+      </div>
+    </div>
+    <!-- SideNav Options: End  -->
+
+    <mat-sidenav-container class="example-sidenav-fab-container" fxFlex="1 1 auto"
+    >
+      <mat-sidenav #optionsnav mode="over" opened="isOpen">
+        <div *ngIf="selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Select" style="width: 100%;">
+          <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="5px">
+            <div fxFlex style="height: 100%; width: 100%">
+              <div class="options">
+                <mat-card-content>
+                  <div fxLayout="column" fxLayoutAlign="start start" fxLayout.gt-md="row" fxLayoutAlign.gt-sm="space-between start">
+                    <div fxLayout fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start start" fxLayoutAlign.gt-xs="start center" style="margin-bottom: 10px;">
+                      <h6 style="margin: 0;padding-right: 10px;">
+                        Template :
+                      </h6>
+                      <mat-select
+                        class="analyzer-query-inputs"
+                        placeholder=""
+                        [(ngModel)]="templateId"
+                        (ngModelChange)="onTemplateSelect($event)"
+                      >
+                        <mat-option
+                          title="{{ template.Id }}"
+                          *ngFor="let template of templates"
+                          [value]="template.Id"
+                        >
+                          {{ template.Id }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                    <div fxLayout fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start start" fxLayoutAlign.gt-xs="start center" style="margin-bottom: 10px;">
+                      <h6 style="margin: 0;padding-right: 10px;">
+                        Group By :
+                      </h6>
+                      <mat-select
+                        class="analyzer-query-inputs"
+                        placeholder=""
+                        [(ngModel)]="groupById"
+                        (ngModelChange)="onGroupBySelect($event)"
+                        [disabled]="disableSelect"
+                      >
+                        <mat-option
+                          title="{{ groupByObservation.Id }}"
+                          *ngFor="let groupByObservation of groupByObservations"
+                          [value]="groupByObservation.Id"
+                        >
+                          {{ groupByObservation.Name }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                  <mat-card>
+                    <mat-toolbar class="main-header" color="primary">
+                      <mat-card-title>
+                        <h5 style="margin-top:0">Observations</h5>
+                      </mat-card-title>
+                    </mat-toolbar>
+                  </mat-card>
+
+                  <ngx-datatable
+                    class="material analyzer-query"
+                    [columns]="columns"
+                    [columnMode]="'force'"
+                    [headerHeight]="50"
+                    [footerHeight]="50"
+                    [rowHeight]="'auto'"
+                    [rows]="observations"
+                    [scrollbarH]="true"
+                    [scrollbarV]="false"
+                  >
+                    <ngx-datatable-column
+                      name=" "
+                      prop="value"
+                      
+                      [minWidth]="25"
+                      [width]="25"
+                    >
+                      <ng-template
+                        ngx-datatable-cell-template
+                        let-value="value"
+                        let-row="row"
+                        let-rowIndex="rowIndex"
+                      >
+                        <mat-checkbox
+                          title="{{ text.ObservationWarning }}"
+                          [(ngModel)]="checkedObservations[rowIndex]"
+                          (ngModelChange)="
+                            onCheckObservationsEvent($event, row, rowIndex)
+                          "
+                          (value)="(value)"
+                        ></mat-checkbox>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Id"
+                      prop="Id"
+                      
+                      [width]="25"
+                      [minWidth]="50"
+                    ></ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Name"
+                      prop="Name"
+                      
+                      [width]="150"
+                      [minWidth]="130"
+                    ></ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="DataType"
+                      prop="DataType"
+                      
+                      [width]="50"
+                      [minWidth]="60"
+                    ></ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Description"
+                      prop="Description"
+                      
+                      [width]="500"
+                      [minWidth]="300"
+                    ></ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Filter"
+                      prop=""
+                      
+                      [width]="50"
+                      [minWidth]="100"
+                    >
+                      <ng-template
+                      let-row="row"
+                      let-rowIndex="rowIndex"
+                      ngx-datatable-cell-template>
+
+                      <a *ngIf="row.DataType !== 'Position' && row.DataType !== 'Statistics'"
+                      (click)="addFilter(row, rowIndex)"
+                      matTooltip="Table" style="padding-left:25px;"
+          mat-icon role="img" class="material-icons" aria-label="Table" id="chart">
+          <img *ngIf="row.Filter" src="../../../assets/images/filter_active.png" class="light-icon" alt="HTML tutorial" height="30">
+          <img *ngIf="row.Filter" src="../../../assets/images/filter_active-dark.png" class="dark-icon" alt="HTML tutorial" height="30">
+
+          <img *ngIf="!row.Filter" src="../../../assets/images/filter_inactive.png" class="light-icon" height="30" />
+          <img *ngIf="!row.Filter" src="../../../assets/images/filter_inactive-dark.png" class="dark-icon" height="30" />
+        </a>
+                    </ng-template>
+                    
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+
+                  <mat-card>
+                    <mat-toolbar class="main-header" color="primary">
+                      <mat-card-title>
+                        <h5 style="margin-top:0">Settings</h5>
+                      </mat-card-title>
+                    </mat-toolbar>
+                  </mat-card>
+
+                  <ngx-datatable
+                    class="material analyzer-query analyzer-query-settings"
+                    [columns]="columns"
+                    [columnMode]="'force'"
+                    [headerHeight]="50"
+                    [footerHeight]="50"
+                    [rowHeight]="65"
+                    [rows]="settings"
+                    [scrollbarH]="true"
+                  >
+                    <ngx-datatable-column
+                      name=" "
+                      prop="value"
+                      
+                      [width]="50"
+                    >
+                      <ng-template
+                        ngx-datatable-cell-template
+                        let-value="value"
+                        let-row="row"
+                        let-rowIndex="rowIndex"
+                      >
+                        <mat-checkbox
+                          title="{{ text.SettingWarning }}"
+                          [(ngModel)]="checkedSettings[rowIndex]"
+                          (ngModelChange)="onCheckSettingsEvent($event, row, rowIndex)"
+                          (value)="(value)"
+                        ></mat-checkbox>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Id"
+                      prop="Id"
+                      
+                      [width]="75"
+                    >
+                    </ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="Name"
+                      prop="Name"
+                      
+                      [width]="400"
+                    ></ngx-datatable-column>
+                    <ngx-datatable-column
+                      name="DataType"
+                      prop="DataType"
+                      
+                      [width]="100"
+                    ></ngx-datatable-column>
+                  </ngx-datatable>
+
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="mr-1"
+                    *ngIf="observations.length > 0 || settings.length > 0"
+                    style="margin-left:10px;margin-top:10px;margin-bottom:10px"
+                    (click)="createReport()"
+                  >
+                    Create report
+                  </button>
+                </mat-card-content>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-sidenav>
+
+      <div *ngIf="groupById != null">
+        <ngx-datatable
+        #myTable
+        class='material'
+        [rows]="finalObservations"
+        [groupRowsBy]="groupByColumnName"
+        [columnMode]="'force'"
+        [scrollbarH]="false"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="40"
+        [groupExpansionDefault]="true">
+      <!-- Group Header Template -->
+    <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader (toggle)="onDetailToggle($event)">
+      <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
+        <div style="padding-left:5px;">
+          <!-- <b>{{groupByName}}: {{group.value[0].groupByName}}</b> -->
+          <a
+            
+            [class.datatable-icon-right]="!expanded"
+            [class.datatable-icon-down]="expanded"
+            title="Expand/Collapse Group"
+            (click)="toggleExpandGroup(group)">
+            <b>{{groupByName}}: {{group.key? group.key : "empty" }} </b>
+          </a>                          
+        </div>
+      </ng-template>
+    </ngx-datatable-group-header>
+        <ngx-datatable-column
+          name="MID"
+          prop="MID"
+          
+          [flexGrow]="1"
+          [maxWidth]="150"
+        >
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Name"
+          prop="DeviceName"
+          
+          [flexGrow]="1"
+          [maxWidth]="400"
+        >
+        </ngx-datatable-column>
+        <ng-container *ngFor="let table of tableSettings">
+          <ngx-datatable-column
+            name="getTableHeaderName(table.Type, table.Header, table.UnitAbbreviation)"
+            prop="{{ table.Header }}"
+            
+            [flexGrow]="table.Settings.Flex"
+            [maxWidth]="table.Settings.MaxWidth"
+          >
+          </ngx-datatable-column>
+        </ng-container>
+      </ngx-datatable>
+      </div>
+      
+
+      <div *ngIf="groupById == null">
+        <ngx-datatable
+        class="material"
+        [columnMode]="'force'"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="40"
+        [rows]="finalObservations"
+        style="height: 98%;"
+        [scrollbarV]="true"
+        [scrollbarH]="true"
+      >
+        <ngx-datatable-column
+          name="MID"
+          prop="MID"
+          
+          [flexGrow]="1"
+          [maxWidth]="150"
+        >
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Name"
+          prop="DeviceName"
+          
+          [flexGrow]="1"
+          [maxWidth]="400"
+        >
+        </ngx-datatable-column>
+        <ng-container *ngFor="let table of tableSettings">
+          <ngx-datatable-column
+            [name]="getTableHeaderName(table.Type, table.Header, table.UnitAbbreviation)"
+            prop="{{ table.Header }}"
+            
+            [flexGrow]="table.Settings.Flex"
+            [maxWidth]="table.Settings.MaxWidth"
+          >
+          </ngx-datatable-column>
+        </ng-container>
+      </ngx-datatable>
+      </div>
+
+      
+
+      <ng-template #hdrTpl let-column="column">
+        <strong>{{ column.name }} </strong>
+      </ng-template>
+    </mat-sidenav-container>
+  </div>
+</div>

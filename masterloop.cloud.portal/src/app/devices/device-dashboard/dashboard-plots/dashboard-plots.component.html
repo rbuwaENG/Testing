@@ -1,0 +1,72 @@
+<!-- <div fxLayout="row wrap" fxLayoutAlign="start stretch" style="width: 100%;" class="chart-wrapper">
+
+  <div
+      cdkDropList
+      [cdkDropListData]="observations"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="camms-live-charts" *ngFor="let observation of observations">
+      
+        <div fxLayout="column" fxLayoutAlign="start start" cdkDrag>
+          <div class="plot-chart-name">
+            <p>{{observation.ObservationName}}</p>
+          </div>
+          <chart [options]="options" (load)="saveChart($event.context, observation.Id)" style="width: 100%"></chart>
+        </div>
+      </div>
+    </div>    
+</div> -->
+
+<div fxLayout="row wrap" fxLayoutAlign="start stretch" style="width: 100%;" class="chart-wrapper">  
+  <div class="camms-live-charts" *ngFor="let observation of observations" [ngClass]="[observation.cols ? observation.cols : '', observation.height ? observation.height : '']">
+    <div fxLayout="column" fxLayoutAlign="" cdkDrag class="draggable-div">
+      <div class="plot-chart-name">
+        <a (click)="navigateToDetailedObservation(observation.Url)" fxLayout="row" fxLayoutAlign="start center">
+          <p>{{observation.ObservationName}}</p>
+        </a>
+      </div>
+      <!--Chart viewer-->     
+      <chart *ngIf="observation.ControlType == 'Plot'" [options]="options" (load)="saveChart($event.context, observation.Id)" style="width: 100%"></chart>
+     
+       <!--Table viewer-->
+       <div *ngIf="observation.ControlType == 'Table'" class="dashboard-item-table" fxLayout="row">
+        <ngx-datatable *ngIf="observation.DataType !== 5 && dataType !== 7"
+        class="material selection-cell block obs-table striped" [rows]="observation.data" [columnMode]="'force'" [headerHeight]="50"
+        [footerHeight]="50" [rowHeight]="40" [scrollbarV]="true" [scrollbarH]="true">
+
+        <ngx-datatable-column name="Timestamp" [minWidth]="165" [flexGrow]="1" prop="Timestamp"
+          [headerTemplate]="hdrTpl">
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [flexGrow]="8" name="Value" prop="Value" [headerTemplate]="hdrTpl">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+            <div class="long-text">{{value}}</div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name=" " [minWidth]="50" [flexGrow]="1" prop="Value" [headerTemplate]="hdrTpl"
+          [sortable]="false">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <a *ngIf="value.length > 30 && isString(value)" mat-icon class="material-icons"
+              (click)="open(tab.values[rowIndex],deviceId,observationName)">
+              open_in_new </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+      </ngx-datatable>
+       </div>
+    </div>
+  </div> 
+</div>
+
+<!-- <div fxLayout="row wrap" fxLayoutAlign="start stretch" style="width: 100%;" class="chart-wrapper">  
+      <div class="camms-live-charts" *ngFor="let observation of observations">
+      
+        <div fxLayout="column" fxLayoutAlign="start start">
+          <div class="plot-chart-name">
+            <p>{{observation.ObservationName}}</p>
+          </div>
+          <chart [options]="options" (load)="saveChart($event.context, observation.Id)" style="width: 100%"></chart>
+        </div>
+      </div> 
+</div>  -->

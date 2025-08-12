@@ -1,0 +1,28 @@
+<ngx-datatable class="material selection-cell flex striped" 
+    [rows]="table.rows" 
+    [columns]="table.columns" 
+    [columnMode]="'force'"
+    [headerHeight]="50" 
+    [footerHeight]="50" 
+    [rowHeight]="40" [scrollbarV]="true" [scrollbarH]="true" [sorts]="[{prop: 'timestamp', dir: 'desc'}]"
+    style="height: calc(100vh - 200px); width:100%;">
+</ngx-datatable>
+
+<ng-template #timestampColumnTemplate let-value="value">{{value | amUtc | amDateFormat: 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]'  }}</ng-template>
+
+<ng-template #postitionTypedColumnTemplate let-value="value">
+    <span *ngIf="value">Lat : {{value.Latitude}}, Lng: {{value.Longitude}}, Alt: {{value.Altitude}}</span>
+</ng-template>
+
+<ng-template #statisticsTypedColumnTemplate let-value="value" let-row="row" let-rowIndex="rowIndex">
+    <span >
+        Min: {{value.Minimum}}, Max : {{value.Maximum}}... 
+        
+    </span>
+    <!--,Mean: {{value.Mean}}, Median: {{value.Median}}
+        StdDev: {{value.StdDev}}, Count: {{value.Count}}
+        From: {{value.From}}, To: {{value.To}}-->
+    <a mat-icon class="material-icons"
+        style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+        (click)="open(row, rowIndex, value)"> open_in_new </a>
+</ng-template>

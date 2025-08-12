@@ -1,0 +1,79 @@
+<div id="template-list" class="result-container" (window:resize)="onResize()">
+
+    <div class="template-header" fxLayout="row" fxLayoutAlign="space-between center">
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <h4 style="">
+          Tenants
+        </h4>
+    
+        <button
+          mat-raised-button
+          color="primary"
+          class="btn-new-device"
+          style="margin-left: 6px;"
+          (click)="openDialog()"
+          style=""
+          id="newTemplateBtn"
+        >
+          <mat-icon class="material-icons" aria-label="add">add</mat-icon>
+          <span class="hide-mobile">New Tenant</span>
+        </button>
+      </div>
+  
+      <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+    </div>
+  
+    <ngx-datatable
+      class="material block expandable"
+      #templateListTable
+      [columnMode]="'force'"
+      [headerHeight]="50"
+      [footerHeight]="50"
+      [rowHeight]="50"
+      [rows]="tenantList"
+      [scrollbarV]="true"
+      [scrollbarH]="true"
+    >
+      <ngx-datatable-column
+        name="Name"
+        prop="Name"
+        [minWidth]="200"
+        [width]="100"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        active
+        let-value="value"
+        let-row="row"        
+        let-rowIndex="rowIndex"
+      >
+      <a style="color:#007dbd" matTooltip="Navigate to tenant details"
+      (click)="navigateToTenantDetails(row)"
+      >{{ value }}</a>                      
+      </ng-template>
+    </ngx-datatable-column> 
+      
+      <ngx-datatable-column
+      name=""
+      prop="AccountId"
+      [minWidth]="100"
+      [width]="50"
+      [sortable]="false"
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        active
+        let-value="value"
+        let-row="row"        
+        let-rowIndex="rowIndex"
+      >
+        <a matTooltip="Navigate to tenant users"
+          (click)="navigateToTenantUsers(row)"
+          ><i class="material-icons">
+            people
+          </i></a>                       
+      </ng-template>
+    </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+  

@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Create New Tenant</h1>
+<div mat-dialog-content>
+  <form class="create-device-form popup-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field class="pb-1">
+          <mat-label>Tenant Name</mat-label>
+          <input matInput placeholder="Enter a name without special characters, numbers or space" (keydown.space)="$event.preventDefault();" [(ngModel)]="name" [formControl]="form.controls['name']">
+
+          <mat-error *ngIf="
+          form.controls['name'].hasError('required') &&
+          form.controls['name'].touched
+        "
+        class="mat-text-warn"
+        >You must include a name without special characters, numbers or space.</mat-error
+      >
+      </mat-form-field>        
+
+      <div class="user-edit-btn-wrapper pt-1" fxLayout="row" fxLayoutAlign="space-between start">
+        <button mat-raised-button color="primary" class="btn-block" type="submit" [disabled]="!form.valid">Create</button>
+        <button mat-raised-button type="button"  (click)="onNoClick()" style="margin-left:5px">Cancel</button>
+      </div>
+      
+  </form>
+</div>

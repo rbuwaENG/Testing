@@ -1,0 +1,18 @@
+.block {
+  height: calc(100vh - 150px);
+}
+
+.template-header {
+  margin: 10px 0 15px;
+
+  h4 {
+    margin: 0 10px 0 5px;
+  }
+}
+
+.btn-new-device {
+  height: 30px;
+  margin: 0 10px 0 6px;
+  min-width: auto;
+  padding: 0 10px;
+}

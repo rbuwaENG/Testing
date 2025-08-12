@@ -1,0 +1,39 @@
+<mat-card>
+  <!--breadcrumb-->
+  <mat-card-title style="margin-top:10px;margin-bottom:15px;font-size:20px;margin-left:0px">
+    <a [routerLink]="['/templates']">Templates</a>
+    <a [routerLink]="['/templates/details/view',TID]">/ {{TID}}</a>
+    <span>/ Create Firmware Release</span>
+  </mat-card-title>
+  <mat-card-content>
+    <!-- <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="versionStatus">
+      <p>Current Version : {{version}}</p>
+    </div> -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <mat-form-field class="firmware-upload">
+        <input matInput
+          [(ngModel)]="newVersion"
+          placeholder="New Version"
+          [formControl]="form.controls['newVersion']"
+          id="newVersion"
+          required
+        />
+        <mat-error
+          *ngIf="
+            form.controls['newVersion'].hasError('required') &&
+            form.controls['newVersion'].touched
+          "
+          class="mat-text-warn"
+          >You must include a new version.</mat-error
+        >
+      </mat-form-field>
+
+      <!-- <mat-input placeholder="New Version" style="width: 100%" [(ngModel)]="newVersion" id="newVersion"></mat-input> -->
+    </div>
+    <div fxLayout="row">
+      <input type="file" class="firmware-upload-btn" (change)="changeListener($event)" />
+    </div>
+    <br/>
+    <button mat-raised-button color="primary" class="mr-1" (click)="createFirmwareRelease()">Upload & Create</button>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,159 @@
+<div id="template-list" class="result-container" (window:resize)="onResize()">
+    <h5 style="margin-top:10px;margin-bottom:15px;margin-left:8px">
+      <a [routerLink]="['/tenants']">Tenants</a>
+      <span> / {{ tenantName }}</span>
+      <span> / Users</span>
+    </h5>
+  
+    <div fxLayout="row" fxLayoutAlign="stretch center">
+      <button
+        mat-raised-button
+        color="primary"
+        class="mr-1"
+        style="margin-left: 6px;"
+        (click)="openUserInvitation()"
+        style="margin-left:3px;margin-top:5px;margin-bottom:10px; margin-left:6px"
+        id="newTemplateBtn"
+      >
+        <mat-icon class="material-icons" aria-label="add" style="position: relative; top: -2px">add</mat-icon> Add user
+      </button>
+      <div fxFlex="1 1 auto"></div>
+    </div>
+  
+    <ngx-datatable
+    class="material block expandable users-details"
+    #templateListTable
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="50"
+    [rows]="tenantUsersList"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+  >
+      <ngx-datatable-row-detail
+        [rowHeight]="50"
+        #myDetailRow
+        (toggle)="onDetailToggle($event)"
+        *ngIf="isMobile"
+      >
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+          <div style="padding-left:20px;">
+            <div>Can Observe: <span *ngIf="row.CanObserve"><i class="material-icons permission-green">check_circle</i></span>
+                <span *ngIf="!row.CanObserve"><i class="material-icons permission-red">cancel</i></span></div>
+            <div>Can Control: <span *ngIf="row.CanControl"><i class="material-icons permission-green">check_circle</i></span>
+                <span *ngIf="!row.CanControl"><i class="material-icons permission-red">cancel</i></span></div> 
+            <div>Can Admin: <span *ngIf="row.Admin"><i class="material-icons permission-green">check_circle</i></span>
+                    <span *ngIf="!row.Admin"><i class="material-icons permission-red">cancel</i></span></div>   
+
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+      <ngx-datatable-column
+        [width]="60"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false"
+        *ngIf="isMobile"
+      >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button mat-icon-button (click)="toggleExpandRow(row)">
+            <!-- <i [class.datatable-icon-right]="!row.$$expanded" [class.datatable-icon-down]="row.$$expanded"></i> -->
+            <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+            <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+  
+      <ngx-datatable-column
+        name="Account Id"
+        prop="AccountId"
+        [width]="100"
+      >
+      </ngx-datatable-column>
+
+      <ngx-datatable-column
+      name="Can Observe"
+      prop="CanObserve"
+      [width]="100"
+    >
+      <ng-template let-value="value" ngx-datatable-cell-template>
+        <span *ngIf="value"><i class="material-icons permission-green">check_circle</i></span>
+        <span *ngIf="!value"><i class="material-icons permission-red">cancel</i></span>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="Can Control"
+      prop="CanControl"
+      [width]="100"
+    >
+      <ng-template let-value="value" ngx-datatable-cell-template>
+        <span *ngIf="value"><i class="material-icons permission-green">check_circle</i></span>
+        <span *ngIf="!value"><i class="material-icons permission-red">cancel</i></span>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="Can Admin"
+      prop="CanAdmin"
+      [width]="100"
+    >
+      <ng-template let-value="value" ngx-datatable-cell-template>
+        <span *ngIf="value"><i class="material-icons permission-green">check_circle</i></span>
+        <span *ngIf="!value"><i class="material-icons permission-red">cancel</i></span>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column
+      name=""
+      prop="AccountId"
+      [minWidth]="100"
+      [width]="50"
+      [sortable]="false"
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        active
+        let-value="value"
+        let-row="row"        
+        let-rowIndex="rowIndex"
+      >
+      <a *ngIf="loggedUserPermissionForTenant.CanAdmin" matTooltip="Navigate to change user permissions"
+      (click)="openPermissionChangeDialog(row)" style="padding-left: 15px;"
+      ><span class="material-icons">
+        <i class="material-icons">edit</i>
+        </span></a>
+        <a *ngIf="!loggedUserPermissionForTenant.CanAdmin" matTooltip="Unable to edit due to lack of permission"
+        style="cursor: default; opacity: 0.5; padding-left: 15px;"
+        ><span class="material-icons">
+          <i class="material-icons">edit</i>
+          </span></a>
+
+      <a *ngIf="loggedUserPermissionForTenant.CanAdmin" matTooltip="Delete Tenant User"
+        (click)="openUserDeleteDialog(row, event)" style="padding-left: 15px;"
+        ><span class="material-icons">
+          <i class="material-icons">delete</i>
+          </span></a>
+          <a *ngIf="!loggedUserPermissionForTenant.CanAdmin" matTooltip="Unable to delete due to lack of permission" class="pl-1"
+          style="cursor: default; opacity: 0.5; padding-left: 15px;"
+          ><span class="material-icons">
+            <i class="material-icons">delete</i>
+            </span></a>
+
+
+
+        <!-- <a *ngIf= "loggedUserPermissionForTenant.CanAdmin" matTooltip="Navigate to change user permissions"
+          (click)="openPermissionChangeDialog(row)"
+          ><span class="material-icons">
+            <i class="material-icons">edit</i>
+            </span></a>
+            <a *ngIf= "loggedUserPermissionForTenant.CanAdmin"  matTooltip="Delete Tenant User"
+            (click)="openUserDeleteDialog(row, event)" class="pl-1"
+            ><span class="material-icons">
+              <i class="material-icons">delete</i>
+              </span></a>             -->
+      </ng-template>
+    </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+  

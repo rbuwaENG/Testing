@@ -1,0 +1,108 @@
+<mat-card-title class="title-margin" id="templatesView" fxLayout="column" fxLayout.gt-xs="row"
+  fxLayoutAlign="start start" fxLayoutAlign.gt-xs="space-between center">
+  <div>
+    <a [routerLink]="['/templates']">Templates</a>
+    <span style="margin: 0 10px;">/</span>
+    <a routerLink="/templates/details/edit/{{TID}}">{{ TID }}</a>
+    <span> / Firmware Manager</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+</mat-card-title>
+<mat-card *ngFor="let variantDetail of variantDetails">
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">
+        {{variantDetail.Id}} - {{variantDetail.Name}}
+      </h5>
+    </mat-card-title>
+  </mat-toolbar>
+  <hr>
+  <mat-card-content *ngIf="variantDetail.Releases.length == 0">
+    <p>No firmware releases found for this template.</p>
+    <p>
+      <button mat-raised-button color="primary" class="mr-1" (click)="openNewRelease(TID, variantDetail.Id, null)"
+        id="newRelease">
+        New Release </button>
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="variantDetail.Releases.length > 0">
+    <table border="0">
+      <tr>
+        <td>
+          <p> ID :</p>
+        </td>
+        <td>
+          <p>
+            <!-- <select [(ngModel)]="selectedReleaseId" style=" height:28px; margin-bottom: 10px; margin-right: 15px;">
+                <option *ngFor="let releaseId of releaseIds" [value]="releaseId['id']" [selected]="releaseId['selected'] == 1">{{releaseId['value']}}</option>
+              </select> -->
+
+            <mat-form-field class="firmware-select">
+              <mat-label>Select Release</mat-label>
+              <mat-select [(ngModel)]="variantDetail.selectedReleaseId" (selectionChange)="displayReleaseDetails(variantDetail.Id, variantDetail.selectedReleaseId)">
+                <mat-option *ngFor="let releaseId of variantDetail.Releases" [disabled]="releaseId['disabled'] == 1"
+                  [value]="releaseId['id']" [selected]="releaseId['selected'] == 1">{{releaseId['value']}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" class="mr-1 set-current" id="currentRelease"
+              (click)="setCurrent(TID,variantDetail.Id,variantDetail.selectedReleaseId)" style="margin-right: 10px;">
+              Set
+              Current </button>
+            <button mat-raised-button color="primary" class="mr-1"
+              (click)="openNewRelease(TID, variantDetail.Id, variantDetail.selectedReleaseId)" id="newRelease">
+              New Release </button>
+          </p>
+
+        </td>
+      </tr>
+      <tr >
+        <td>
+          <p> Version No- :</p>
+        </td>
+        <td>
+          <p *ngIf="!valueSelected"> {{variantDetail.VersionNo}} </p>
+          <p *ngIf="valueSelected" > {{selectedVersion}} </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> Release Date :</p>
+        </td>
+        <td>
+          <p *ngIf="!valueSelected"> {{variantDetail.ReleaseDate }} </p>
+          <p *ngIf="valueSelected" > {{selectedReleaseDate }} </p>
+        </td>
+      </tr>
+      <tr >
+        <td>
+          <p> Size :</p>
+        </td>
+        <td *ngIf="!valueSelected">
+          <p *ngIf="variantDetail.Size > 0" > {{variantDetail.Size}} bytes</p>
+        </td>
+        <td *ngIf="valueSelected">
+          <p *ngIf="variantDetail.Size > 0" > {{ selectedSize }} bytes</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> MD5 (base64 encoded) :</p>
+        </td>
+        <td>
+          <p *ngIf="!valueSelected"> {{variantDetail.FirmwareMD5}} </p>
+          <p *ngIf="valueSelected" > {{selectedMD5}} </p>
+        </td>
+      </tr>
+      <tr >
+        <td>
+        </td>
+        <td>
+          <a  *ngIf="!valueSelected" mat-raised-button color="primary" class="download" href="{{variantDetail.Url}}"> Download</a>
+          <a  *ngIf="valueSelected"  mat-raised-button color="primary" class="download" href="{{selectedUrl}}"> Download</a>
+        </td>
+      </tr>
+    </table>
+
+  </mat-card-content>
+</mat-card>

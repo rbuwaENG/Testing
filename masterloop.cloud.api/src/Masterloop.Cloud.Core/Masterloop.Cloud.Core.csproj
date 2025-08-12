@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ReleaseVersion>5.0.0</ReleaseVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="Generators\MessagingManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pulse\" />
+    <Folder Include="SystemNotification\" />
+    <Folder Include="Event\" />
+    <Folder Include="Firmware\" />
+    <Folder Include="Command\" />
+    <Folder Include="RMQ\" />
+    <Folder Include="RMQ\API\" />
+    <Folder Include="Observation\" />
+    <Folder Include="Node\" />
+    <Folder Include="Unit\" />
+    <Folder Include="Dashboard\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\submodules\Masterloop.Core.Types\src\Masterloop.Core.Types\Masterloop.Core.Types.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Generators\.DS_Store" />
+    <None Remove="Unit\" />
+    <None Remove="Dashboard\" />
+  </ItemGroup>
+</Project>

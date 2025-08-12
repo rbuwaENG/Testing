@@ -1,0 +1,68 @@
+
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+      <a [routerLink]="['/devices/all']">Devices</a>
+      <span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/',mid]" fxLayout="row"  fxLayoutAlign="start center">{{mid}}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+      <span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/observations/',mid]">Observations</a>
+      <span style="margin: 0 10px;">/</span>
+      <span>Table</span>
+    </div>
+    <div fxFlex="1 1 auto"></div>
+    <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+  </mat-card-title>
+  <mat-card-content>
+    <div class="analyzer" fxLayout="column" fxLayoutAlign="stretch stretch">
+      <div class="content" fxLayout="row" fxLayoutAlign="stretch stretch">
+
+        <mat-sidenav-container class="example-sidenav-fab-container" fxFlex="1 1 auto">
+          <div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="stretch stretch" style="height:100%">
+            <div fxFlex="none" fxLayout="row" fxLayoutAlign="stretch center" fxLayoutGap="10px">
+              <mat-tab-group fxFlex="1 1 auto" [(selectedIndex)]="selectedToggleIndex" (selectedTabChange)="onToggleChanged(); clearBuffer()">
+                <mat-tab *ngFor="let toggle of toggles">
+                  <ng-template mat-tab-label>{{ toggle.name }}</ng-template>
+                </mat-tab>
+              </mat-tab-group>
+            </div>
+
+            <div fxFlex="none" [fxShow]="!!selectedToggleValue?.showDateRangeSelector">
+              <div fxLayout="column" fxLayout.gt-xs="row" style="width: fit-content ; margin:15px auto auto" fxLayoutGap="10px" fxLayoutAlign="center center">
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+                  <label fxFlex="none">From</label>
+                  <mat-form-field>
+                    <input matInput [owlDateTime]="dt1" [(ngModel)]="selectedToggleValue._from" [owlDateTimeTrigger]="dt1" placeholder="Date Time">
+                    <owl-date-time #dt1></owl-date-time>
+                  </mat-form-field>
+                  <!-- <input fxFlex="none" [(ngModel)]="selectedToggleValue._from" ngui-datetime-picker/> -->
+                </div>
+
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+                  <label fxFlex="none">To</label>
+                  <mat-form-field>
+                    <input matInput [owlDateTime]="dt2" [(ngModel)]="selectedToggleValue._to" [owlDateTimeTrigger]="dt2" placeholder="Date Time">
+                    <owl-date-time #dt2></owl-date-time>
+                  </mat-form-field>
+                  <!-- <input fxFlex="none" [(ngModel)]="selectedToggleValue._to" ngui-datetime-picker /> -->
+                </div>
+
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+                  <label fxFlex="none">UTC</label>
+                </div>
+
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center">
+                  <button fxFlex="none" type="button" mat-raised-button color="primary" (click)="onToggleChanged();clearBuffer()" style="margin-bottom: 1.25em">Reload</button>
+                </div>
+              </div>
+            </div>
+            <div class="popup" *ngIf="isLoading">
+              <div class="cssload-speeding-wheel"></div>
+            </div>
+            <div fxFlex="1 1 auto" fxLayoutAlign="stretch stretch">
+              <app-infograph-table-observation [graphicOptions]="infoGraphicOptions" [from]="selectedToggleValue._from" [to]="selectedToggleValue._to"></app-infograph-table-observation>
+            </div>
+          </div>
+        </mat-sidenav-container>
+      </div>
+    </div>
+  </mat-card-content>

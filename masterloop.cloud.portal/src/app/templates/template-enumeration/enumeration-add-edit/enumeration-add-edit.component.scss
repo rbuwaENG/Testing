@@ -1,0 +1,51 @@
+.toolbar-wrapper {
+    margin-inline: 0;
+    padding: 0;
+}
+
+.add-enum-table {
+    margin-inline: 0;
+
+    .datatable-body {
+        .datatable-scroll {
+            max-height: 350px;
+        }
+    }
+}
+
+.main-header {
+    mat-card-title {
+        margin: 0;
+    }
+}
+
+.popup-title {
+    margin-top: 0;
+}
+
+.enum-button-wrapper {
+    margin-top: 15px;
+}
+
+.custom-footer {
+    width: 100%;
+  
+    &__count {
+      color: rgba(0, 0, 0, 0.87);
+      font-size: 16px;
+      padding: 0;
+    }
+  
+    &__add-template {
+      color: #000;
+      font-size: 20px;
+      font-weight: 600;
+      opacity: 0.5;
+  
+      span {
+        margin-bottom: 0;
+        margin-left: 5px;
+      }
+    }
+  }
+  

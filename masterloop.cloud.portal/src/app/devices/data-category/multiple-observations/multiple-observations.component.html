@@ -1,0 +1,62 @@
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']">Devices</a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/general/',deviceId]" fxLayout="row"  fxLayoutAlign="start center">{{deviceId}}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/observations/',deviceId]">Observations</a>
+    <span style="margin: 0 10px;">/</span>
+    <span>Live</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <section class="example-section">
+    <!-- <mat-checkbox class="example-margin" [(ngModel)]="showRecentFirst" (change)="toggle($event)">Show most recent first</mat-checkbox> -->
+    <mat-form-field>
+      <mat-select
+      [(value)] = "selectedValue"
+      [(ngModel)]="selectedValue"
+      (selectionChange)="sortBySelection()"
+      placeholder="Order by"
+      id="deviceTemplate"
+    >
+    <mat-option value="time">Timestamp</mat-option>
+    <mat-option value="id">Id</mat-option>
+    <mat-option value="name">Name</mat-option>
+    </mat-select>
+    </mat-form-field>
+    
+  </section>
+</mat-card-title>
+
+<div fxLayout="row wrap" fxLayoutAlign=" stretch" fxLayoutGap="5px grid">
+  <div *ngFor="let item of observations" fxFlex="49%" fxFlex.gt-xs="32.2%" fxFlex.gt-md="14.1%" class="item-wrapper">
+    <mat-card class="ob-mat-card" fxLayout="column" fxLayoutAlign="space-between stretch" [style.background-color]="item.ValueColor">
+      <mat-card-title class="ob-mat-title" [style.background-color]="item.TitleColor" [style.color]="item.TextColor" fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="card-item-id">{{item.Id}}</div>
+        <div class="long-text" [matTooltip]="item.Name" [matTooltipPosition]="'above'">{{item.Name}}</div>
+      </mat-card-title>
+
+      <div>
+        <mat-card-content class="ob-mat-content">
+          <div class="ob-container">
+            <div class="ob-values" [mat-tooltip]="item.ToolTip">
+
+              <span *ngIf="item.Value.length > 15"> {{item.Value.substring(0,15)}}...
+              </span>
+              <a *ngIf="item.Value.length > 15" mat-icon class="material-icons"
+                style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+                (click)="open(item)"> open_in_new </a>
+              <span *ngIf="! (item.Value.length > 15)">{{item.Value}}</span>
+              <span *ngIf="item.Value" class="abbreviation">&nbsp;{{item.UnitAbbreviation}}</span>
+              </div>           
+          </div>
+        </mat-card-content>
+      </div>
+
+      <div class="ob-mat-footer" [style.color]="item.TextColor" [style.background-color]="item.TitleColor">
+        {{item.Timestamp}}
+      </div>
+    </mat-card>
+  </div>
+
+</div>

@@ -1,0 +1,97 @@
+<ngx-datatable class="material selection-cell flex common-table striped" 
+    [rows]="table.rows" 
+    [columns]="table.columns" 
+    [columnMode]="'force'"
+    [headerHeight]="50" 
+    [footerHeight]="50" 
+    [rowHeight]="40" [scrollbarV]="true" [scrollbarH]="true" [sorts]="[{prop: 'timestamp', dir: 'desc'}]"
+    style="height: calc(100vh - 200px); width:100%;">
+</ngx-datatable>
+
+<ng-template #timestampColumnTemplate let-value="value">{{value | amUtc | amDateFormat: 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]'  }}</ng-template>
+
+<ng-template #postitionTypedColumnTemplate let-value="value">
+    <span *ngIf="value">Lat : {{value.Latitude}}, Lng: {{value.Longitude}}, Alt: {{value.Altitude}}</span>
+</ng-template>
+
+<ng-template #statisticsTypedColumnTemplate let-value="value" let-row="row" let-rowIndex="rowIndex">
+    <!-- <span *ngIf="value">Max : {{value.Maximum}}, Mean: {{value.Mean}}, Median: {{value.Median}}, Min: {{value.Minimum}}, StdDev: {{value.StdDev}}</span> -->
+    <span >
+      Min: {{value.Minimum}}, Max : {{value.Maximum}}... 
+      
+  </span>
+  <!--,Mean: {{value.Mean}}, Median: {{value.Median}}
+      StdDev: {{value.StdDev}}, Count: {{value.Count}}
+      From: {{value.From}}, To: {{value.To}}-->
+  <a mat-icon class="material-icons"
+      style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+      (click)="open(row, rowIndex, value)"> open_in_new </a>
+</ng-template>
+
+
+<!-- OLD HTML IMPLEMENTATION-->
+<!-- <ngx-datatable #selectedObservationListTable class="material selection-cell flex" [rows]="table.rows"
+[columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="40" [scrollbarV]="true"
+[scrollbarH]="true" [sorts]="[{prop: 'timestamp', dir: 'desc'}]" style="height: calc(100vh - 200px); width:100%;">
+
+<ngx-datatable-row-detail [rowHeight]="200" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+  <ng-template let-row="row" let-value="value" ngx-datatable-row-detail-template>
+    <div style="padding-left:35px; height: 200px; overflow: scroll;">
+      <div *ngFor="let deviceObservationId of deviceObservationIds">
+          <p *ngIf="deviceObservationId.split('@@')[2] != 5">
+              <strong>{{deviceObservationId.split("@@")[1]}}: </strong>{{row[deviceObservationId.split("@@")[0]]}}
+            </p>
+            <p *ngIf="deviceObservationId.split('@@')[2] == 5">
+              <strong>{{deviceObservationId.split("@@")[1]}}: </strong>
+                Lat : {{row[deviceObservationId.split("@@")[0]].Latitude}}, Lng: 
+                  {{row[deviceObservationId.split("@@")[0]].Longitude}}, Alt: 
+                  {{row[deviceObservationId.split("@@")[0]].Altitude}}
+            </p>
+      </div>
+    </div>
+  </ng-template>
+</ngx-datatable-row-detail>
+
+<ngx-datatable-column [width]="60" [resizeable]="false" [sortable]="false" [draggable]="false"
+  [canAutoResize]="false" *ngIf="isMobile">
+  <ng-template let-row="row" ngx-datatable-cell-template>
+    <button md-icon-button (click)="toggleExpandRow(row)">
+      <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+      <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+    </button>
+  </ng-template>
+</ngx-datatable-column>
+
+<ngx-datatable-column *ngFor="let col of table.columns; let i = index" [name]="col.name" [prop]="col.prop" 
+  [minWidth]="setColumnsMinWidth(col.dataType)" [width]="setColumnsMaxWidth(col.dataType)">
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" *ngIf="col.dataType == 0">
+        {{value | amUtc | amDateFormat: 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' }}
+    </ng-template>
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" *ngIf="col.dataType == 5">
+      <span *ngIf="value">Lat : {{value.Latitude}}, Lng: {{value.Longitude}}, Alt: {{value.Altitude}}</span>
+    </ng-template>
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" *ngIf="col.dataType == 6">
+      <div *ngIf="value == 'empty'">
+        <span class="empty">{{value  }}</span>
+      </div>
+      <div *ngIf="value != 'empty'">
+        <span >{{value  }}</span>
+      </div>  
+  </ng-template>
+  <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" *ngIf="col.dataType == 7">
+    <span *ngIf="value">Max : {{value.Maximum}}, Mean: {{value.Mean}}, Median: {{value.Median}}, Min: {{value.Minimum}}, StdDev: {{value.StdDev}}</span>
+</ng-template>
+</ngx-datatable-column>
+
+</ngx-datatable>
+
+<ng-template #timestampColumnTemplate
+let-value="value">{{value | amUtc | amDateFormat: 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' }}</ng-template>
+
+<ng-template #postitionTypedColumnTemplate let-value="value">
+<span *ngIf="value">gdgdgdgdgLat : {{value.Latitude}}, Lng: {{value.Longitude}}, Alt: {{value.Altitude}}</span>
+</ng-template>
+
+<ng-template #statisticsTypedColumnTemplate let-value="value">
+  <span *ngIf="value">Max : {{value.Maximum}}, Mean: {{value.Mean}}, Median: {{value.Median}}, Min: {{value.Minimum}}, StdDev: {{value.StdDev}}</span>
+</ng-template> -->

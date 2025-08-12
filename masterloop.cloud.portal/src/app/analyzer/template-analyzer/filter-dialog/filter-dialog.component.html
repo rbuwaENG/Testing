@@ -1,0 +1,63 @@
+<h1 mat-dialog-title>Set Filter for {{ observation.Name}}</h1>
+
+<mat-dialog-content [formGroup]="form">
+    <div fxLayout="row" fxLayoutWrap="wrap">
+        <mat-form-field>
+            <mat-select formControlName="Condition" placeholder="Select a Condition">
+                <mat-option *ngFor="let condition of conditions" [value]="condition.value">
+                  {{condition.viewValue}}
+                </mat-option>
+              </mat-select>
+              <mat-error
+              *ngIf="
+                form.controls['Condition'].hasError('required') &&
+                form.controls['Condition'].touched
+              "
+              class="mat-text-warn"
+              >You must select a condition.</mat-error
+            >
+        </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="!showBoolean">
+        <mat-form-field>
+            <input matInput
+                    placeholder="Enter a Value"
+                   formControlName="Value">
+                   <mat-error
+          *ngIf="
+            form.controls['Value'].hasError('required') &&
+            form.controls['Value'].touched
+          "
+          class="mat-text-warn"
+          >You must include a value.</mat-error
+        >
+        </mat-form-field>         
+    </div>
+    <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="showBoolean">
+      <!-- <mat-form-field> -->
+        <mat-radio-group aria-label="Select an option" formControlName="Value">
+          <mat-radio-button value="1" selected>True</mat-radio-button>
+          <mat-radio-button value="0">False</mat-radio-button>
+        </mat-radio-group>
+        <mat-error
+        *ngIf="
+          form.controls['Value'].hasError('required') &&
+          form.controls['Value'].touched
+        "
+        class="mat-text-warn"
+        >You must select an option.</mat-error
+      >
+      <!-- </mat-form-field>          -->
+  </div>
+    
+  
+    
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between start" style="margin-bottom: 0;">
+    <button class="mat-raised-button"(click)="clearFilter()">Clear</button>
+    <div>
+      <button class="mat-raised-button mat-primary"(click)="setFilter()">OK</button>    
+      <button class="mat-raised-button"(click)="close()" style="margin-left: 10px;">Cancel</button>
+    </div>
+</mat-dialog-actions>

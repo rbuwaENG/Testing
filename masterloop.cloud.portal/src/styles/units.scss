@@ -1,0 +1,10 @@
+// Abbreviations 
+.abbreviation {
+    color: #7C7C7C;
+    display: inline !important;
+
+    .title-margin &,
+    .settings-item-row & {
+        margin-left: 5px;
+    }
+}

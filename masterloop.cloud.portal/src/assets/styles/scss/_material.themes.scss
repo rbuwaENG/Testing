@@ -1,0 +1,11 @@
+// Default Theme
+.app-light {
+    @include angular-material-theme($theme);
+    // @include generate-theme-vars($theme);
+}
+
+// Dark Theme
+.app-dark {
+    @include angular-material-theme($dark-theme);
+    // @include generate-theme-vars($dark-theme);
+}

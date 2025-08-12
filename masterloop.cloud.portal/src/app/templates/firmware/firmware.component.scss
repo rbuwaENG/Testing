@@ -1,0 +1,49 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+mat-card-content p {
+  min-width: 95px;
+  padding: 15px 0;
+}
+
+.firmware-select {
+  margin-right: 15px;
+  width: 200px;
+
+  @media (min-width: 768px) {
+    width: 245px;
+  }
+
+  @media (min-width: 991px) {
+    width: 255px;
+  }
+}
+
+.set-current {
+  @media (max-width: 414px) {
+    margin-bottom: 10px;
+  }
+}
+
+a.download {
+  color: #fff;
+}

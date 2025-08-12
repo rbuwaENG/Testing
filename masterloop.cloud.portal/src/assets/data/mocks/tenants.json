@@ -1,0 +1,78 @@
+[
+    {
+        "Id": 1,
+        "Name": "Masterloop"       
+    },
+    {
+        "Id": 2,
+        "Name": "Skaitec"       
+    },
+    {
+        "Id": 3,
+        "Name": "BiotaTools"       
+    },
+    {
+        "Id": 4,
+        "Name": "Zaptec"       
+    },
+    {
+        "Id": 5,
+        "Name": "Offcode"       
+    },
+    {
+        "Id": 6,
+        "Name": "Demo"       
+    },
+    {
+        "Id": 7,
+        "Name": "Skailand"       
+    },
+    {
+        "Id": 8,
+        "Name": "ZaptecTest"       
+    },
+    {
+        "Id": 9,
+        "Name": "Bluekey"       
+    },
+    {
+        "Id": 10,
+        "Name": "SeaBit"       
+    },
+    {
+        "Id": 11,
+        "Name": "FerryTrack"       
+    },
+    {
+        "Id": 12,
+        "Name": "MCSKPI"       
+    },
+    {
+        "Id": 14,
+        "Name": "Automotive"       
+    },
+    {
+        "Id": 15,
+        "Name": "Kverneland"       
+    },
+    {
+        "Id": 16,
+        "Name": "Bysykkelen"       
+    },
+    {
+        "Id": 17,
+        "Name": "Flaate"       
+    },
+    {
+        "Id": 18,
+        "Name": "JBIoTec"       
+    },
+    {
+        "Id": 19,
+        "Name": "Easee"       
+    },
+    {
+        "Id": 21,
+        "Name": "IRene"       
+    }
+]

@@ -1,0 +1,50 @@
+@import "/src/assets/styles/scss/material.variables";
+
+a:link {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+  
+  /* visited link */
+  a:visited {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+  
+  /* mouse over link */
+  a:hover {
+    color: dodgerblue;
+  }
+  
+  /* selected link */
+  a:active {
+    color: mat-color($mat-mcs-blue, 500);
+  }
+
+  .block {
+    height: calc(100vh - 165px);
+  }
+
+input.firmware-upload-btn[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 7px;
+  padding: 6px 12px;
+}
+
+.inactive {
+  background-color: red;
+}
+
+.active {
+  background-color: green;
+}
+
+.status-label {
+  width: 70px;
+  border-radius: 35px;
+  text-align: center;
+  color: #fff;
+}

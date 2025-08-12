@@ -1,0 +1,45 @@
+.material-icons.mat-14 {
+  font-size: 14px;
+}
+
+.block {
+  height: calc(100vh - 165px);
+}
+
+.template-header {
+  margin: 10px 0 15px;
+  
+  @media (max-width: 599px) {
+    margin-top: 10px;
+  }
+
+  h4 {
+    margin: 0 10px 0 5px;
+  }
+}
+
+.btn-new-device {
+  height: 30px;
+  margin: 0 10px 0 6px;
+  min-width: auto;
+  padding: 0 10px;
+}
+
+.template-filter-search {
+  margin: 0;
+  position: relative;
+  top: 9px;
+}
+
+.template-filter-wrapper {
+  padding: 0 10px;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    width: auto;
+  }
+}
+
+app-reload-content {
+  margin-top: 10px;
+}

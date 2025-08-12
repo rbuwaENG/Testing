@@ -1,0 +1,33 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="row">
+  <div>
+    <a [routerLink]="['/devices/all']">Devices </a>
+    <a [routerLink]="['/devices/general/',MID]">/ {{MID}}</a>
+    <span> / Send Command</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-reload-content (reload)="refreshDeviceDetails();ngOnInit()"></app-reload-content>
+</mat-card-title>
+
+<mat-card-content>
+  <ngx-datatable class='material block striped' [columns]="columns" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="50"
+    [rows]='sendCommands' [scrollbarV]="true" [scrollbarH]="true">
+
+    <ngx-datatable-column name="Id" prop="Id" [width]="50"  [headerTemplate]="hdrTpl"></ngx-datatable-column>
+    <ngx-datatable-column name="Name" prop="Name" [width]="150" [headerTemplate]="hdrTpl"></ngx-datatable-column>
+    <ngx-datatable-column name="Description" prop="Description" [width]="300"  [headerTemplate]="hdrTpl"></ngx-datatable-column>
+
+    <ngx-datatable-column name=" " [sortable]="false">
+      <ng-template let-value="value" ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+        <a matTooltip="Edit Command" style="padding-left:25px;" [routerLink]="['../../editSendCommand/', MID , sendCommands[rowIndex].Id]"
+          mat-icon role="img" class="material-icons" aria-label="mode edit" id="edit">play_arrow</a>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{column.name}} </strong>
+</ng-template>
+

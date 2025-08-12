@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">Security</h5>
+    </mat-card-title>
+  </mat-toolbar>
+  <hr>
+  <mat-card-content>
+    <div style="overflow-x:auto;">
+      <table border="0">
+        <tr>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../secure', MID]" mat-icon role="img" class="material-icons" aria-label="Security Details" id="securityDetails">security</a>
+              <p style=" margin:0px">Security Details</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../permission', MID]" mat-icon role="img" class="material-icons" aria-label="Permissions" id="permissions">group</a>
+              <p style=" margin:0px">Permissions</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

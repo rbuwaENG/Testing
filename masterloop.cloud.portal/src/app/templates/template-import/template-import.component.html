@@ -1,0 +1,31 @@
+<div>
+  <h4>Select an option to import template</h4>
+  <mat-radio-group aria-label="Select an option to import template" (change)="importOptionChange($event)" fxLayout="column">
+    <mat-radio-button value="1">Import By File</mat-radio-button>
+    <mat-radio-button value="2">Import By Existing Template</mat-radio-button>
+  </mat-radio-group>
+</div>
+<div *ngIf="importByFile">
+  <input type="file" class="firmware-upload-btn" (change)="changeListener($event)"  />
+</div>
+<div *ngIf="importByTemplate">
+  <mat-form-field>
+    <mat-label>Select a template</mat-label>
+    <mat-select name="type" (selectionChange)="onTypeChange($event)">
+      <mat-option *ngFor="let type of TIDS" [value]="type" >{{
+        type
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+    <!-- <input type="file" class="firmware-upload-btn" (change)="changeListener($event)"  /> -->
+</div>
+<div *ngIf="isContentReady" class="diff-wrapper">
+    <td-ngx-text-diff
+        [left]="left"
+        [right]="right"
+        (compareResults)="onCompareResults($event)"></td-ngx-text-diff>
+</div>
+  <div mat-dialog-actions>
+    <button mat-raised-button color="white" mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="!isTwoObjetsAreDifferent" mat-button cdkFocusInitial (click)="updateTemplate()">Update Template</button>
+  </div>

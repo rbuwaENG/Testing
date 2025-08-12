@@ -1,0 +1,15 @@
+.session-wrapper {
+  .mat-card {
+    padding: 0;
+
+    .mat-form-field-appearance-legacy {
+      .mat-form-field-wrapper {
+        padding-bottom: 1em;
+      }
+    }
+  }
+}
+
+.login-logo {
+  margin-inline: auto;
+}

@@ -1,0 +1,46 @@
+[
+    {
+        "username": "tra@masterloop.com",
+        "password": "Sibmip56",
+        "tokens": {
+            "password": {
+                "access_token": "Lzw6jeAv6ANg2pXqbgDA6ezso7cjWSPaSz-xbpmp5J8lgqnWjmcMWCFDTaFoJjivbLtlqXxPWJ9D5uVIeAhYpGN-cdUFaWy0CzZxiKZFm3E2UkojnaZzVLFunGnropC2avN7kpJP0hbH_3I18ym4ZqzyfCaj9_HfPl0qGDxkUHhKKsGtImIYgnbeIezSpwt5oCCrfni4BGNsaFXDLLdiDl1XgyzPFqtTVm7HwsAylaebdlIor3VkKdbCL56QyRKl6PFcrYUimHgYZXbDiApWc2g60rO0vsiMes9XQr2nbqxKaRJbxokhHFqvcIGacQzl08LF1efAGQ9O_LCyhKMeXZ1E7iXFgSlcrG3g_WuNE2I_EFDr",
+                "token_type": "bearer",
+                "expires_in": 431999
+            }
+        }
+    },
+    {
+        "username": "iwia@masterloop.com",
+        "password": "iwimip56",
+        "tokens": {
+            "password": {
+                "access_token": "Lzw6jeAv6ANg2pXqbgDA6ezso7cjWSPaSz-xbpmp5J8lgqnWjmcMWCFDTaFoJjivbLtlqXxPWJ9D5uVIeAhYpGN-cdUFaWy0CzZxiKZFm3E2UkojnaZzVLFunGnropC2avN7kpJP0hbH_3I18ym4ZqzyfCaj9_HfPl0qGDxkUHhKKsGtImIYgnbeIezSpwt5oCCrfni4BGNsaFXDLLdiDl1XgyzPFqtTVm7HwsAylaebdlIor3VkKdbCL56QyRKl6PFcrYUimHgYZXbDiApWc2g60rO0vsiMes9XQr2nbqxKaRJbxokhHFqvcIGacQzl08LF1efAGQ9O_LCyhKMeXZ1E7iXFgSlcrG3g_WuNE2I_EFDr",
+                "token_type": "bearer",
+                "expires_in": 431999
+            }
+        }
+    },
+    {
+        "username": "ssa@masterloop.com",
+        "password": "Dactit48",
+        "tokens": {
+            "password": {
+                "access_token": "GoW50IR-kO1pWWMM139s0xWGe_Q9VEsSzJkuB6ycSOk8bHiadyazS6NP6j87wDae1RbcUtMrjr0YVJ533vzf5OADMYIbV9eFEfPVy5uYkKaP48YKvPZCYcJpkcmFSuJbztM4kM0Iot3_kjFV33wIUa5wMMciUtDHNvIBBafpy-jOnKWqzGemVApgwdDntphpmWLeJ2n07eQnCFnTeytO6qSQjEUcV90lwg2FWS8I7e8bOq1MjcyIxnWRL9kv5fUxBGup6JfiOQ40NOgdCOx4faRc2F_FN56O9Onrt0gVjSGZDYuazx1LVpyRDHf5V8pvqSeoLuosEBIww68FVB5fUqtjQ1ysjendIiQxjFXydb5Gxi2V",
+                "token_type": "bearer",
+                "expires_in": 431999
+            }
+        }
+    },
+    {
+        "username": "kwi@masterloop.com",
+        "password": "Jorlix15",
+        "tokens": {
+            "password": {
+                "access_token": "8fM4e1aKWWPXZPUhAta85r_CB32inf0ggfZQ2jA790JoxPWjaqtWxFP0vG_oLoY7_jVdUjnNSIzcNlwvbpk7CSdqDtKmU273VhDIeAkk_WRK4FNedTV9uMMCF6JfLxXlwCOfbjYaH_BFYtmep_CCXKgKO1Ut9oxzxXbKV4DTm_8-Fe-2FYhCs_gsUeqsGG3SKJZS6OKTOlzFqWmweM_D6GG4VmVxcVOvhgKZi7YDiJ5jfZe00JSoN0M7Vi6jpksnPtafNUxWMl_d2loMRt4rd3RFZWJRYS3MHbLn4rkj8djLvOHoVNzzc9DFOfP0NbO0tzMaw__sjNvk3GmE_8AsluZSM5TM-eNtg_jQnc-2c-77Raik",
+                "token_type": "bearer",
+                "expires_in": 431999
+            }
+        }
+    }
+]

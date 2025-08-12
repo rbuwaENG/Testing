@@ -1,0 +1,37 @@
+.material-icons.mat-14 {
+  font-size: 14px;
+}
+
+.block {
+  height: calc(100vh - 150px);
+}
+.status-label {
+  width: 70px;
+  border-radius: 35px;
+  text-align: center;
+  color: #fff;
+  line-height: 22px;
+}
+
+.inactive {
+  background-color: red;
+}
+
+.active {
+  background-color: green;
+}
+
+.template-header {
+  margin: 10px 0 15px;
+
+  h4 {
+    margin: 0 10px 0 5px;
+  }
+}
+
+.btn-new-device {
+  height: 30px;
+  margin: 0 10px 0 6px;
+  min-width: auto;
+  padding: 0 10px;
+}

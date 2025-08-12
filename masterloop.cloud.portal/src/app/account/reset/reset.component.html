@@ -1,0 +1,109 @@
+<div class="session mat-mcs-blue">
+  <div class="session-content">
+    <div class="session-wrapper">
+      <mat-card>
+        <mat-card-content>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="text-xs-center pb-1">
+              <img src="assets/images/logo-dark.png" alt="" class="light-icon login-logo" width="150" />
+              <img src="assets/images/Masterloop_Logo_Inverse.png" alt="" class="dark-icon login-logo" width="150" />
+              <p class="mat-text-muted">
+                Enter your new password to reset your account password.
+              </p>
+            </div>
+
+            <div fxLayout="column" fxLayoutAlign="space-around">
+              <!-- Email (readonly and disabled) -->
+              <mat-form-field class="pb-1">
+                <input
+                  matInput
+                  placeholder="Email address"
+                  type="email"
+                  formControlName="email"
+                  readonly
+                  disabled
+                  style="width: 100%"
+                  id="email"
+                />
+              </mat-form-field>
+
+              <!-- Token (hidden) -->
+              <input type="hidden" formControlName="token" />
+
+              <!-- New Password -->
+              <mat-form-field class="pb-1" appearance="fill">
+                <input
+                  matInput
+                  placeholder="New Password"
+                  [type]="hideNewPassword ? 'password' : 'text'"
+                  formControlName="newPassword"
+                  style="width: 100%"
+                  id="newPassword"
+                />
+                <button mat-icon-button matSuffix (click)="hideNewPassword = !hideNewPassword" type="button" tabindex="-1">
+                  <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error
+                  *ngIf="form.get('newPassword')?.hasError('required') && form.get('newPassword')?.touched"
+                  class="mat-text-warn"
+                >
+                  New password is required.
+                </mat-error>
+                <mat-error
+                  *ngIf="form.get('newPassword')?.hasError('minlength') && form.get('newPassword')?.touched"
+                  class="mat-text-warn"
+                >
+                  Password must be at least 8 characters.
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Confirm New Password -->
+              <mat-form-field class="pb-1" appearance="fill">
+                <input
+                  matInput
+                  placeholder="Confirm New Password"
+                  [type]="hideConfirmPassword ? 'password' : 'text'"
+                  formControlName="confirmPassword"
+                  style="width: 100%"
+                  id="confirmPassword"
+                />
+                <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" tabindex="-1">
+                  <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error
+                  *ngIf="form.get('confirmPassword')?.hasError('required') && form.get('confirmPassword')?.touched"
+                  class="mat-text-warn"
+                >
+                  Confirmation password is required.
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Password mismatch error -->
+              <mat-error
+                *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched"
+                class="mat-text-warn"
+              >
+                Passwords do not match.
+              </mat-error>
+
+              <!-- Submit Button -->
+              <button
+                mat-raised-button
+                type="submit"
+                color="primary"
+                class="custom-reset-button"
+                [disabled]="form.invalid || form.hasError('passwordMismatch') || loading"
+              >
+                Reset Password
+              </button>
+            </div>
+
+            <div class="pt-1 pb-1 text-xs-center">
+              <a [routerLink]="['../signin']">Sign into your account</a>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

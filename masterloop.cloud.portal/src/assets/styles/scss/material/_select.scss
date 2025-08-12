@@ -1,0 +1,11 @@
+.mat-select-panel {
+	background-color: mat-color($background, card);
+}
+mat-option {
+    font-size: $font-size-base!important;
+	font-family: "Muli","Helvetica Neue", Helvetica, sans-serif;
+}
+
+.app-dark .mat-select-panel {
+	background-color: mat-color($dark-background, card);
+}

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ReleaseVersion>5.0.0</ReleaseVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Masterloop.Cloud.BusinessLayer\Masterloop.Cloud.BusinessLayer.csproj" />
+    <ProjectReference Include="..\Masterloop.Cloud.Core\Masterloop.Cloud.Core.csproj" />
+    <ProjectReference Include="..\Masterloop.Cloud.Storage\Masterloop.Cloud.Storage.csproj" />
+    <ProjectReference Include="..\..\submodules\Masterloop.Core.Types\src\Masterloop.Core.Types\Masterloop.Core.Types.csproj" />
+  </ItemGroup>
+</Project>

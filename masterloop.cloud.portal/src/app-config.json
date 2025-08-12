@@ -1,0 +1,5 @@
+{
+  "api_url": "https://api.masterloop.no/",
+  "api_version": "5",
+  "live_port": 10443
+}

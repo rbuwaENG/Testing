@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ReleaseVersion>5.0.0</ReleaseVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="Services\Extensions\BinaryPatchUtility.cs" />
+    <Compile Remove="Managers\ImportExportManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Managers\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\RMQ\" />
+    <Folder Include="Services\Security\" />
+    <Folder Include="Managers\Interfaces\" />
+    <Folder Include="Services\Firmware\" />
+    <Folder Include="Services\Cache\" />
+    <Folder Include="Services\Units\" />
+    <Folder Include="Services\Observations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\submodules\Masterloop.Core.Types\src\Masterloop.Core.Types\Masterloop.Core.Types.csproj" />
+    <ProjectReference Include="..\Masterloop.Cloud.Storage\Masterloop.Cloud.Storage.csproj" />
+    <ProjectReference Include="..\Masterloop.Cloud.Core\Masterloop.Cloud.Core.csproj" />
+    <ProjectReference Include="..\..\submodules\Masterloop.Core.Units\src\Masterloop.Core.Units\Masterloop.Core.Units.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Services\Cache\" />
+    <None Remove="Services\Units\" />
+    <None Remove="System.Runtime.Loader" />
+    <None Remove="Services\Observations\" />
+  </ItemGroup>
+</Project>

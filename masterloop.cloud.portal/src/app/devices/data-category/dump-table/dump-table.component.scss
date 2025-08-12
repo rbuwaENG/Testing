@@ -1,0 +1,96 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+.flex-grid {
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.first {
+  width: 90%;
+}
+
+@media (max-width: 400px) {
+  .flex-grid {
+    display: block;
+  }
+
+  .col {
+    margin-top: 1.5%;
+  }
+
+  .last {
+    margin-bottom: 8%;
+  }
+
+  .first {
+    padding-right: 1%;
+  }
+}
+
+@media (max-width: 700px) {
+  .flex-grid {
+    display: block;
+  }
+
+  .col {
+    margin-top: 1.5%;
+  }
+
+  .first {
+    padding-right: 15%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .col {
+    margin-top: 1.5%;
+  }
+
+  .first {
+    padding-right: 15%;
+  }
+}
+
+.long-text {
+  // display: inline-block;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+.block {
+  height: -webkit-calc(100vh - 150px);
+  height: -moz-calc(100vh - 150px);
+  height: calc(100vh - 150px);
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

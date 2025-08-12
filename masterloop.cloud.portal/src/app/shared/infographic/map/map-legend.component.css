@@ -1,0 +1,58 @@
+.container-relative {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.container-absolute {
+  position: absolute;
+  top: 0px;
+  bottom: -17px;
+  left: 0px;
+  right: 0px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.legendkey {
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 1px 2px;
+  font-size: 11px;
+}
+
+.legendkey:not(:last-child) {
+  margin-right: 7px;
+}
+
+.legendkey table{
+  border: 1px solid #fff;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.legendkey th, td{
+  border: 1px solid #fff;
+  padding: 0;
+}
+.legendkey table tr td:not(:last-child){
+  padding-right: 2px;
+}
+
+.legendkey table tr td:not(:first-child){
+  padding-left: 2px;
+}
+
+.legendkey table tr:last-child {
+  font-size: 9px;
+  color: grey;
+}
+
+.legendkey .color {
+  min-width: 100px;
+  height: 5px;
+}
+

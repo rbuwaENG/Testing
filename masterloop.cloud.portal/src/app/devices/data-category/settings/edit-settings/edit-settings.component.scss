@@ -1,0 +1,109 @@
+@import "/src/assets/styles/scss/material.variables";
+
+mat-tabs:not(.mat-no-tab-content):not(.mat-dynamic-height) {
+  min-height: 100%;
+}
+
+/* unvisited link */
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+table {
+  td {
+    padding: 16px 0;
+  }
+}
+
+.mat-card {
+  padding: 10px 0;
+}
+
+.settings-close {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+
+  @media (min-width: 600px) {
+    right: 34px;
+    top: 34px;
+  }
+}
+
+h3 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  margin-top: 0;
+  padding-right: 35px;
+}
+
+.settings-item-row {
+  & > div {
+    word-break: break-all;
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: 20px;
+  }
+}
+
+.settings-input,
+.position-input {
+  height: 30px;
+  max-width: 250px;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  width: 100%;
+}
+
+.position-input {
+  width: 250px;
+}
+
+input.settings-input::-webkit-outer-spin-button,
+input.settings-input::-webkit-inner-spin-button,
+input.position-input::-webkit-outer-spin-button,
+input.position-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.settings-textarea {
+  height: 170px;
+  resize: none;
+  width: 100%;
+}
+
+.position-input-wrapper {
+  margin-bottom: 9px;
+  width: 100%;
+}
+
+.settings-button-wrapper {
+  bottom: 20px;
+  left: 0;
+  padding: 0 20px;
+  position: absolute;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    bottom: 34px;
+    padding: 0 34px;
+  }
+}

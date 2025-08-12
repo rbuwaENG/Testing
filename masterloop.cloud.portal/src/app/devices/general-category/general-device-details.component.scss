@@ -1,0 +1,263 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+.ancher:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+.ancher:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+.ancher:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+.ancher:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+.device-info-table {
+  td {
+    padding: 16px 0 16px 0;
+  }
+
+  &__label {
+    min-width: 100px;
+  }
+}
+
+.mat-focus-indicator {
+  padding: 0;
+}
+
+.device-details-card {
+  color: #fff;
+  background-color: mat-color($mat-mcs-blue, 500);
+  margin-bottom: 17px !important;
+  padding: 5px 10px 0px;
+  position: relative;
+
+  @media (max-width: 576px) {
+    padding-top: 35px;
+  }
+
+  @media (min-width: 600px) {
+    margin-bottom: 10px !important;
+    padding: 20px 20px 0;
+  }
+
+  @media (min-width: 1025px) {
+    padding: 20px 35px 0;
+  }
+
+  &__edit {
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+
+    a {
+      margin-left: 10px;
+    }
+
+    @media (min-width: 600px) {
+      padding: 20px 20px 0;
+    }
+
+    @media (min-width: 1025px) {
+      padding: 20px 35px 0;
+    }
+  }
+
+  &__item {
+    margin-bottom: 10px;
+
+    @media (min-width: 600px) {
+      margin-bottom: 20px;
+      min-height: 50px;
+      padding-right: 20px;
+    }
+
+    @media (min-width: 960px) {
+      min-height: 40px;
+    }
+
+    label {
+      font-size: 15px;
+      margin: 0;
+
+      @media (min-width: 960px) {
+        font-size: 12px;
+      }
+    }
+
+    p {
+      font-size: 15px;
+      margin: 0;
+
+      a {
+        color: #fff;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      span:not(#templateTenant) {
+
+        font-weight: 600;
+
+        &.green {
+          color: #71ed71;
+        }
+
+        &.red {
+          color: #f39292;
+        }
+      }
+    }
+
+
+  }
+
+  &__input-wrapper {
+    max-width: 400px;
+    width: 100%;
+
+    .mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &__status {
+    border-radius: 50%;
+    height: 10px;
+    margin-left: 10px;
+    min-width: 10px;
+    width: 10px;
+  }
+}
+
+.command-item-wrapper {
+  margin-bottom: 10px;
+  padding: 0 5px;
+
+  @media (min-width: 600px) {
+    background-color: #fff;
+    box-shadow: 1px 1px 6px -3px rgba(#000, 0.5);
+    margin-left: 7px;
+    margin-right: 7px;
+    padding: 15px 5px;
+  }
+
+  @media (max-height: 505px) and (min-width: 1240px) {
+    padding: 0 5px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &--low-height {
+    @media (max-height: 601px) and (min-width: 1240px) {
+      display: none !important;
+    }
+  }
+}
+
+.command-item {
+  background-color: #fff;
+  box-shadow: 1px 1px 6px -3px rgba(#000, 0.5);
+  margin-bottom: 7px;
+  padding: 6px 10px;
+
+  @media(max-width: 599px) {
+    height: 45px;
+  }
+
+  .material-icons {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    
+    @media(max-width: 599px) {
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 600px) {
+    box-shadow: 0 0 0;
+    margin-bottom: 0;
+    max-width: 100px !important;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: rgba(#eee, 0.5);
+    }
+  }
+
+  @media (min-width: 768px) {
+    max-width: 120px !important;
+  }
+
+  img,
+  span,
+  mat-icon {
+    height: 20px;
+    margin-right: 10px;
+
+    @media (min-width: 600px) {
+      height: 24px;
+      margin-bottom: 10px;
+      margin-right: 0;
+
+      &.data-stream {
+        margin-bottom: 7px;
+        margin-top: 3px;
+      }
+    }
+  }
+
+  p {
+    font-size: 12px;
+    margin: 0;
+  }
+
+  &.disable {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  @media (max-height: 601px) and (min-width: 1240px) {
+    flex: 1 !important;
+  }
+
+  &--low-height {
+    color: mat-color($mat-mcs-blue, 500);
+    display: none !important;
+
+    @media (max-height: 601px) and (min-width: 1240px) {
+      display: flex !important;
+    }
+  }
+}
+
+.device-detail-bc-link {
+  color: mat-color($mat-mcs-blue, 500);
+
+  &:hover {
+    color: dodgerblue;
+  }
+}
+
+.create-device-form {
+  &__item {
+    max-width: 400px;
+    width: 100%;
+  }
+}

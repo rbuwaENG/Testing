@@ -1,0 +1,29 @@
+export class LocalStorageKeys {
+  static readonly OAUTH_TOKEN: string = 'oauth_token';
+  static readonly SIMPLIFY_ENABLED = 'simplify_js';
+  static readonly SELECTED_MAP_TYPE = 'selected_map_type';
+  static readonly CACHED_DEVICES = 'cached_devices';
+  static readonly CACHED_TEMPLATES = 'cached_templates';
+  static readonly SHOW_ACTIVE_DEVICES = 'show_active_devices';
+  static readonly SELECTED_TEMPLATES = 'selected_templates';
+  static readonly CHANGE_TEMPLATE_SELECTION = 'change_template_selection';
+  static readonly SELECT_ALL_TEMPLATES = 'select_all_templates';
+  static readonly LAST_SYNC_DEVICE_LIST = 'last_sync_date';
+  static readonly DEVICE_DETAILS = 'device_details';
+  static readonly CURRENT_POSITION = 'currentCoordinates';
+  static readonly RECENT_DEVICES = 'recentDevices';
+  static readonly FAVORITE_DEVICES = 'favorite_devices';
+  static readonly USER_INFO = 'user_info';
+  static readonly LOGIN_USER = 'login_user';
+  static readonly LAST_FOLDER = 'last_folder';
+  static readonly TRACK_STYLE = 'track_style';
+  static readonly DEVICE_STATUS_FILTER = 'device_status_filter';
+  static readonly DEVICE_LIST_VIEW_MODE = 'device_list_view_mode';
+  static readonly DEVICES_LAST_UPDATED_ON = 'devicesUpdatedOn';
+  static readonly FOUND_DEVICES = 'found_devices';
+  static readonly SEARCH_QUERY = 'search_query';
+  static readonly SEARCH_COUNT = 'search_count';
+  static readonly FOUND_DEVICE_LIST = 'found_device_list';
+  static readonly QUANTITIES = 'quantities';
+  static readonly COLOR_THEME = 'color_theme';
+}

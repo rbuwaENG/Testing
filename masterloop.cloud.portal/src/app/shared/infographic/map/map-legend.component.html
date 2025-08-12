@@ -1,0 +1,20 @@
+<div class="container-relative">
+  <div class="container-absolute">
+    <div *ngFor="let legendKey of legendKeys" class="legendkey">
+      <table>
+        <tr>
+          <td></td>
+          <td>{{ legendKey.name }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>{{ legendKey.minValue }}</td>
+          <td>
+            <div class="color" style.background="{{ legendKey.backgroundCSSStyle }}"></div>
+          </td>
+          <td>{{ legendKey.maxValue }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

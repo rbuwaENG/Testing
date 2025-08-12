@@ -1,0 +1,123 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']">Devices</a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/general/',deviceId]" fxLayout="row" fxLayoutAlign="start center">{{deviceId}}<span
+        class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/observations/',deviceId]">Observations</a>
+    <span style="margin: 0 10px;">/</span>
+    <span>{{observationId}} - {{observationName}} <span class="abbreviation">{{abbrieviation}}</span></span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+</mat-card-title>
+
+<mat-card-content>
+  <!-- tabs  -->
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabSelectedChanged()"
+    class="history-panel">
+    <mat-tab *ngFor="let tab of tabs;  let i = index">
+      <ng-template mat-tab-label>{{tab.name}}</ng-template>
+      <!-- values table  -->
+      <!-- <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="tab.showDateRangeSelector" style="padding-top: 10px; padding-left : 10px;"> -->
+      <div fxLayout="column" fxLayout.gt-xs="row" style="width: fit-content ; margin:auto" fxLayoutGap="10px"
+        fxLayoutAlign="center center" *ngIf="tab.showDateRangeSelector" style="margin-top: 15px">
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+          <label style="padding-bottom: 5px;">From</label>
+          <mat-form-field>
+            <input matInput [owlDateTime]="dt1" [(ngModel)]="tab._from" [owlDateTimeTrigger]="dt1"
+              placeholder="Date Time">
+            <owl-date-time #dt1></owl-date-time>
+          </mat-form-field>
+        </div>
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+          <label style="padding-bottom: 5px;">To</label>
+          <!-- <input style="margin-top:3px;" [(ngModel)]="tab._to" ngui-datetime-picker /> -->
+          <mat-form-field>
+            <input matInput [owlDateTime]="dt2" [(ngModel)]="tab._to" [owlDateTimeTrigger]="dt2"
+              placeholder="Date Time">
+            <owl-date-time #dt2></owl-date-time>
+          </mat-form-field>
+        </div>
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center">
+          <button type="button" mat-raised-button color="primary" (click)="onTabSelectedChanged()"
+            style="margin-bottom: 1.25em">Search</button>
+        </div>
+      </div>
+
+      <ngx-datatable *ngIf="dataType !== OBSEVATION_DATA_TYPE.Position && dataType !== OBSEVATION_DATA_TYPE.Statistics"
+        class="material selection-cell block obs-table striped" [columns]="columns" [columnMode]="'force'" [headerHeight]="50"
+        [footerHeight]="50" [rowHeight]="40" [rows]='tab.values' [scrollbarV]="true" [scrollbarH]="true">
+
+        <ngx-datatable-column name="Timestamp" [minWidth]="165" [flexGrow]="1" prop="Timestamp"
+          >
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [flexGrow]="8" [name]="tableHeaderName" prop="Value">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+            <div class="long-text">{{value}}</div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name=" " [minWidth]="50" [flexGrow]="1" prop="Value" 
+          [sortable]="false">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <a *ngIf="value.length > 30 && isString(value)" mat-icon class="material-icons"
+              (click)="open(tab.values[rowIndex],deviceId,observationName)">
+              open_in_new </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+      </ngx-datatable>
+
+
+      <ngx-datatable *ngIf="dataType === OBSEVATION_DATA_TYPE.Position" class="material selection-cell block striped"
+        [columns]="columns" [columnMode]="'standard'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="40"
+        [rows]='tab.values' [scrollbarV]="true" [scrollbarH]="true" style="height:700px">
+        <ngx-datatable-column name="Timestamp" [width]="300" prop="Timestamp" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Latitude " [width]="200" prop="Latitude" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Longitude" [width]="200" prop="Longitude" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Altitude " [width]="200" prop="Altitude" >
+        </ngx-datatable-column>
+      </ngx-datatable>
+
+      <ngx-datatable *ngIf="dataType === OBSEVATION_DATA_TYPE.Statistics" class="material selection-cell block striped"
+        [columns]="columns" [columnMode]="'standard'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="40"
+        [rows]='tab.values' [scrollbarV]="true" [scrollbarH]="true" style="height:700px">
+        <ngx-datatable-column name="Timestamp" [width]="300" prop="Timestamp" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Minimum" [width]="200" prop="Minimum" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Maximum" [width]="200" prop="Maximum" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Mean" [width]="200" prop="Mean" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Median" [width]="200" prop="Median" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Standard Deviation" [width]="200" prop="StdDev" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Count" [width]="100" prop="Count" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="From" [width]="200" prop="From" >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="To" [width]="200" prop="To" >
+        </ngx-datatable-column>
+      </ngx-datatable>
+
+    </mat-tab>
+  </mat-tab-group>
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{column.name}} </strong>
+</ng-template>
+
+<ng-template #hdrTplAbr let-column="column">
+  <strong>{{column.name}} </strong>
+  <span class="abbreviation">{{abbrieviation}}</span>
+</ng-template>

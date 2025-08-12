@@ -1,0 +1,27 @@
+@import "/src/assets/styles/scss/material.variables";
+
+.bread-crumb {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+.header {
+    margin-left:10px;
+    margin-top:15px;
+    margin-bottom:25px
+}
+
+.command-select-box {
+    //overflow:hidden !important;
+    width: 80%; 
+    margin-bottom: 15px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.time-select-box {
+    width: 200px; 
+    margin-bottom: 15px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Compact Observation Format</title>
+</head>
+<body>
+    <h1>Compact Observation Format</h1>
+
+    <p>The Masterloop Compact Observation Format is a comma-separated UTF-8 text document. The general structure of this format is:</p>
+
+    <p>
+        <code>
+            &lt;observation_id&gt;,&lt;timestamp&gt;,&lt;value&gt;&lt;cr&gt;&lt;lf&gt;
+        </code>
+    </p>
+
+    <p>where:</p>
+
+    <p>
+        <table cellpadding="5">
+            <tr>
+                <td><code>observation_id</code></td>
+                <td>Observation id number according to device template.</td>
+            </tr>
+            <tr>
+                <td><code>timestamp</code></td>
+                <td>Timestamp of value formatted as an ISO 8601 string. If timestamp of observation is unknown, use “0”, which will take the time of the server at the time of logging.</td>
+            </tr>
+            <tr>
+                <td><code>value</code></td>
+                <td>
+                    Value as string, according to observation data type defined for the device template:
+                    <ul>
+                        <li>Boolean: “0”=false, “1”=true</li>
+                        <li>Double: NNNN.nnnn (note: point decimal separation symbol)</li>
+                        <li>Integer: NNNNNN</li>
+                        <li>Position (2D): LAT.DLAT,LON.DLON</li>
+                        <li>Position (3D): LAT.DLAT,LON.DLON,ALT.DALT</li>
+                        <li>String: Text up to 1023 characters.</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </p>
+</body>
+</html>

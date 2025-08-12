@@ -1,0 +1,43 @@
+@import "/src/assets/styles/scss/material.variables";
+
+.card{
+  padding: 0px; 
+  //height: 350px;
+}
+.card-title{
+  text-align: center; 
+  margin-bottom:0;
+}
+.plot {
+  display:block;
+  width: 100% !important;
+  height: -webkit-calc(100vh - 300px);
+  height: -moz-calc(100vh - 300px);
+  height: calc(100vh - 300px); 
+}
+.plot-all {
+  display:block;
+  width: 100% !important;
+  height:290px;
+}
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}

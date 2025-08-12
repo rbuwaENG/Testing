@@ -1,0 +1,253 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/**Loader CSS**/
+.popup {
+  position: fixed;
+  width: auto;
+  // background: #ffffff;
+  left: 50%;
+  transform: translate(-50%, 0);
+  top: 10%;
+  z-index: 9000;
+  margin-top: 300px !important;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+cssload-container {
+  width: 100%;
+  height: 32px;
+  text-align: center;
+}
+
+.cssload-speeding-wheel {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  border: 2px solid rgb(235, 216, 9);
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: cssload-spin 400ms infinite linear;
+  -o-animation: cssload-spin 400ms infinite linear;
+  -ms-animation: cssload-spin 400ms infinite linear;
+  -webkit-animation: cssload-spin 400ms infinite linear;
+  -moz-animation: cssload-spin 400ms infinite linear;
+}
+
+
+
+@keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes cssload-spin {
+  100% {
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes cssload-spin {
+  100% {
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes cssload-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes cssload-spin {
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+/**End of loader css*/
+.options,
+.chosen-options {
+  margin: 10px;
+  padding-left: 10px;
+  vertical-align: middle;
+}
+
+.options,
+.options-observations {
+  cursor: pointer;
+}
+
+.options-toggle {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 10px 0;
+  border-bottom: 0.5px solid lightgrey;
+  background: transparent;
+  cursor: pointer;
+}
+
+.options-toggle.selected {
+  background: white;
+  font-weight: bold;
+}
+
+
+
+
+mat-sidenav-container,
+.my-content {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.example-sidenav-fab-container mat-sidenav {
+  min-width: 75%;
+  max-width: 75%;
+}
+
+.analyzer .header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 8px
+}
+
+.analyzer .content {
+  height: calc(100vh - 137px);
+}
+
+
+.options-toggle {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 10px 0;
+  border-bottom: 0.5px solid lightgrey;
+  background: transparent;
+}
+
+.options-toggle.selected {
+  background: white;
+  font-weight: bold;
+}
+
+
+.map {
+  width: 100%;
+}
+
+a.dock {
+  color: blue;
+  text-decoration: none;
+  border-bottom: 1px solid darkblue;
+}
+
+.pad {
+  padding: 0px;
+}
+
+.popup-map {
+  background: #6d6d6d;
+  padding: 3px;
+  color: white;
+  opacity: 0.8;
+  position: relative;
+  white-space: nowrap;
+  font-size: 0.9em;
+  font-family: "Muli", "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.search-link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+.map-legend {
+  height: 40px;
+  position: absolute;
+  width: 98.6%;
+  bottom: 5px;
+}
+
+.legend-item {
+  line-height: 30px; //padding: 0 10px;
+  font-size: 0.9em;
+}
+
+.quarts {
+  font-size: 13px;
+  color: black;
+}
+
+.circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  float: left;
+  margin: 5px;
+  border: 2px solid;
+}
+
+#msg {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  transform: translate(-50%, 5px);
+  background-color: rgba(40, 40, 40, .8);
+  padding: 10px;
+  color: #eee;
+  width: 350px;
+  text-align: center;
+}
+
+.selector-refresh {
+  margin-top: 5px;
+}
+
+.device-map-filters {
+  min-width: 200px;
+
+  @media (min-width: 768px) {
+    margin-right: 10px;
+  }
+}
+.disable-selector-panel{
+  pointer-events:none;
+}
+
+.analyzer-map {
+  .ol-attribution {
+    bottom: 15px;
+  }
+}

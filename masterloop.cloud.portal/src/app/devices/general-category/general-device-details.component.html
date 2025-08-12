@@ -1,0 +1,405 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']" class="device-detail-bc-link" (click)="navigateToList()">Devices</a><span
+      style="margin: 0 10px;">/</span>
+    <span *ngIf="!isNewDeviceCreateMode" fxLayout="row" fxLayoutAlign="start center">{{ MID }}
+      <span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span>
+    </span>
+    <span *ngIf="isDeviceEditCliked"> / Edit Device</span>
+
+    <span *ngIf="isNewDeviceCreateMode" fxLayout="row" fxLayoutAlign="start center">Add Device</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <div fxLayout="row" fxLayoutAlign="end center">
+    <app-reload-content (reload)="refreshDeviceDetails(); ngOnInit()"></app-reload-content>
+  </div>
+</mat-card-title>
+
+<mat-card-content style="margin-top: 5px;">
+
+  <mat-card>
+    <div class="device-details-card">
+      <div class="device-details-card__edit" fxLayout="row" fxLayoutAlign="end start">
+
+        <a *ngIf="!isDeviceFavorite" matTooltip="Make Favorite"
+          (click)="handleFavorite(deviceDetails.MID, isDeviceFavorite, deviceDetails.TemplateId)" mat-icon role="img" class="material-icons"
+          aria-label="mode edit" id="favorite">star_border</a>
+
+        <a *ngIf="isDeviceFavorite" matTooltip="Already Favorite"
+          (click)="handleFavorite(deviceDetails.MID, isDeviceFavorite, deviceDetails.TemplateId)" mat-icon role="img" class="material-icons"
+          aria-label="mode edit" id="dislike" style="color: #f5a623;">grade</a>
+
+        <a *ngIf="permissions.canControl" matTooltip="Edit Device"
+          (click)="onEditDeviceDetails()" mat-icon role="img" class="material-icons"
+          aria-label="mode edit" id="edit">edit</a>
+        <a *ngIf="permissions.canAdmin && isButtonVisible" matTooltip="Delete Device"
+          (click)="deleteDevice(deviceDetails.MID)" mat-icon role="img" class="material-icons" aria-label="delete sweep"
+          id="delete">delete</a>
+      </div>
+      <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start start">
+        <div fxFlex.gt-sm="50" style="width: 100%;">
+          <div *ngIf="!isDeviceEditCliked && !isNewDeviceCreateMode">
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Template : </label>
+              <p fxFlex="60" fxFlex.gt-xs="auto">
+                <a id="deviceTempplate" class="ancher"
+                  [routerLink]="['../../../templates/details/view/', deviceDetails['TemplateId']]">{{
+                  deviceDetails["TemplateId"] }}</a>
+                <span id="templateTenant" *ngIf="getTenantName(deviceDetails['TemplateId'])">
+                  -
+                  <a class="ancher" (click)="navigateToTenant(deviceDetails['TemplateId'])">
+                    {{ getTenantName(deviceDetails['TemplateId']) }}
+                  </a>
+                </span>
+              </p>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">MID : </label>
+              <p fxFlex="60" fxFlex.gt-xs="auto" fxLayout="row" fxLayoutAlign="start center">{{ deviceDetails["MID"] }}
+              </p>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Name : </label>
+              <p fxFlex="60" fxFlex.gt-xs="auto">{{ deviceDetails["Name"] }}</p>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Description : </label>
+              <p fxFlex="60" fxFlex.gt-xs="auto">{{ deviceDetails["Description"] }}</p>
+            </div>
+          </div>
+          <form [formGroup]="deviceForm" *ngIf="isDeviceEditCliked || isNewDeviceCreateMode" (ngSubmit)="onSubmit()">
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Template : </label>
+              <mat-form-field class="create-device-form__item device-details-template-form-field">
+                <mat-select
+                  [formControl]="deviceForm.controls['TemplateId']"
+                  id="deviceTemplate"
+                  class="device-details-template-select"
+                >
+                  <mat-option
+                    *ngFor="let template of templates"
+                    [value]="template.Id"
+                    id="template"
+                    class="template-select-option"
+                    required
+                  >
+                    {{ template.Name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    deviceForm.controls['TemplateId'].hasError('required') &&
+                    deviceForm.controls['TemplateId'].touched
+                  "
+                  class="mat-text-warn"
+                  >You must select a template.</mat-error
+                >
+              </mat-form-field>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">MID : </label>
+              <div fxFlex="60" fxFlex.gt-xs="100" fxLayout="row" fxLayoutAlign="start center" class="device-details-card__input-wrapper">
+                <mat-form-field class="device-details-template-form-field">
+                  <input matInput
+                      [formControl]="deviceForm.controls['MID']"
+                      id="mid"
+                      required
+                  />
+                  <mat-error
+                    *ngIf="
+                      deviceForm.controls['MID'].hasError('required') &&
+                      deviceForm.controls['MID'].touched"
+                      class="mat-text-warn"
+                    >You must include a MID.
+                    </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Name : </label>
+              <div fxFlex="60" fxFlex.gt-xs="100" fxLayout="row" fxLayoutAlign="start center"
+                class="device-details-card__input-wrapper">
+                <mat-form-field class="device-details-template-form-field">
+                  <input matInput
+                    [formControl]="deviceForm.controls['Name']"
+                    style="width: 300px !important"
+                    id="deviceName"
+                    required
+                    />
+                  <mat-error
+                    *ngIf="
+                      deviceForm.controls['Name'].hasError('required') &&
+                      deviceForm.controls['Name'].touched
+                    "
+                    class="mat-text-warn"
+                    >You must include a name.
+                    </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Description : </label>
+              <div fxFlex="60" fxFlex.gt-xs="100" fxLayout="row" fxLayoutAlign="start center"
+                class="device-details-card__input-wrapper">
+                <mat-form-field class="device-details-template-form-field">      
+                  <input matInput
+                    [formControl]="deviceForm.controls['Description']"
+                    style="width: 300px !important"
+                    id="deviceDescription"
+                    required
+                  />
+                  <mat-error
+                  *ngIf="
+                    deviceForm.controls['Description'].hasError('required') &&
+                    deviceForm.controls['Description'].touched
+                  "
+                  class="mat-text-warn"
+                  >You must include a description.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="isNewDeviceCreateMode" class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+              <label fxFlex="40" fxFlex.gt-xs="auto">Pre-shared key : </label>
+              <mat-form-field class="device-details-template-form-field">      
+                 <input matInput
+                    [formControl]="deviceForm.controls['PSK']"
+                    style="width: 300px !important"
+                    id="devicePsk"
+                    required
+                  />
+                  <mat-error
+                  *ngIf="
+                  deviceForm.controls['PSK'].hasError('required') &&
+                  deviceForm.controls['PSK'].touched
+                  "
+                  class="mat-text-warn"
+                  >You must include a PSK.At least 8 & not more than 16 characters allowed.
+                  </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="device-details-card__item" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+              <button
+                mat-raised-button
+                type="submit"
+                class="mr-1"
+                id="submitBtns"
+                [disabled]="!deviceForm.valid"
+              >
+                {{btnName}}
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="mr-1"
+                id="cancelBtn"
+                (click)="onCancel()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="!isNewDeviceCreateMode" fxFlex.gt-sm="50" style="width: 100%;">
+          <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+            <label fxFlex="40" fxFlex.gt-xs="auto">Status : </label>
+            <p fxFlex="60" fxFlex.gt-xs="auto">
+              <span>{{ deviceDetails["status"] }}</span> | {{ deviceDetails["lastUpdatedTime"] }}
+            </p>
+          </div>
+          <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+            <label fxFlex="40" fxFlex.gt-xs="auto">Latest Pulse : </label>
+            <p fxFlex="60" fxFlex.gt-xs="auto">{{ latestDevicePulse }} </p>
+            <!--{{ latestDevicePulseDate }}-->
+          </div>
+          <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+            <label fxFlex="40" fxFlex.gt-xs="auto">Device Created : </label>
+            <p fxFlex="60" fxFlex.gt-xs="auto">{{ deviceDetails["CreatedOn"] }}</p>
+          </div>
+          <div class="device-details-card__item" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start start">
+            <label fxFlex="40" fxFlex.gt-xs="auto">Device Updated : </label>
+            <p fxFlex="60" fxFlex.gt-xs="auto">{{ deviceDetails["UpdatedOn"] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <div fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutAlign.gt-xs="start start"
+    class="command-item-wrapper">
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../observations/', MID]">
+      <img src="assets/images/eye-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/eye-solid-light.svg" class="dark-icon" alt="" />
+      <p>Observations</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Observations">
+      <img src="assets/images/eye-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/eye-solid-light.svg" class="dark-icon" alt="" />
+      <p>Observations</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../', MID, 'commandsHistory']">
+      <img src="assets/images/history-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/history-solid-light.svg" class="dark-icon" alt="" />
+      <p>Commands</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Commands">
+      <img src="assets/images/history-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/history-solid-light.svg" class="dark-icon" alt="" />
+      <p>Commands</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../', MID, 'pulse']">
+      <img src="assets/images/heartbeat-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/heartbeat-solid-light.svg" class="dark-icon" alt="" />
+      <p>Pulses</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Pulses">
+      <img src="assets/images/heartbeat-solid.svg" class="light-icon" alt="" />
+      <img src="assets/images/heartbeat-solid-light.svg" class="dark-icon" alt="" />
+      <p>Pulses</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../events/', MID]">
+      <span class="material-icons">event</span>
+      <p>Events</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Events">
+      <span class="material-icons">event</span>
+      <p>Events</p>
+    </a>
+
+    <a *ngIf="permissions.canControl && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../', MID,'stream']">
+      <img src="assets/images/data-stream.svg" class="data-stream light-icon" alt="" />
+      <img src="assets/images/data-stream-light.svg" class="data-stream dark-icon" alt="" />
+
+      <p>Stream</p>
+    </a>
+    <a *ngIf="!permissions.canControl && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Stream">
+      <img src="assets/images/data-stream.svg" class="data-stream light-icon" alt="" />
+      <img src="assets/images/data-stream-light.svg" class="data-stream dark-icon" alt="" />
+      <p>Stream</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" (click)="navigateToDeviceDashboard()">
+    <mat-icon>apps</mat-icon>
+    <p>Dashboards</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Dashboards">
+      <mat-icon>apps</mat-icon>
+      <p>Dashboards</p>
+    </a>
+
+    <a *ngIf="permissions.canControl && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item command-item--low-height" [routerLink]="['../../quickCommands/', MID]">
+      <span class="material-icons">send</span>
+      <p>Control</p>
+    </a>
+    <a *ngIf="!permissions.canControl && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable command-item--low-height" [routerLink]=""
+      matTooltip="You do not have permission to access Control">
+      <span class="material-icons">send</span>
+      <p>Control</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item command-item--low-height" [routerLink]="['../../settings/', MID]">
+      <span class="material-icons">settings</span>
+      <p>Settings</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable command-item--low-height" [routerLink]=""
+      matTooltip="You do not have permission to access Settings">
+      <span class="material-icons">settings</span>
+      <p>Settings</p>
+    </a>
+
+    <a *ngIf="permissions.canAdmin && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item command-item--low-height" [routerLink]="['../../permission', MID]">
+      <span class="material-icons">people</span>
+      <p>Permissions</p>
+    </a>
+    <a *ngIf="!permissions.canAdmin && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable command-item--low-height" [routerLink]=""
+      matTooltip="You do not have permission to access Permissions">
+      <span class="material-icons">people</span>
+      <p>Permissions</p>
+    </a>
+
+    <a *ngIf="permissions.canAdmin && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item command-item--low-height" (click)="openSecurityPopupClick()">
+      <span class="material-icons">vpn_key</span>
+      <p>Security</p>
+    </a>
+    <a *ngIf="!permissions.canAdmin && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable command-item--low-height" [routerLink]=""
+      matTooltip="You do not have permission to access Security">
+      <span class="material-icons">vpn_key</span>
+      <p>Security</p>
+    </a>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutAlign.gt-xs="start start"
+    class="command-item-wrapper command-item-wrapper--low-height">
+    <a *ngIf="permissions.canControl && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../quickCommands/', MID]">
+      <span class="material-icons">send</span>
+      <p>Control</p>
+    </a>
+    <a *ngIf="!permissions.canControl && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Control">
+      <span class="material-icons">send</span>
+      <p>Control</p>
+    </a>
+
+    <a *ngIf="permissions.canObserve && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../settings/', MID]">
+      <span class="material-icons">settings</span>
+      <p>Settings</p>
+    </a>
+    <a *ngIf="!permissions.canObserve && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Settings">
+      <span class="material-icons">settings</span>
+      <p>Settings</p>
+    </a>
+
+    <a *ngIf="permissions.canAdmin && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" [routerLink]="['../../permission', MID]">
+      <span class="material-icons">people</span>
+      <p>Permissions</p>
+    </a>
+    <a *ngIf="!permissions.canAdmin && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Permissions">
+      <span class="material-icons">people</span>
+      <p>Permissions</p>
+    </a>
+
+    <a *ngIf="permissions.canAdmin && !isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item" (click)="openSecurityPopupClick()">
+      <span class="material-icons">vpn_key</span>
+      <p>Security</p>
+    </a>
+    <a *ngIf="!permissions.canAdmin && isNewDeviceCreateMode" fxLayout="row" fxLayout.gt-xs="column" fxLayoutAlign="start center" fxFlex="48"
+      class="command-item disable" [routerLink]="" matTooltip="You do not have permission to access Security">
+      <span class="material-icons">vpn_key</span>
+      <p>Security</p>
+    </a>
+    <!-- <a class="command-item" fxLayout="row" fxLayoutAlign="start center" fxFlex="48" *ngIf="permissions.canControl" [routerLink]="['../../sendCommands/', MID]">
+      <img src="assets/images/paper-plane-solid.svg" alt="" />
+      <p>Send</p>
+    </a> -->
+  </div>
+</mat-card-content>

@@ -1,0 +1,52 @@
+@import "~@angular/material/core/theming/all-theme";
+
+$mat-mcs-blue: (
+  50: #e0eff7,
+  100: #b3d8eb,
+  200: #80bede,
+  300: #4da4d1,
+  400: #2691c7,
+  500: #007dbd,
+  600: #0075b7,
+  700: #006aae,
+  800: #0060a6,
+  900: #004d98,
+  A100: #c3ddff,
+  A200: #90c1ff,
+  A400: #5da4ff,
+  A700: #4495ff,
+  A800: #0071aa,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $light-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,   
+  )
+);
+
+$primary: mat-palette($mat-mcs-blue, 500);
+$accent: mat-palette($mat-amber, A200, A100, A400);
+$warn: mat-palette($mat-red);
+$theme: mat-light-theme($primary, $accent, $warn);
+$background: map-get($theme, background);
+$foreground: map-get($theme, foreground);
+
+@include mat-core();
+
+$dark-primary: mat-palette($mat-mcs-blue, 500);
+$dark-accent: mat-palette($mat-amber, A200, A100, A400);
+$dark-warn: mat-palette($mat-deep-orange);
+$dark-search: mat-palette($mat-mcs-blue, A800);
+$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+$dark-background: map-get($dark-theme, background);
+$dark-foreground: map-get($dark-theme, foreground);

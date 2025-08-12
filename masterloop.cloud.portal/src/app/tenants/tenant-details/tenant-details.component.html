@@ -1,0 +1,70 @@
+<mat-card-title class="title-margin" fxLayout="row">
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <a style="color:#007dbd" [routerLink]="['/devices/all']" class="device-detail-bc-link"
+      (click)="navigateToList()">Tenants</a><span style="margin: 0 10px;">/</span>
+    <span fxLayout="row" fxLayoutAlign="start center">{{ tenantName }}<span
+        class="breadcumb-device-status"></span></span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+</mat-card-title>
+<mat-card-content style="margin-top: 5px;">
+  <mat-card>
+    <div class="form-container">
+      <form>
+        <div fxLayout="row wrap" fxLayoutAlign="start center">
+          <mat-form-field class="form-field">
+            <mat-label> Tenant Id
+            </mat-label>
+            <input type="text" matInput readonly [value]="tenantId">
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="start center">
+          <mat-form-field class="form-field">
+            <mat-label> Tenant Name
+            </mat-label>
+            <input type="text" matInput readonly [value]="tenantName" >
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">Tenant Templates</h5>
+      </mat-card-title>
+    </mat-toolbar>
+    <div>
+      <ngx-datatable class="material block expandable template-table striped" #templateListTable [columnMode]="'force'"
+        [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]="tenantTemplates">
+        <ngx-datatable-row-detail [rowHeight]="50" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+          <ng-template let-row="row" ngx-datatable-row-detail-template>
+            <div style="padding-left:20px;">
+              <div>Revision: {{ row.Revision }}</div>
+            </div>
+          </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column name="TID" prop="Id" [minWidth]="100" [width]="50">
+          <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <a style="color:#007dbd" (click)="navigateToTemplateDetails(tenantTemplates[rowIndex].Id)" id="template">{{
+              value }}</a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Name" prop="Name" [minWidth]="200" [width]="100">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="" [width]="10" [headerTemplate]="hdrTplNormal">
+        </ngx-datatable-column>
+      </ngx-datatable>
+      <ng-template #hdrTpl let-column="column">
+        <div>
+          <strong>{{ column.name }}</strong>
+          <i (click)="sort(column, true)" class="material-icons mat-14">arrow_upward</i>
+          <i (click)="sort(column, false)" class="material-icons mat-14">arrow_downward</i>
+        </div>
+      </ng-template>
+      <ng-template #hdrTplNormal let-column="column">
+        <div>
+          <strong>{{ column.name }}</strong>
+        </div>
+      </ng-template>
+    </div>
+  </mat-card>
+</mat-card-content>

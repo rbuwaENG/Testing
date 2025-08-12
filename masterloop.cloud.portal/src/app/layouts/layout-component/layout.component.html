@@ -1,0 +1,191 @@
+<!-- <div class="app" #root="$implicit" dir="ltr"> -->
+<div class="app" dir="ltr">
+  <mat-toolbar class="main-header" color="primary" fxLayout="row" fxLayoutAlign=" center">
+    <button (click)="sidemenu.toggle()" mat-icon-button class="mobile-menu-button">
+      <!--(click)="sidemenu.toggle()"-->
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="branding" fxShow="false" fxShow.gt-xs>
+      <!-- <div class="container "><img class='logoMasterloop' src='./assets/images/Masterloop_Logo_Inverse.png' />&nbsp;<span class="version">{{version}}</span></div>       -->
+      <div class="container">
+        <img class="logoMasterloop" src="./assets/images/Masterloop_Logo_Inverse.png" />
+      </div>
+      <!-- <p class="version">{{version}}</p> -->
+    </div>
+
+    <div class="search-bar" fxFlex>
+      <form class="search-form" fxShow="true" fxShow.gt-xs>
+        <mat-icon>search</mat-icon>
+        <!-- <input spellcheck="false" autocomplete="off" matInput #searchElement type="text" 
+              [(ngModel)]="searchService.search" placeholder="Search" (keyup)="updateSearchText($event)" 
+              (ngModelChange)="updateModelChange($event)" id="search" name="search"/>  -->
+
+        <!--old code-->
+        <!-- <input placeholder="Search" spellcheck="false" autocomplete="off" matInput type="text" 
+              #searchElement (keyup)="updateSearchText($event)" [(ngModel)]="searchService.search" (ngModelChange)="updateModelChange($event)" id="search" name="search"/> -->
+
+        <!--new code-->
+        <input placeholder="Search" spellcheck="false" autocomplete="off" matInput type="text" #searchElement
+          [ngModel]='searchText' (ngModelChange)='searchTextModelChanged.next($event)' id="search" name="search" />
+
+        <!-- <input type="text" spellcheck="false" autocomplete="off" matInput #searchElement 
+              class="form-control" (keyup)="updateSearchText($event)"  placeholder="Search"/>-->
+      </form>
+    </div>
+
+    <div class="user-name" *ngIf="showLoggedUser">
+      {{ loggedUserName }}
+    </div>
+
+    <button appToggleFullscreen mat-icon-button>
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+
+    <button [matMenuTriggerFor]="setting" mat-icon-button class="">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #setting="matMenu" x-position="before">
+      <style>
+        button {
+          background: transparent;
+          border: none;
+          padding: 0;
+          font-size: inherit;
+          font-weight: inherit;
+          font-family: inherit;
+        }
+      </style>
+      <div style="padding: 5px 10px;">
+        <!--Begin: Theme Styles-->
+        <h6 style="margin-top: 5px;">Theme Style</h6>
+        <mat-divider style="margin: 5px 0;"></mat-divider>
+        <mat-radio-group>
+          <button fxLayout="column" *ngFor="let theme of listOfThemeStyles" (click)="onToggleDarkMode(theme.value)"
+            class="mat-radio-group__item">
+            <mat-radio-button [checked]="theme.value == selectedThemeStyle" [value]="theme.value">{{ theme.displayName }}
+            </mat-radio-button>
+          </button>
+        </mat-radio-group>
+        <!--End: Track Styles-->
+        <mat-divider style="margin: 5spx 0;"></mat-divider>
+        <div style="padding: 5px 0">
+          <mat-checkbox class="example-margin" [(ngModel)]="enableReduceMapPoints" (change)="onPointReductionToggled()">
+          </mat-checkbox>
+          <span (click)="onPointReductionToggled(!enableReduceMapPoints)" class="mat-radio-label-content">Track Point
+            Reduction</span>
+        </div>
+        <mat-divider style="margin: 5px 0;"></mat-divider>
+        <!-- <div style="margin-top:10px">
+                  <mat-checkbox class="example-margin" [(ngModel)]="showDeviceActivity" (change)="onShowDeviceActivityToggled()"></mat-checkbox>
+                  <span (click)="onShowDeviceActivityToggled(!showDeviceActivity)">Show Device Activity</span>
+              </div> -->
+        <!-- Begin: Tile layer types ... -->
+        <h6 style="margin-top: 17px;">Map Type</h6>
+        <mat-divider style="margin: 5px 0;"></mat-divider>
+        <mat-radio-group>
+          <button fxLayout="column" *ngFor="let item of availableMapTypes"
+            (click)="onSelectedMapTypeChanged(item.value)" class="mat-radio-group__item">
+            <mat-radio-button [checked]="item.value == selectedMapType" [value]="item.value">{{ item.name }}
+            </mat-radio-button>
+          </button>
+        </mat-radio-group>
+        <!-- End: Tile layer types ... -->
+        <!--Begin: Track Styles-->
+        <h6 style="margin-top: 17px;">Track Style</h6>
+        <mat-divider style="margin: 5px 0;"></mat-divider>
+        <mat-radio-group>
+          <button fxLayout="column" *ngFor="let item of listOfTrackStyles" (click)="onSelectedTrackStyleChanged(item)"
+            class="mat-radio-group__item">
+            <mat-radio-button [checked]="item.name == selectedTrackStyle" [value]="item.name">{{ item.displayName }}
+            </mat-radio-button>
+          </button>
+        </mat-radio-group>
+        <!--End: Track Styles-->
+      </div>
+    </mat-menu>
+
+    <button mat-icon-button sign-out class="">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-toolbar>
+
+
+  <mat-sidenav-container class="app-inner" autosize>
+
+    <mat-sidenav #sidemenu class="sidebar-panel" [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()">
+      <mat-accordion class="app-nav-accordion">
+        <mat-nav-list *ngFor="let menuitem of menuItems.getAll(); let i = index">
+
+          <a mat-list-item [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link' && menuitem.visible">
+            <mat-icon>{{ menuitem.icon }}</mat-icon>
+            <span (click)="clearSearch()">{{ menuitem.name | translate }}</span>
+            <span *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
+          </a>
+
+          <a mat-nav-list (click)="clearSearch()" href="{{ menuitem.state }}" target="_blank"
+            *ngIf="menuitem.type === 'extTabLink'">
+            <mat-icon>{{ menuitem.icon }}</mat-icon>
+            <span>{{ menuitem.name | translate }}</span>
+            <span *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
+          </a>
+
+          <mat-expansion-panel class="mat-elevation-z0" *ngIf="menuitem.visible && menuitem.type === 'sub'"
+            [expanded]="menuitem.open">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>{{ menuitem.icon }}</mat-icon>
+                <span>{{ menuitem.name | translate }}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-nav-list *ngIf="menuitem.state === 'devices'" [expanded]="expanded">
+              <a (click) = A(childitem); class = "{{childitem.class}}" [routerLink]="!!childitem.url ? childitem.url : ['/', menuitem.state, childitem.state] "
+                [queryParams]="childitem.queryParam"  mat-list-item
+                *ngFor="let childitem of menuitem.children" >{{ childitem.name }}</a>
+            </mat-nav-list> 
+            <!-- {{ childitem.class == 'open'? 'open' : 'close' }} routerLinkActive="open" -->
+
+
+            <mat-nav-list *ngIf="menuitem.state === 'analyzer'">
+              <a mat-list-item *ngFor="let childitem of menuitem.children" [routerLink]="
+                    !!childitem.url
+                      ? childitem.url
+                      : ['/', menuitem.state, childitem.state]
+                  " [queryParams]="childitem.queryParam" class="relative" routerLinkActive="open">{{ childitem.name
+                }}</a>
+            </mat-nav-list>
+
+            <mat-nav-list *ngIf="menuitem.visible && menuitem.state === 'tenants' ">
+              <a mat-list-item *ngFor="let childitem of menuitem.children" [routerLink]="
+                  !!childitem.url
+                    ? childitem.url
+                    : ['/', menuitem.state, childitem.state]
+                " [queryParams]="childitem.queryParam" class="relative" routerLinkActive="open">{{ childitem.name
+                }}</a>
+            </mat-nav-list>
+
+            <mat-nav-list *ngIf="menuitem.state === 'links'">
+              <a mat-list-item *ngFor="let childitem of menuitem.children" href="{{ childitem.state }}" target="_blank"
+                class="relative" routerLinkActive="open">{{ childitem.name
+                }}</a>
+            </mat-nav-list>
+
+          </mat-expansion-panel>
+
+        </mat-nav-list>
+
+
+      </mat-accordion>
+
+    </mat-sidenav>
+
+    <router-outlet></router-outlet>
+  </mat-sidenav-container>
+</div>
+
+<div class="cookie-bar" *ngIf="!agreedToUseCookies">
+  <div class="cookie-bar__container" fxLayout="row" fxLayoutAlign="space-between center">
+    <p>By using this website, you agree to our use of cookies. We use cookies to provide you with a great experience and
+      to help our website run effectively.</p>
+    <span (click)="agreeToUseCookies()" class="material-icons">close</span>
+  </div>
+</div>

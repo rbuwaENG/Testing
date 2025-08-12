@@ -1,0 +1,145 @@
+<div id="template-list" class="result-container" (window:resize)="onResize()">
+    <div class="template-header" fxLayout="row" fxLayoutAlign="space-between center">
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <h4>
+          Users
+        </h4>
+    
+        <button
+          mat-raised-button
+          color="primary"
+          class="btn-new-device"
+          style="margin-left: 6px;"
+          (click)="openNewUser()"
+          id="newTemplateBtn"
+        >
+          <mat-icon class="material-icons" aria-label="add">add</mat-icon>
+          <span class="hide-mobile">New User</span>
+        </button>
+      </div>
+  
+      <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+    </div>
+  
+    <ngx-datatable
+    class="material block expandable"
+    #templateListTable
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="50"
+    [rows]="usersList"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    >
+      <ngx-datatable-row-detail
+        [rowHeight]="60"
+        #myDetailRow
+        (toggle)="onDetailToggle($event)"
+        *ngIf="isMobile"
+      >
+        <ng-template let-row="row" ngx-datatable-row-detail-template>
+          <div style="padding-left:20px;">
+            <div>First Name: {{ row.FirstName }}</div>
+            <div>Last Name: {{ row.LastName }}</div>
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+      <ngx-datatable-column
+        [width]="60"
+        [minWidth]="60"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false"
+        *ngIf="isMobile"
+      >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button mat-icon-button (click)="toggleExpandRow(row)">
+            <!-- <i [class.datatable-icon-right]="!row.$$expanded" [class.datatable-icon-down]="row.$$expanded"></i> -->
+            <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+            <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+  
+      <ngx-datatable-column
+        name="Email Address"
+        prop="EMail"
+        [minWidth]="200"
+        [width]="250"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          active
+          let-value="value"
+          let-row="row"        
+          let-rowIndex="rowIndex"
+        >
+          <span>{{ value }}</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        name="First Name"
+        prop="FirstName"
+        [minWidth]="150"
+        [width]="100"
+        *ngIf="!isMobile"
+      ></ngx-datatable-column> 
+
+      <ngx-datatable-column
+        name="Last Name"
+        prop="LastName"
+        [minWidth]="150"
+        [width]="100"
+        *ngIf="!isMobile"
+      ></ngx-datatable-column> 
+
+      <ngx-datatable-column
+        name="Admin User"
+        prop="IsAdmin"
+        [minWidth]="100"
+        [width]="100"
+      >
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <span class="status-label" [ngClass]="row.IsAdmin ? 'active': 'inactive'" style="display: inline-block;margin-left: 5px;">
+            {{ row.IsAdmin ? 'Yes' : 'No' }}
+        </span>
+    </ng-template>
+    </ngx-datatable-column> 
+      
+      <ngx-datatable-column
+      name=""
+      prop="AccountId"
+      [minWidth]="100"
+      [width]="50"
+      [sortable]="false"
+    >
+    <ng-template
+    ngx-datatable-cell-template
+    active
+    let-value="value"
+    let-row="row"        
+    let-rowIndex="rowIndex"
+  >
+    <a matTooltip="Update User"
+      (click)="openUserEditDialog(row)"
+      ><span class="material-icons">
+        <i class="material-icons">edit</i>
+        </span></a>
+    
+        <a *ngIf="!row.IsAdmin" matTooltip="Delete User"
+        (click)="openUserDeleteDialog(row)" style="padding-left: 15px;"
+        ><span class="material-icons">
+          <i class="material-icons">delete</i>
+          </span></a>
+          <a *ngIf="row.IsAdmin" matTooltip="Cannot delete admin user"
+          style="cursor: default; opacity: 0.5; padding-left: 15px;"
+          ><span class="material-icons">
+            <i class="material-icons">delete</i>
+            </span></a>      
+  </ng-template>
+    </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+  

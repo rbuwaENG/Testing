@@ -1,0 +1,133 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="row">
+  <div>
+    <a [routerLink]="['/devices/all']">Devices </a>
+    <a [routerLink]="['/devices/general/', MID]">/ {{ MID }}</a>
+    <a [routerLink]="['/devices/sendCommands/', MID]"> / Send Command</a>
+    <span>/ {{ commandName }}</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-reload-content
+    (reload)="refreshDeviceDetails(); ngOnInit()"
+  ></app-reload-content>
+</mat-card-title>
+
+<mat-card-content>
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">General</h5>
+      </mat-card-title>
+    </mat-toolbar>
+  </mat-card>
+
+  <mat-card-title style="margin-bottom:0px">
+    <h6 style="margin-left:10px;margin-top:15px;margin-bottom:25px">
+      Expires :
+    </h6>
+  </mat-card-title>
+  <mat-select
+    placeholder="Select expire time"
+    style="width: 15%; margin-bottom: 15px;margin-left: 10px"
+    [(ngModel)]="commandTime"
+  >
+    <mat-option
+      *ngFor="let expTime of expireTimes"
+      style="width: 100%"
+      [value]="expTime.value"
+    >
+      {{ expTime.Name }}
+    </mat-option>
+  </mat-select>
+
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">Arguments</h5>
+      </mat-card-title>
+    </mat-toolbar>
+  </mat-card>
+
+  <ngx-datatable
+    class="material"
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+    [rows]="editSendCommands"
+    [scrollbarV]="false"
+    [scrollbarH]="true"
+  >
+    <ngx-datatable-column
+      name="Id"
+      prop="Id"
+      [headerTemplate]="hdrTpl"
+      [width]="50"
+      [maxWidth]="100"
+    ></ngx-datatable-column>
+    <ngx-datatable-column
+      name="Name"
+      prop="Name"
+      [headerTemplate]="hdrTpl"
+      [width]="200"
+      [maxWidth]="500"
+    ></ngx-datatable-column>
+    <ngx-datatable-column name="Value" prop="Value" [headerTemplate]="hdrTpl">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span
+          title="Double click to edit"
+          *ngIf="
+            !editing[rowIndex + '-Value'] &&
+            !(row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+        >
+          {{ value }}
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="commandText[rowIndex]"
+          (keyup)="validateTextInput($event, row)"
+          (keydown)="validateTextInput($event, row)"
+          (blur)="updateValue($event, 'Value', value, row, rowIndex)"
+          *ngIf="
+            editing[rowIndex + '-Value'] &&
+            !(row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+          [value]="value"
+          style="width: 60%;"
+        />
+
+        <mat-checkbox
+          [(ngModel)]="checkedState[rowIndex]"
+          (ngModelChange)="onCheckEvent($event, 'Value', row, rowIndex)"
+          *ngIf="
+            editing[rowIndex + '-Value'] &&
+            (row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+          (value)="(value)"
+        ></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="DataType"
+      prop="DataType"
+      [headerTemplate]="hdrTpl"
+      [width]="100"
+    ></ngx-datatable-column>
+  </ngx-datatable>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="mr-1"
+    style="margin-left:10px;margin-top:10px;margin-bottom:10px"
+    (click)="sendCommands()"
+  >
+    Send Command
+  </button>
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{ column.name }} </strong>
+</ng-template>

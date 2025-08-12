@@ -1,0 +1,125 @@
+.block {
+  height: calc(100vh - 200px);
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  min-width: 10px;
+}
+
+.btn-new-device {
+  height: 30px;
+  margin: 0 10px 0 6px;
+  min-width: auto;
+  padding: 0 10px;
+}
+
+.active-device-toggle {
+  padding-right: 10px;
+  margin-left: 10px;
+
+  @media (min-width: 600px) {
+    margin-top: 0;
+  }
+
+  &__label {
+    margin-left: 10px;
+  }
+}
+
+app-reload-content {
+  margin-top: 10px;
+}
+
+.device-filter {
+  mat-select {
+    width: 130px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    margin: 0 15px 0;
+
+    @media (max-width: 767px) {
+      margin-left: 0.3333333333rem;
+    }
+  }
+}
+
+.device-filter-color-span {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin-right: 10px;
+}
+
+.device-filter-wrapper {
+  margin-top: 10px;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    margin-top: 0;
+    width: auto;
+  }
+}
+
+.device-list-header {
+  margin: 10px 0 15px;
+}
+
+.device-list-title {
+  margin: 0 10px 0 5px;
+}
+
+.devices-table {
+  height: calc(100vh - 165px);
+  min-height: 300px;
+
+  @media (min-width: 600px) {
+    height: calc(100vh - 215px);
+  }
+
+  @media (min-width: 1280px) {
+    height: calc(100vh - 165px);
+  }
+}
+
+.device-filter-search {
+  margin: 0 5px 0 0;
+  position: relative;
+  top: 9px;
+}
+
+.device-filter-columns {
+  padding: 0 10px;
+  width: 100%;
+}
+
+.icon-save {
+  color: #008450 !important;
+}
+
+.icon-cls {
+  color: #B81D13 !important;
+}
+
+.edit-name {
+  border: 0 none;
+  border-bottom: 1px solid;
+  border-radius: 0;
+  padding: 0 5px;
+
+  &:focus {
+    border-width: 2px;
+  }
+
+  &:focus-visible {
+    outline: 0 none;
+  }
+  
+  .mat-form-field-appearance-legacy {
+    .mat-form-field-underline {
+      background-color: rgba(0, 0, 0, 0.12);
+    }
+  }
+}

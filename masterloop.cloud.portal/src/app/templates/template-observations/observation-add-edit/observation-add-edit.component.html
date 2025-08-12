@@ -1,0 +1,92 @@
+<div mat-dialog-content>
+  <h5>{{title}}</h5>
+  <div class="form-container">
+    <form [formGroup]="addEditObservationForm" class="template-edit-form">
+      <div class="template-edit-form-field-wrapper" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start "
+        fxLayoutAlign.gt-xs="space-between start">
+        <div class="field-columns" fxLayout="column" fxLayoutAlign="start " fxFlex="100%" fxFlex.gt-xs="48%">
+          <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+            <mat-label> Id
+            </mat-label>
+            <input matInput formControlName="Id" required>
+            <mat-error *ngIf="addEditObservationForm.controls.Id.touched && addEditObservationForm.controls.Id.invalid">
+              <span *ngIf="addEditObservationForm.controls.Id.errors.required">This field is mandatory.</span>
+            </mat-error>
+            <mat-error *ngIf="addEditObservationForm.controls.Id.touched && addEditObservationForm.controls.Id.invalid">
+              <span *ngIf="addEditObservationForm.controls.Id.errors['duplicateId']">Observation id is
+                duplicated.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+            <mat-label> Name
+            </mat-label>
+            <input matInput formControlName="Name" required>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.Name.touched && addEditObservationForm.controls.Name.invalid">
+              <span *ngIf="addEditObservationForm.controls.Name.errors.required">This field is mandatory.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+            <mat-label> Description
+            </mat-label>
+            <input matInput formControlName="Description" required>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.Description.touched && addEditObservationForm.controls.Description.invalid">
+              <span *ngIf="addEditObservationForm.controls.Description.errors.required">This field is mandatory.</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="field-columns" fxLayout="column" fxLayoutAlign="start " fxFlex="100%" fxFlex.gt-xs="48%">
+          <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+            <mat-label>Data Type</mat-label>
+            <mat-select formControlName="DataType" (selectionChange)='onDataTypeChanged($event.value)' required>
+              <mat-option *ngFor="let dataType of dataTypes" [value]="dataType.id">
+                {{ dataType.name }}</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.DataType.touched && addEditObservationForm.controls.DataType.invalid">
+              <span *ngIf="addEditObservationForm.controls.DataType.errors.required">This field is mandatory.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="unit-search">
+            <mat-label>Unit</mat-label>
+            <input matInput formControlName="QuantityUnit" [matAutocomplete]="auto" required>
+            <mat-autocomplete #auto="matAutocomplete" class="unit-autocomplete" [displayWith]="displaySelectedOption"
+              (optionSelected)="optionSeleted($event)">
+              <mat-option *ngFor="let opt of filteredQuanitiyUnitOps | async" [value]="opt">
+                {{opt.quantityName}} | {{opt.unitsName}}
+              </mat-option>
+            </mat-autocomplete>
+            <button *ngIf="getClearBtnAvailability()" type="button" mat-button matSuffix mat-icon-button (click)="clearUnitValue()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.QuantityUnit.touched && addEditObservationForm.controls.QuantityUnit.invalid">
+              <span *ngIf="addEditObservationForm.controls.QuantityUnit.errors.required">This field is mandatory.</span>
+            </mat-error>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.QuantityUnit.touched && addEditObservationForm.controls.QuantityUnit.invalid">
+              <span *ngIf="addEditObservationForm.controls.QuantityUnit.errors['notMatch']">Invalid unit.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+            <mat-label>Historian</mat-label>
+            <mat-select formControlName="Historian" required>
+              <mat-option *ngFor="let option of historianTypes" [value]="option.id">
+                {{ option.name }}</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="addEditObservationForm.controls.Historian.touched && addEditObservationForm.controls.Historian.invalid">
+              <span *ngIf="addEditObservationForm.controls.Historian.errors.required">This field is mandatory.</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+        <button mat-raised-button color="primary" [disabled]="!addEditObservationForm.dirty || addEditObservationForm.invalid"
+          (click)="save()">Save</button>
+        <button mat-raised-button (click)="onNoClick()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

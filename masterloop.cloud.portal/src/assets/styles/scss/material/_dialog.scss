@@ -1,0 +1,11 @@
+.mat-dialog-container {
+  background: mat-color($background, card);
+  border-radius: $border-radius-base;
+  margin: 0 auto;
+  height: auto !important;
+  position: relative;
+}
+
+.cdk-focus-trap-content {
+  height: 100% !important;
+}

@@ -1,0 +1,110 @@
+<div class="analyzer" fxLayout="column" fxLayoutAlign="stretch stretch">
+  <h4 class="header">Analyze Observations with Plot</h4>
+  <div class="content" fxLayout="row" fxLayoutAlign="stretch stretch">
+    <!-- SideNav Options: start  -->
+    <div fxFlex="0 0 22px">
+      <div id="options" class="options-toggle" [ngClass]="{ 'selected': selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Select }" (click)="toggleOptionsTabShowingStatus(OptionsTabShowingStatus.Select)">Devices</div>
+      <div class="options-toggle" [ngClass]="{ 'selected': selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Chosen }" (click)="toggleOptionsTabShowingStatus(OptionsTabShowingStatus.Chosen)">Selected</div>
+    </div>
+    <!-- SideNav Options: end  -->
+
+    <mat-sidenav-container class="example-sidenav-fab-container" fxFlex="1 1 auto">
+      <mat-sidenav #optionsnav mode="over" opened="true">
+        <div *ngIf="selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Select" fxLayout="column" style="height: 100%; width: 100%;">
+          <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="5px" style="height: 100%;">
+            <input matInput placeholder="Search device by MID or by Name or by Description" class="analyzer-search-device"
+            [(ngModel)]="searchText"  (keyup)='filterDevices($event.target.value)'/>
+            <div fxFlex style="height: 100%; width: 100%">
+              <cdk-virtual-scroll-viewport  [itemSize] ="10" class="example-viewport">
+                <div class="options" *cdkVirtualFor="let device of filteredDevices">
+                  <!-- device element -->
+                  <div fxLayout="row" fxLayoutAlign="start center">
+                    <div class="" (click)="device._showObservations = !device._showObservations && loadObservations(device)" [ngClass]="device._showObservations ? 'analizer-item-arrow open' : 'analizer-item-arrow'">
+                      <mat-icon class="material-icons">keyboard_arrow_right</mat-icon>
+                    </div>
+                    <button id="deviceInput" [disabled]="device._disabled" (click)="toggleDeviceSelection(device)">
+                      <input type="checkbox" [disabled]="device._disabled" [checked]="selectedDeviceIds[device.MID] && selectedDeviceIds[device.MID].isSelected" />
+                    </button>
+                    <span (click)="device._showObservations = !device._showObservations && loadObservations(device)">{{ device.MID}} - {{device.Name }}</span>
+                  </div>
+                  <!-- device element -->
+                  <!-- device observations -->
+                  <div *ngIf="device._showObservations">
+                    <div class="multiple-select-observations">
+                      <div *ngIf="device._isObservationsLoading" style="padding: 10px;">Loading,please hold ...</div>
+                      <!-- observation element-->
+                      <div class="options-observations" *ngFor="let observation of device._observations">
+                        <button [disabled]="observation._disabled" (click)="toggleDeviceObservationSelection(device, observation)">
+                          <input type="checkbox" [disabled]="observation._disabled" [checked]="selectedDeviceObservationIds[device.MID] && selectedDeviceObservationIds[device.MID][observation.Id]" />{{ observation.Name }}
+                        </button>
+                      </div>
+                      <!-- observation element-->
+                    </div>
+                  </div>
+                  <!-- device observations -->
+                </div>
+              </cdk-virtual-scroll-viewport>
+            </div>
+          </div>
+        </div>
+
+        <div fxFlex="none" *ngIf="selectedOptionsTabShowingStatus === OptionsTabShowingStatus.Chosen" style="width: 100%;">
+          <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="5px">
+            <div fxFlex style="height: 100%; width: 100%">
+              <div *ngFor="let mid of getKeys(selectedDeviceIds)" class="chosen-options">
+                <span>{{ mid }}</span>
+                <div *ngFor="let observationId of getKeys(selectedDeviceObservationIds[mid])" class="chosen-observations">
+                  <span> {{ selectedDeviceObservationIds[mid][observationId].Name }} </span>
+                  <a class="material-icons btn-style" (click)="toggleDeviceObservationSelection(selectedDeviceIds[mid], selectedDeviceObservationIds[mid][observationId])">remove_circle</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-sidenav>
+
+      <div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="stretch stretch" style="height:100%">
+        <div fxFlex="none" fxLayout="row" fxLayoutAlign="stretch center" fxLayoutGap="10px">
+          <mat-tab-group fxFlex="1 1 auto" [(selectedIndex)]="selectedToggleIndex" (selectedTabChange)="onToggleChanged();clearBuffer()">
+            <mat-tab *ngFor="let toggle of toggles">
+              <ng-template mat-tab-label>{{ toggle.name }}</ng-template>
+            </mat-tab>
+          </mat-tab-group>
+
+          <button id="reloadBtn" mat-raised-button fxFlex="none" [fxHide]="!!selectedToggleValue?.showDateRangeSelector" type="button" color="primary" (click)="onToggleChanged();clearBuffer()">Reload</button>
+          <button id="button" mat-raised-button fxFlex="none" type="button" color="default" [fxHide]="!selectedToggleValue?.showClearBuffer" (click)="clearBuffer()">Clear Buffer</button>
+        </div>
+
+        <div fxFlex="none" [fxShow]="!!selectedToggleValue?.showDateRangeSelector">
+          <div fxLayout="column" fxLayout.gt-xs="row" style="width: fit-content ; margin:auto" fxLayoutGap="10px" fxLayoutAlign="center center" style="margin-top: 15px" class="observation-field-wrapper">
+            <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+              <label style="padding-bottom: 5px;">From</label>
+              <mat-form-field>
+                <input matInput [owlDateTime]="dt1" [(ngModel)]="selectedToggleValue._from" [owlDateTimeTrigger]="dt1" placeholder="Date Time">
+                <owl-date-time #dt1></owl-date-time>
+              </mat-form-field>
+            </div>
+            <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+              <label style="padding-bottom: 5px;">To</label>
+              <!-- <input style="margin-top:3px;" [(ngModel)]="tab._to" ngui-datetime-picker /> -->
+              <mat-form-field>
+                <input matInput [owlDateTime]="dt2" [(ngModel)]="selectedToggleValue._to" [owlDateTimeTrigger]="dt2" placeholder="Date Time">
+                <owl-date-time #dt2></owl-date-time>
+              </mat-form-field>
+            </div>
+            <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between center">
+              <button type="button" mat-raised-button color="primary"
+                (click)="onToggleChanged()" style="margin-bottom: 1.25em">Reload</button>
+            </div>
+          </div>
+        </div>
+        <div class="popup" *ngIf="isLoading">
+            <div class="cssload-speeding-wheel"></div>
+        </div>
+        <div fxFlex="1 1 auto" fxLayoutAlign="stretch stretch">
+           <app-infograph-plot [graphicOptions]="infoGraphicOptions" [from]="selectedToggleValue.from" [to]="selectedToggleValue.to"></app-infograph-plot>
+        </div>
+      </div>
+    </mat-sidenav-container>
+  </div>
+</div>

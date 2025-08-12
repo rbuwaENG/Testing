@@ -1,0 +1,286 @@
+<mat-card>
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">Template Commands</h5>
+    </mat-card-title>
+    <a
+      *ngIf="isView"
+      matTooltip="Add Commands"
+      style="padding-left:25px;"
+      (click)="addCommands(); scrollDown()"
+      mat-icon
+      role="img"
+      class="material-icons"
+      aria-label="mode edit"
+      id="editcommand"
+      >add_circle</a
+    >
+  </mat-toolbar>
+</mat-card>
+
+<!--Command Table Section -->
+<ngx-datatable
+  id="commands"
+  class="material selection-cell"
+  [columnMode]="'force'"
+  [headerHeight]="50"
+  [footerHeight]="50"
+  [rowHeight]="60"
+  [rows]="allCommands"
+  [scrollbarH]="true"
+  [selected]="selected"
+  [selectionType]="'single'"
+  (select)="onSelect($event)"
+>
+  <ngx-datatable-column
+    name="ID"
+    prop="Id"
+    [minWidth]="50" [width]="50" [maxWidth]="70"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+      <input
+        autofocus
+        *ngIf="editing[rowIndex + '-cell']"
+        (blur)="updateValue($event, 'Id', value, row, rowIndex)"
+        type="text"
+        [value]="value"
+        id="commandId"
+        style="width:50px"
+        class="observation-edit-field"
+      />
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column
+    name="Name"
+    prop="Name"
+    [minWidth]="75" [width]="150"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+      <input
+        autofocus
+        *ngIf="editing[rowIndex + '-cell']"
+        (blur)="updateValue($event, 'Name', value, row, rowIndex)"
+        type="text"
+        [value]="value"
+        id="commandName"
+        style="width:160px"
+        class="observation-edit-field"
+      />
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    name="Description"
+    prop="Description"
+    [minWidth]="100" [width]="650"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+      <input
+        autofocus
+        *ngIf="editing[rowIndex + '-cell']"
+        (blur)="updateValue($event, 'Description', value, row, rowIndex)"
+        type="text"
+        [value]="value"
+        id="commandDes"
+        style="width:250px"
+        class="observation-edit-field"
+      />
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    name="Arguments"
+    prop="Arguments"
+    [width]="250" [minWidth]="150"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <select *ngIf="value.length > 0" style="width:150px" class="observation-edit-field">
+        <option [ngValue]="argument.Name" *ngFor="let argument of value">{{
+          argument.Name
+        }}</option>
+      </select>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    name=" "
+    *ngIf="isView"
+    [width]="70" [minWidth]="70"
+  >
+    <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+      <a
+        *ngIf="!isNew"
+        matTooltip="Edit Command"
+        (click)="editing[rowIndex + '-cell'] = true"
+        (click)="editCommandArguments(commands[rowIndex])"
+        mat-icon
+        role="img"
+        class="material-icons"
+        aria-label="mode edit"
+        id="edit"
+        >edit</a
+      >
+      <a
+      matTooltip="Delete Command"
+        style="padding-left:25px;"
+        (click)="deleteCommands(row, rowIndex)"
+        mat-icon
+        role="img"
+        class="material-icons"
+        aria-label="delete sweep"
+        id="delete"
+        >delete</a
+      >
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-footer>
+    <ng-template
+      ngx-datatable-footer-template
+      let-rowCount="rowCount"
+      let-pageSize="pageSize"
+      let-selectedCount="selectedCount"
+      let-curPage="curPage"
+      let-offset="offset"
+    >
+     <div class="custom-footer" fxLayout="row" fxLayoutAlign="space-between center">
+        <span class="custom-footer__count">{{ rowCount }}  total</span>
+        <a class="custom-footer__add-template" *ngIf="isView" (click)="addCommands()" fxLayout="row" fxLayoutAlign="start center">
+          Add Commands
+          <span mat-icon role="img" class="material-icons" aria-label="mode edit" id="editcommand">add_circle</span>
+        </a>
+      </div>
+    </ng-template>
+  </ngx-datatable-footer>
+</ngx-datatable>
+
+<!--Arguments Table Section-->
+<div *ngIf="isShow" class="command-arguments">
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary" style="background-color: #005884;">
+      <mat-card-title>
+        <h5 style="margin-top:0">
+          Command Arguments for '{{ CmdName }}'</h5>
+        </mat-card-title>
+
+          <a
+          matTooltip="Add Arguments"
+            style="padding-left:25px;"
+            (click)="addArguments()"
+            mat-icon
+            role="img"
+            class="material-icons"
+            aria-label="mode edit"
+            id="editArg"
+            >add_circle</a
+          >
+    </mat-toolbar>
+  </mat-card>
+
+  <ngx-datatable
+    class="material"
+    [columns]="columns"
+    [columnMode]="'flex'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+    [rows]="commandArguments"
+  >
+    <ngx-datatable-column
+      name="Id"
+      prop="Id"
+      [minWidth]="75"
+      [flexGrow]="0.5"
+      [headerTemplate]="hdrTpl"
+    >
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span *ngIf="!subEditing[rowIndex + '-cell']">{{ value }}</span>
+        <input
+          autofocus
+          *ngIf="subEditing[rowIndex + '-cell']"
+          (blur)="updateSubValue($event, 'Id', value, row, rowIndex)"
+          type="text"
+          [value]="value"
+          id="argId"
+          style="width:50px"
+          class="observation-edit-field"
+        />
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column
+      name="Name"
+      prop="Name"
+      [minWidth]="200"
+      [flexGrow]="1.5"
+    >
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span *ngIf="!subEditing[rowIndex + '-cell']">{{ value }}</span>
+        <input
+          autofocus
+          *ngIf="subEditing[rowIndex + '-cell']"
+          (blur)="updateSubValue($event, 'Name', value, row, rowIndex)"
+          type="text"
+          [value]="value"
+          id="argName"
+          style="width:200px"
+          class="observation-edit-field"
+        />
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="Data Type"
+      prop="DataType"
+      [minWidth]="100"
+      [flexGrow]="1"
+    >
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span *ngIf="!subEditing[rowIndex + '-cell']">{{
+          dataTypes[value]
+        }}</span>
+        <select
+          *ngIf="subEditing[rowIndex + '-cell']"
+          (change)="updateSubValue($event, 'DataType', value, row, rowIndex)"
+          [value]="value"
+          id="argData"
+          style="width:100px"
+          class="observation-edit-field"
+        >
+          <option value="" disabled selected hidden>Select a data type</option>
+          <option value="2">Boolean</option>
+          <option value="3">Double</option>
+          <option value="4">Integer</option>
+          <option value="5">Position</option>
+          <option value="6">String</option>
+        </select>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name=" " [minWidth]="150" [flexGrow]="1">
+      <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+        <a
+          *ngIf="!isNew"
+          matTooltip="Edit Argument"
+          style="padding-left:25px;"
+          (click)="subEditing[rowIndex + '-cell'] = true"
+          mat-icon
+          role="img"
+          class="material-icons"
+          aria-label="mode edit"
+          id="edit"
+          >edit</a
+        >
+        <a
+        matTooltip="Delete Argument"
+          style="padding-left:25px;"
+          (click)="deleteArguments(row, rowIndex)"
+          mat-icon
+          role="img"
+          class="material-icons"
+          aria-label="delete sweep"
+          id="delete"
+          >delete</a
+        >
+      </ng-template>
+    </ngx-datatable-column>    
+  </ngx-datatable>
+</div>

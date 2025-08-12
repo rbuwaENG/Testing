@@ -1,0 +1,105 @@
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div class="col" flex="1">
+    <div fxLayout="row wrap" fxLayoutAlign="start center">
+      <a [routerLink]="['/devices/all']">Devices</a><span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/',MID]" fxLayout="row" fxLayoutAlign="start center"> {{MID}}<span
+          class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+      <span style="margin: 0 10px;">/</span>
+      <span>Dashboards</span>
+    </div>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <div class="device-filter-columns">
+  </div>
+</mat-card-title>
+  <ngx-datatable
+    class="material block expandable"
+    #dashboardListTable
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="50"
+    [rows]="listOfDashboards"
+    
+    >
+      <ngx-datatable-column
+        name="Name"
+        prop="Name"
+        [minWidth]="300"
+        [width]="200"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          active
+          let-value="value"
+          let-row="row"        
+          let-rowIndex="rowIndex"
+        >
+          <a
+            style="color:#007dbd"
+            (click)="navigateToSelectedDashboard(row.Id)"
+            id="template"
+            >{{ value }}</a
+          >
+        </ng-template>
+      </ngx-datatable-column>
+    <ngx-datatable-column
+        name="Observations"
+        prop="Observations"
+        [minWidth]="300"
+        [width]="200"
+      >
+      <ng-template
+          ngx-datatable-cell-template
+          active
+          let-value="value"
+          let-row="row"        
+          let-rowIndex="rowIndex"
+        >
+          {{ getObservationList(value) }}
+        </ng-template>
+    </ngx-datatable-column>
+      <ngx-datatable-column
+        name="Number of gadgets"
+        prop="Observations"
+        [minWidth]="200"
+        [width]="100"
+      >
+      <ng-template
+      ngx-datatable-cell-template
+      active
+      let-value="value"
+      let-row="row"        
+      let-rowIndex="rowIndex"
+    >
+      {{ value.length }}
+    </ng-template></ngx-datatable-column> 
+      <ngx-datatable-column
+        name="Longest timespan (s)"
+        prop="Observations"
+        [minWidth]="200"
+        [width]="100"
+      >
+      <ng-template
+      ngx-datatable-cell-template
+      active
+      let-value="value"
+      let-row="row"        
+      let-rowIndex="rowIndex"
+    >
+      {{ getLongestDuration(value) }}
+    </ng-template></ngx-datatable-column> 
+      <ngx-datatable-column
+        name="Columns"
+        prop="Columns"
+        [minWidth]="100"
+        [width]="50"
+      >
+    </ngx-datatable-column>
+      <ngx-datatable-column
+        name="Rows"
+        prop="Rows"
+        [minWidth]="100"
+        [width]="50"
+      ></ngx-datatable-column>
+    </ngx-datatable>

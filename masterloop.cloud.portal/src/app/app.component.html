@@ -1,0 +1,7 @@
+<!-- <app-test-component *ngIf="this.token != null"></app-test-component>
+<router-outlet *ngIf="this.token == null"></router-outlet>  -->
+<app-test-component *ngIf="this.auth.oAuthToken._token != null"></app-test-component>
+<router-outlet *ngIf="this.auth.oAuthToken._token == null"></router-outlet> 
+<!-- <h1>
+  {{title}}
+</h1> -->

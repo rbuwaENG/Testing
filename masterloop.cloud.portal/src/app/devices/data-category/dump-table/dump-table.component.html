@@ -1,0 +1,82 @@
+<!--breadcrumb-->
+<mat-card-title
+  class="title-margin"
+  fxLayout="row wrap"
+  fxLayoutAlign="stretch center"
+>
+  <div class="flex-grid" fxLayout="column" fxLayout.gt-sm="row" fxLayoutAlign="space-between start">
+    <div fxLayout="row wrap"  fxLayoutAlign="start center">
+      <a [routerLink]="['/devices/all']">Devices</a>
+      <span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/', MID]" fxLayout="row"  fxLayoutAlign="start center">{{ MID }}<span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+      <span style="margin: 0 10px;">/</span>
+      <span>Stream</span>
+    </div>
+
+    <div fxLayout="row wrap"  fxLayoutAlign="end center">
+      <button *ngIf="!isStart" mat-raised-button color="green" (click)="startSubscribeToLiveData()"
+        style="min-width:100px;margin: 3px;">
+        Start
+      </button>
+      <button *ngIf="!isStop" mat-raised-button color="warn" (click)="stopSubscribedToLiveData()"
+        style="min-width:100px;margin: 3px;">
+        Stop
+      </button>
+      <button mat-raised-button color="primary" (click)="clearSubscribedData()" style="min-width:100px;margin: 3px;">
+        Clear
+      </button>
+      <button mat-raised-button color="primary" (click)="exportToCSV()" style="min-width:100px;margin: 3px;">
+        Save CSV
+      </button>
+    </div>
+  </div>
+</mat-card-title>
+
+<!-- dump table -->
+<ngx-datatable
+  #dumpTable
+  class="material block expandable stream-table"
+  [columnMode]="'force'"
+  [headerHeight]="50"
+  [rowHeight]="50"
+  [rows]="dumpResult"
+  [scrollbarV]="true"
+  [scrollbarH]="false"
+>
+  <ngx-datatable-column
+    name="Timestamp"
+    prop="Timestamp"
+    [maxWidth]="250"
+    [flexGrow]="1.5"
+  >
+  </ngx-datatable-column>
+
+  <ngx-datatable-column
+    name="RoutingKey"
+    prop="RoutingKey"
+    [maxWidth]="230"
+    [flexGrow]="1"
+  >
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Payload" prop="Payload" [flexGrow]="6">
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+      <div class="long-text">{{ value }}</div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column
+    name=" "
+    [maxWidth]="50"
+    [minWidth]="50"
+    [flexGrow]="1"
+    prop="Value"
+    [sortable] = "false"
+  >
+    <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+      <a mat-icon class="material-icons" (click)="open(dumpResult[rowIndex])" *ngIf="isStop">
+        open_in_new
+      </a>
+    </ng-template>
+  </ngx-datatable-column>
+</ngx-datatable>

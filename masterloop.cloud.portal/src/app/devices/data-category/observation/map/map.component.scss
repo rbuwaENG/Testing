@@ -1,0 +1,59 @@
+@import "/src/assets/styles/scss/material.variables";
+
+mat-tabs:not(.mat-no-tab-content):not(.mat-dynamic-height) {
+  min-height: 100%;
+}
+
+/* unvisited link */
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+.popup {
+  position: relative;
+  padding: 3px;
+  background: #ffa500; // rgba(50,50,50,.85);
+  color: white;
+  opacity: 0.9;
+  white-space: nowrap;
+  font: 0.8em sans-serif;
+}
+
+.popupNoData {
+  position: relative;
+  padding: 3px;
+  background: white;
+  color: white;
+  opacity: 0.7;
+  white-space: nowrap;
+  font: 1em sans-serif;
+}
+
+.block {
+  @media (min-width: 600px) {
+    height: calc(100vh - 200px);
+  }
+}
+
+.map-block {
+  @media (max-width: 600px) {
+    display: flex;
+    height: calc(100vh - 350px);
+    justify-content: center;
+  }
+}

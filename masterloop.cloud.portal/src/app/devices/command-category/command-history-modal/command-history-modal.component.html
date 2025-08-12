@@ -1,0 +1,61 @@
+<div class="example-container">
+  <table>
+    <tr>
+      <td>Status :</td>
+      <td><span class="menu-badge md-{{statuses[modalInformation.Status].class}}">{{statuses[modalInformation.Status].title}}</span></td>
+    </tr>
+    <tr>
+      <td>Timestamp :</td>
+      <td>{{ modalInformation.Timestamp}}</td>
+    </tr>
+    <tr>
+      <td>Name :</td>
+      <td>{{ modalInformation.Name}}</td>
+    </tr>
+    <tr>
+      <td>Expires At :</td>
+      <td> {{ modalInformation.ExpiresAt}}</td>
+    </tr>
+    <tr>
+      <td>Arguments :</td>
+      <td>
+        <ul>
+          <li *ngFor="let argument of modalInformation.Arguments">{{argument.Name}}={{argument.Value}}</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>Delivered At :</td>
+      <td>{{ modalInformation.DeliveredAt}}</td>
+    </tr>
+    <tr>
+      <td>Was Accepted :</td>
+      <td>{{ modalInformation.WasAccepted}}</td>
+    </tr>
+    <tr>
+      <td>Origin Application :</td>
+      <td>{{ modalInformation.OriginApplication}}</td>
+    </tr>
+    <tr>
+      <td>Origin Account :</td>
+      <td>{{ modalInformation.OriginAccount}}</td>
+    </tr>
+    <tr>
+      <td>Origin Address :</td>
+      <td>{{ modalInformation.OriginAddress}}</td>
+    </tr>
+    <tr>
+      <td>Origin Reference :</td>
+      <td>{{ modalInformation.OriginReference}}</td>
+    </tr>
+    <tr>
+      <td>Result Code :</td>
+      <td>{{ modalInformation.ResultCode}}</td>
+    </tr>
+    <tr>
+      <td>Comment :</td>
+      <td>{{ modalInformation.Comment}}</td>
+    </tr>
+  </table>
+  <button mat-raised-button color="primary" (click)="close($event)">Close</button>
+</div>

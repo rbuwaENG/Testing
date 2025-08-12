@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "3",
+    "Name": "Dashboard",
+    "IsDefault": false,
+    "Definition": {
+      "Observations": [
+        {
+          "Id": 960,
+          "Timespan": "hourly",
+          "ControlType": "Plot"
+        },
+        {
+          "Id": 945,
+          "Timespan": "hourly",
+          "ControlType": "Plot"
+        },
+        {
+          "Id": 947,
+          "Timespan": "hourly",
+          "ControlType": "Plot"
+        }
+      ]
+    }
+  }
+]

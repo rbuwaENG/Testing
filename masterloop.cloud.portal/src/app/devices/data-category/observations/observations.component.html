@@ -1,0 +1,333 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="row" fxLayoutAlign="stretch center">
+  <div fxLayout="column" fxLayoutAlign="start start" fxLayout.gt-md="row" fxLayoutAlign.gt-md="space-between center"
+    class="observation-title-wrapper">
+    <div fxLayout="row wrap" fxLayoutAlign="start center">
+      <a [routerLink]="['/devices/all']">Devices</a><span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/',MID]" fxLayout="row" fxLayoutAlign="start center"> {{MID}}<span
+          class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+      <span style="margin: 0 10px;">/</span>
+      <span>Observations</span>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutAlign.gt-md="end center" class="observation-filter-btns-wrapper">
+      <div class="col" flex="1">
+        <form class="template-filter-search device-filter-search" appearance="fill">
+          <mat-form-field>
+            <img src="../../../assets/images/filter_inactive.png" class="filter-pre-icon light-icon" width="25" matPrefix />
+            <img src="../../../assets/images/filter_inactive-dark.png" class="filter-pre-icon dark-icon" width="25" matPrefix />
+            <input placeholder="Filter Observations by name, value and timestamp" autocomplete="off" matInput type="text"
+              id="observationFilter" name="observationFilter" [(ngModel)]="observationSearch"
+              (ngModelChange)="searchObservations($event)" />
+            <button *ngIf="observationSearch" matSuffix mat-icon-button aria-label="Clear" (click)="clearObservationSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+      </div>
+      <div class="col" flex="1">
+        <div fxLayout="row" fxLayoutAlign="end center" class="device-filter-columns">
+          <mat-button-toggle-group name="tableSize" aria-label="Table size" class="table-view-toggle"
+            #group="matButtonToggleGroup" [value]="selectedView" (change)="onValChange(group.value)">
+            <mat-button-toggle value="default-tb" matTooltip="Default table view">
+              <img src="assets/images/default-table-dark.svg" width="24" *ngIf="isCompact" />
+              <img src="assets/images/default-table.svg" width="24" *ngIf="!isCompact" />
+            </mat-button-toggle>
+            <mat-button-toggle value="compact-tb" matTooltip="Compact table view">
+              <img src="assets/images/compact-table-dark.svg" width="24" *ngIf="!isCompact" />
+              <img src="assets/images/compact-table.svg" width="24" *ngIf="isCompact" />
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </div>
+      <div class="col" flex="1">
+        <div>
+          <button mat-raised-button color="primary" [fxHide]="allSelected == false && selected.length == 0 "
+            (click)="tableAll()"
+            style="height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+            <span class="material-icons" style="font-size: 30px;">list</span>
+            <span class="material-icons">menu</span>
+          </button>
+        </div>
+      </div>
+      <div class="col" flex="1">
+        <div>
+          <button mat-raised-button color="primary" [fxHide]="allSelected == false && selected.length == 0 "
+            (click)="plotAll()"
+            style="height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+            <span class="material-icons">image</span>
+            <span class="material-icons">image</span>
+          </button>
+        </div>
+      </div>
+      <div class="col" flex="1">
+        <div style="padding-right: 10px;">
+          <button mat-raised-button color="primary" (click)="multipleObservations()" style="min-width:100px">
+            Show Latest
+          </button>
+        </div>
+      </div>
+      <div class="col" flex="1">
+        <div style="float: right;">
+          <app-reload-content (reload)="refreshDeviceDetails();ngOnInit()"></app-reload-content>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card-title>
+
+<mat-card-content class="device-observations">
+  <ngx-datatable #deviceObservationListTable class='material block expandable observation-table striped' [columns]="columns"
+    [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="28" [rows]='detailedObservations'
+    [scrollbarV]="true" [scrollbarH]="true" *ngIf="isCompact">
+
+    <ngx-datatable-column [width]="40" [maxWidth]="50" [flexGrow]="0.25" *ngIf="!isMobile" [sortable]="false">
+      <ng-template ngx-datatable-header-template let-value="value">
+        <mat-checkbox (change)="selectAll($event)" [checked]="allSelected" class="select-all-checkbox"></mat-checkbox>
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <mat-checkbox [disabled]="detailedObservations[rowIndex].Readonly"
+          [checked]="detailedObservations[rowIndex].Selected"
+          (change)="selectObservation(detailedObservations[rowIndex].Id)"></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-row-detail [rowHeight]="90" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-row-detail-template let-rowIndex="rowIndex">
+        <div style="padding-left:20px;">
+          <div>
+            Current Timestamp: {{row.Timestamp}}
+          </div>
+          <div style="padding-top:17px;">
+            <!-- Current Value: {{row.Value}} -->
+            <span
+              *ngIf="row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6">
+              Current Value: {{row.Value.substring(0,30)}}
+            </span>
+            <a *ngIf="row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6"
+              mat-icon class="material-icons"
+              style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+              (click)="open(detailedObservations[rowIndex])"> open_in_new </a>
+            <span
+              *ngIf="! (row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6)">Current
+              Value: {{row.Value}} </span>
+
+
+          </div>
+        </div>
+      </ng-template>
+    </ngx-datatable-row-detail>
+
+    <!-- <ngx-datatable-column [width]="45" [maxWidth]="45" [canAutoResize]="false" [flexGrow]="0.5"  *ngIf="isMobile">
+      <ng-template ngx-datatable-header-template let-value="value">
+        <mat-checkbox (change)="selectAll($event)" [checked]="allSelected"></mat-checkbox>
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+        <mat-checkbox [disabled]="detailedObservations[row.$$index].Readonly" [checked]="detailedObservations[row.$$index].Selected"  (change)="selectObservation(detailedObservations[row.$$index].Id)" 
+        ></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column> -->
+
+    <ngx-datatable-column [width]="60" [resizeable]="false" [sortable]="false" [draggable]="false"
+      [canAutoResize]="false" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button mat-icon-button (click)="toggleExpandRow(row)">
+          <!-- <i [class.datatable-icon-right]="!row.$$expanded" [class.datatable-icon-down]="row.$$expanded"></i> -->
+          <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+          <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+        </button>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="ID" prop="Id"  [minWidth]="30" [width]="55" [flexGrow]="0.35">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name"  [width]="190" [minWidth]="175"
+      [flexGrow]="1" *ngIf="!isMobile">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name"  [width]="150" [canAutoResize]="false"
+      *ngIf="isMobile">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Current Timestamp" prop="Timestamp"  [minWidth]="125"
+      *ngIf="!isMobile" [flexGrow]="0.75"></ngx-datatable-column>
+
+    <ngx-datatable-column name="Current Value" prop="Value"  [width]="250" [minWidth]="200"
+      *ngIf="!isMobile" [flexGrow]="1.5">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" let-rowIndex="rowIndex">
+        <span *ngIf="value.length > 30 && detailedObservations[rowIndex].DataType == 6"> {{value.substring(0,30)}}...
+        </span>
+        <a *ngIf="value.length > 30 && detailedObservations[rowIndex].DataType == 6" mat-icon class="material-icons"
+          style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+          (click)="open(detailedObservations[rowIndex])"> open_in_new </a>
+        <span *ngIf="! (value.length > 30 && detailedObservations[rowIndex].DataType == 6)">{{value}}
+          <span *ngIf="value" class="abbreviation">&nbsp;{{detailedObservations[rowIndex].UnitAbbreviation}}</span>
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name=" " prop="DataType" [minWidth]="150" [flexGrow]="0.75" [sortable]="false">
+      <ng-template let-value="value" ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="value != 5" matTooltip="Table" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name,detailedObservations[rowIndex].DataType, 'table']"
+          mat-icon role="img" class="material-icons" aria-label="Table" id="chart">list</a>
+
+
+        <a *ngIf="value == 5" matTooltip="Table" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name,detailedObservations[rowIndex].DataType,'table']"
+          mat-icon role="img" class="material-icons" aria-label="Table" id="chart">list</a>
+
+        <a *ngIf="value != 5 && value != 6 && value != 7" matTooltip="Plot" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, 'plot']"
+          mat-icon role="img" class="material-icons" aria-label="Plot" id="plot">image</a>
+
+        <!--Statistics-->
+        <a *ngIf="value == 7" matTooltip="Plot" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, 'statPlot']"
+          mat-icon role="img" class="material-icons" aria-label="Plot" id="plot">image</a>
+
+        <a *ngIf="value == 5" matTooltip="Map" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, detailedObservations[rowIndex].DataType,'map']"
+          mat-icon role="img" class="material-icons" aria-label="Map" id="map">place</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+  </ngx-datatable>
+  <ngx-datatable #deviceObservationListTable class='material block expandable observation-table striped' [columns]="columns"
+    [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]='detailedObservations'
+    [scrollbarV]="true" [scrollbarH]="true" *ngIf="!isCompact">
+
+    <ngx-datatable-column [width]="40" [maxWidth]="50" [flexGrow]="0.25" *ngIf="!isMobile" [sortable]="false">
+      <ng-template ngx-datatable-header-template let-value="value">
+        <mat-checkbox (change)="selectAll($event)" [checked]="allSelected" class="select-all-checkbox"></mat-checkbox>
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <mat-checkbox [disabled]="detailedObservations[rowIndex].Readonly"
+          [checked]="detailedObservations[rowIndex].Selected"
+          (change)="selectObservation(detailedObservations[rowIndex].Id)"></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-row-detail [rowHeight]="90" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-row-detail-template let-rowIndex="rowIndex">
+        <div style="padding-left:20px;">
+          <div>
+            Current Timestamp: {{row.Timestamp}}
+          </div>
+          <div style="padding-top:17px;">
+            <!-- Current Value: {{row.Value}} -->
+            <span
+              *ngIf="row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6">
+              Current Value: {{row.Value.substring(0,30)}}
+            </span>
+            <a *ngIf="row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6"
+              mat-icon class="material-icons"
+              style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+              (click)="open(detailedObservations[rowIndex])"> open_in_new </a>
+            <span
+              *ngIf="! (row.Value !== undefined && row.Value.length > 30 && detailedObservations[rowIndex].DataType == 6)">Current
+              Value: {{row.Value}} </span>
+
+
+          </div>
+        </div>
+      </ng-template>
+    </ngx-datatable-row-detail>
+
+    <!-- <ngx-datatable-column [width]="45" [maxWidth]="45" [canAutoResize]="false" [flexGrow]="0.5"  *ngIf="isMobile">
+      <ng-template ngx-datatable-header-template let-value="value">
+        <mat-checkbox (change)="selectAll($event)" [checked]="allSelected"></mat-checkbox>
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+        <mat-checkbox [disabled]="detailedObservations[row.$$index].Readonly" [checked]="detailedObservations[row.$$index].Selected"  (change)="selectObservation(detailedObservations[row.$$index].Id)" 
+        ></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column> -->
+
+    <ngx-datatable-column [width]="60" [resizeable]="false" [sortable]="false" [draggable]="false"
+      [canAutoResize]="false" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button mat-icon-button (click)="toggleExpandRow(row)">
+          <!-- <i [class.datatable-icon-right]="!row.$$expanded" [class.datatable-icon-down]="row.$$expanded"></i> -->
+          <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+          <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+        </button>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="ID" prop="Id"  [minWidth]="30" [width]="55" [flexGrow]="0.35">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name"  [width]="190" [minWidth]="175"
+      [flexGrow]="1" *ngIf="!isMobile">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name"  [width]="150" [canAutoResize]="false"
+      *ngIf="isMobile">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Current Timestamp" prop="Timestamp"  [minWidth]="125"
+      *ngIf="!isMobile" [flexGrow]="0.75"></ngx-datatable-column>
+
+    <ngx-datatable-column name="Current Value" prop="Value"  [width]="250" [minWidth]="200"
+      *ngIf="!isMobile" [flexGrow]="1.5">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" let-rowIndex="rowIndex">
+        <span *ngIf="value.length > 30 && detailedObservations[rowIndex].DataType == 6"> {{value.substring(0,30)}}...
+        </span>
+        <a *ngIf="value.length > 30 && detailedObservations[rowIndex].DataType == 6" mat-icon class="material-icons"
+          style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;"
+          (click)="open(detailedObservations[rowIndex])"> open_in_new </a>
+        <span *ngIf="! (value.length > 30 && detailedObservations[rowIndex].DataType == 6)">{{value}}
+          <span *ngIf="value" class="abbreviation">&nbsp;{{detailedObservations[rowIndex].UnitAbbreviation}}</span>
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name=" " prop="DataType" [minWidth]="150" [flexGrow]="0.75" [sortable]="false">
+      <ng-template let-value="value" ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="value != 5" matTooltip="Table" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name,detailedObservations[rowIndex].DataType, 'table']"
+          mat-icon role="img" class="material-icons" aria-label="Table" id="chart">list</a>
+
+
+        <a *ngIf="value == 5" matTooltip="Table" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name,detailedObservations[rowIndex].DataType,'table']"
+          mat-icon role="img" class="material-icons" aria-label="Table" id="chart">list</a>
+
+        <a *ngIf="value != 5 && value != 6 && value != 7" matTooltip="Plot" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, 'plot']"
+          mat-icon role="img" class="material-icons" aria-label="Plot" id="plot">image</a>
+
+        <!--Statistics-->
+        <a *ngIf="value == 7" matTooltip="Plot" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, 'statPlot']"
+          mat-icon role="img" class="material-icons" aria-label="Plot" id="plot">image</a>
+
+        <a *ngIf="value == 5" matTooltip="Map" style="padding-left:25px;"
+          [routerLink]="['../..', MID, 'observations', detailedObservations[rowIndex].Id, detailedObservations[rowIndex].Name, detailedObservations[rowIndex].DataType,'map']"
+          mat-icon role="img" class="material-icons" aria-label="Map" id="map">place</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+  </ngx-datatable>
+  <!-- <div fxLayout="row" fxLayoutAlign="stretch center" style="margin-right:5px">
+  
+    <div fxFlex="1 1 auto"></div>
+    <button mat-raised-button color="primary" [fxHide]="allSelected == false && selected.length == 0 " (click)="plotAll()">
+      Plot All
+    </button>
+  </div> -->
+
+  <!-- <div fxLayout="row" fxLayoutAlign="stretch center" style="margin-right:5px">
+  
+    <div fxFlex="1 1 auto"></div>
+    <button mat-raised-button color="primary" (click)="multipleObservations()">
+      Show Latest
+    </button>
+  </div> -->
+
+</mat-card-content>
+
+<ng-template #hdrTpl let-column="column">
+  <strong>{{column.name}} </strong>
+</ng-template>

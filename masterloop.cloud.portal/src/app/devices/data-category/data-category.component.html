@@ -1,0 +1,104 @@
+<mat-card (window:resize)="onResize()">
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">Data</h5>
+    </mat-card-title>
+  </mat-toolbar>
+  <hr>
+  <mat-card-content>
+    <div style="overflow-x:auto;">
+      <table border="0" *ngIf="!isMobile">
+        <tr>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../observations/', MID]" mat-icon role="img" class="material-icons"
+                aria-label="Observations" id="observations">visibility</a>
+              <p style=" margin:0px">Observations</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../events/', MID]" mat-icon role="img" class="material-icons" aria-label="Event Log"
+                id="eventlog">assignment</a>
+              <p style=" margin:0px">Event Log</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../settings/', MID]" mat-icon role="img" class="material-icons" aria-label="Settings"
+                id="settings">settings</a>
+              <p style=" margin:0px">Settings</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../', MID, 'pulse']" mat-icon role="img" class="material-icons" aria-label="Pulses"
+                id="pulses">favorite</a>
+              <p style=" margin:0px">Pulses</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../', MID,'dump']" mat-icon role="img" class="material-icons" aria-label="Dump"
+                id="dump">av_timer</a>
+              <p style=" margin:0px">Dump</p>
+            </div>
+          </td>
+          <!-- <td>
+              <div style=" text-align:center; width: 100px;" >
+                <a [routerLink]="['../../import/', MID]" mat-icon role="img" class="material-icons" aria-label="Upload" id="upload">cloud_upload</a>
+                <p style=" margin:0px">Import</p>
+              </div>
+         </td> -->
+        </tr>
+      </table>
+      <table border="0" *ngIf="isMobile" class="command-mobile">
+        <tr>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../observations/', MID]" mat-icon role="img" class="material-icons"
+                aria-label="Observations" id="observations">visibility</a>
+              <p style=" margin:0px">Observations</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../events/', MID]" mat-icon role="img" class="material-icons" aria-label="Event Log"
+                id="eventlog">assignment</a>
+              <p style=" margin:0px">Event Log</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../settings/', MID]" mat-icon role="img" class="material-icons" aria-label="Settings"
+                id="settings">settings</a>
+              <p style=" margin:0px">Settings</p>
+            </div>
+          </td>
+        </tr>
+        <tr style="padding-top:17px;">
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../', MID, 'pulse']" mat-icon role="img" class="material-icons" aria-label="Pulses"
+                id="pulses">favorite</a>
+              <p style=" margin:0px">Pulses</p>
+            </div>
+          </td>
+          <td>
+            <div style=" text-align:center; width: 100px;">
+              <a [routerLink]="['../../', MID, 'dump']" mat-icon role="img" class="material-icons" aria-label="Dump"
+                id="dump">av_timer</a>
+              <p style=" margin:0px">Dump</p>
+            </div>
+          </td>
+          <!-- <td>
+                    <div style=" text-align:center; width: 100px;" >
+                      <a [routerLink]="['../../import/', MID]" mat-icon role="img" class="material-icons" aria-label="Upload" id="upload">cloud_upload</a>
+                      <p style=" margin:0px">Import</p>
+                    </div>
+               </td> -->
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

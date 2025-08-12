@@ -1,0 +1,17 @@
+<a mat-dialog-close class="close-btn">
+    <img src="assets/images/close.svg" />
+</a>
+<div mat-dialog-title>Preview</div>
+<div mat-dialog-content style="width: 800px;">
+    <mat-grid-list [cols]="columns" rowHeight="100px">
+        <mat-grid-tile *ngFor="let observation of observations" 
+            [colspan]="observation.Placement.ColumnSpan"
+            [rowspan]="observation.Placement.RowSpan"
+            [style.background]="getGridBackgroundColour(observation.ControlType)">
+            <div fxLayout="column">
+                <div>{{observation.ObservationName}} ({{observation.Id}})</div>
+                <div><i>({{getGridTypeText(observation.ControlType)}})</i></div>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

@@ -1,0 +1,81 @@
+<div *ngIf="createUser">
+    <h4>Create user</h4>
+    <!-- <mat-radio-group aria-label="Select an option to import template" (change)="changeOption($event)" fxLayout="column">
+      <mat-radio-button value="create">Create User</mat-radio-button>
+      <mat-radio-button value="invite">Invite User</mat-radio-button>
+    </mat-radio-group> -->
+</div>
+  <div *ngIf="createUser">
+    
+    <form class="invite-user-form popup-form" [formGroup]="createUserForm" (ngSubmit)="onCreate()">
+      <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start">        
+
+        <mat-form-field class="pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-label>Enter First Name</mat-label>
+          <input matInput [(ngModel)]="firstName" [formControl]="createUserForm.controls['firstName']">
+        </mat-form-field>
+
+        <mat-form-field class="pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-label>Enter Last Name</mat-label>
+          <input matInput [(ngModel)]="lastName" [formControl]="createUserForm.controls['lastName']">
+        </mat-form-field>
+
+        <mat-form-field class="pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-label>Enter Email Address</mat-label>
+          <input matInput type="email" [(ngModel)]="eMail" [formControl]="createUserForm.controls['eMail']">
+        </mat-form-field>
+
+        <div class="user-edit-checkbox pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-checkbox  class="example-margin" [formControl]="createUserForm.controls['isAdmin']" [(ngModel)]="isAdmin" >Invite as an Admin</mat-checkbox>
+        </div> 
+      </div>
+               
+
+      <div class="user-edit-btn-wrapper" fxLayout="row" fxLayoutAlign="space-between start">
+        <button mat-raised-button color="primary" class="btn-block" type="submit" [disabled]="!createUserForm.valid">Create User</button>
+        <button mat-raised-button  type="button"  (click)="onNoClick()" style="margin-left:5px">Cancel</button>
+      </div>
+        
+    </form>
+  </div>
+  <!-- <div *ngIf="inviteUser">
+    <form class="invite-user-form popup-form" [formGroup]="inviteUserForm" (ngSubmit)="onInvite()">
+      <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start">
+        <mat-form-field class="pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-label>Enter Email Address</mat-label>
+          <input matInput type="email" [(ngModel)]="eMail" [formControl]="inviteUserForm.controls['eMail']">
+        </mat-form-field>
+
+        <div class="user-edit-checkbox pb-1" fxFlex="100" fxFlex.gt-xs="50">
+          <mat-checkbox class="example-margin" [formControl]="inviteUserForm.controls['isAdmin']" [(ngModel)]="isAdmin" >Invite as an Admin</mat-checkbox>
+        </div>
+      </div>        
+
+      <div class="user-edit-btn-wrapper" fxLayout="row" fxLayoutAlign="space-between start">
+        <button mat-raised-button color="primary" [mat-dialog-close]="data.TenantId" class="btn-block" type="submit" [disabled]="!inviteUserForm.valid">Invite User</button>
+        <button mat-raised-button  type="button" [disabled]="passwordGenerated"  (click)="onNoClick()" style="margin-left:5px">Cancel</button>
+      </div>
+        
+    </form>
+  </div> -->
+  <div *ngIf="passwordSectionShow">
+    <!-- <div> -->
+      <h4>Generated password</h4>
+      <div class="popup-form">
+        <mat-form-field class="pb-1" fxFlex="100">
+          <mat-label>Generated password</mat-label>
+          <input matInput [(ngModel)]="passwordGenerated" #formInputText>
+        </mat-form-field>
+        <!-- <div [ngxClipboard]="formInputText" class="copy-password">
+          <i class="material-icons">
+            content_copy
+          </i>
+        </div> -->
+      </div>
+
+    <mat-checkbox  class="example-margin" [(ngModel)]="passwordCopied" (change)="confirmCopy()" >Confirm password is copied!</mat-checkbox>
+
+    <div *ngIf="passwordCopied" class="user-edit-btn-wrapper pt-1" fxLayout="row" fxLayoutAlign="end start">
+      <button mat-raised-button  type="button"  (click)="closeAfterConfirmingPasswordCopy()">Close</button>
+    </div>
+  </div>

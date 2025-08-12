@@ -1,0 +1,217 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" id="templatesView" fxLayout="column" fxLayout.gt-xs="row"
+  fxLayoutAlign="start start" fxLayoutAlign.gt-xs="space-between center">
+  <div>
+    <a [routerLink]="['/templates']">Templates</a>
+    <span *ngIf="templateDetails['Id']"> / {{ templateDetails.Id }}</span>
+    <span *ngIf="!templateDetails['Id']"> / Create Template</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <app-template-constants *ngIf="!isNewTemplate"></app-template-constants>
+  <!-- <button ><mat-icon aria-hidden="false" aria-label="Example home icon" (click)="openTemplateImportView()">cloud_upload</mat-icon></button> -->
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" (click)="openTemplateImportView()"
+      title="Upload template" class="upload-btn">cloud_upload</mat-icon>
+    <mat-icon aria-hidden="false" aria-label="Example home icon" (click)="downloadTemplateJson()"
+      title="Export template as JSON" class="upload-btn">cloud_download</mat-icon>
+    <app-reload-content title="Click to refresh template details" (reload)="ngOnInit()"></app-reload-content>
+  </div>
+</mat-card-title>
+
+<mat-card-content class="template-card" style="padding-top:5px;">
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">Template General Details</h5>
+      </mat-card-title>
+      <!--(click)="editGeneralTemplate()"-->
+      <a [routerLink]="['/templates/details/edit/', templateDetails.Id]" *ngIf="!isNewTemplate && !isView"
+        matTooltip="Template Edit" style="padding-left:25px; color: white;" mat-icon role="img" class="material-icons"
+        aria-label="mode edit" id="edit">edit</a>
+    </mat-toolbar>
+    <hr />
+    <mat-card-content>
+      <table border="0">
+        <tr>
+          <!-- <td>
+            <p> ID :</p>
+          </td> -->
+          <td>
+            <p *ngIf="!isEditable">
+              <mat-form-field class="">
+                <input matInput placeholder="TID" [formControl]="form.controls['TemplateId']" [(ngModel)]="templateId"
+                  name="template" style="width:300px" class="form-group" minlength="8" maxlength="16" disabled />
+              </mat-form-field>
+              <!--#template="ngModel"-->
+
+            </p>
+            <p *ngIf="isEditable && !isNewTemplate">{{ templateId }}</p>
+            <div *ngIf="isNewTemplate && isEditable">
+              <mat-form-field class="">
+                <input matInput placeholder="TID" [formControl]="form.controls['TemplateId']" [(ngModel)]="templateId"
+                  name="template" style="width:300px" class="form-group" minlength="8" maxlength="16" disabled />
+              </mat-form-field>
+              <div>
+                <mat-error *ngIf="
+            form.controls['TemplateId'].hasError('required') &&
+            form.controls['TemplateId'].touched
+          " class="mat-text-warn">TID is required.</mat-error>
+                <mat-error *ngIf="
+            form.controls['TemplateId'].hasError('minlength') ||
+            form.controls['TemplateId'].hasError('maxlength')
+          " class="mat-text-warn">TID should contain between 8 and 16 characters.</mat-error>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p *ngIf="!isEditable">
+              <mat-form-field class="">
+                <input matInput placeholder="Name" [formControl]="form.controls['TemplateName']"
+                  [(ngModel)]="templateName" name="template" style="width:300px" class="form-group" disabled />
+              </mat-form-field>
+
+            </p>
+            <div *ngIf="isEditable">
+              <mat-form-field class="">
+                <input matInput placeholder="Name" [formControl]="form.controls['TemplateName']"
+                  [(ngModel)]="templateName" name="template" style="width:300px" class="form-group" disabled />
+              </mat-form-field>
+              <div>
+                <mat-error *ngIf="form.controls['TemplateName'].hasError('required')&&
+                form.controls['TemplateName'].touched" class="mat-text-warn">Template
+                  name is required.</mat-error>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <!-- <p *ngIf="!isEditable">
+              <label
+                style="font-size: 11px;font-family: Muli,sans-serif;color: grey;display: inline-block;position: relative;opacity: 1;"
+              >
+                Description</label
+              ><br />
+              {{ templateDescription }}
+            </p> -->
+            <div>
+              <mat-form-field>
+                <input matInput placeholder="Description" [formControl]="form.controls['TemplateDescription']"
+                  [(ngModel)]="templateDescription" style="width: 300px !important" id="deviceDescription" />
+              </mat-form-field>
+              <div>
+                <mat-error *ngIf="form.controls['TemplateDescription'].hasError('required')&&
+                form.controls['TemplateDescription'].touched" class="mat-text-warn">Template
+                  description is required.</mat-error>
+              </div>
+            </div>
+
+          </td>
+        </tr>
+        <tr *ngIf="!isNewTemplate">
+          <td>
+              <mat-form-field class="">
+                <input matInput placeholder="Revision" [formControl]="form.controls['TemplateRevision']"
+                  [(ngModel)]="templateRevision" name="template" style="width:300px" class="form-group" readonly />
+              </mat-form-field>
+            <!-- <div *ngIf="isEditable">
+              <mat-input placeholder="Revision" #template="ngModel" [(ngModel)]="templateRevision" name="template" style="width:300px" class="form-group" required></mat-input>
+              <div>
+                <small *ngIf="(template.hasError('required') && template.touched) " class="mat-text-warn">Template revision number is required.</small>
+              </div>
+            </div> -->
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <mat-form-field class="" *ngIf="isNewTemplate">
+              <mat-select [formControl]="form.controls['DefaultProtocol']" [(ngModel)]="defaultProtocol"
+                id="protocol">
+                <mat-option value="0">None</mat-option>
+                <mat-option value="1">HTTP</mat-option>
+                <mat-option value="2">AMQP</mat-option>
+                <mat-option value="3">MQTT</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="" *ngIf="!isNewTemplate || !isEditable">
+              <mat-select [formControl]="form.controls['DefaultProtocol']" [(ngModel)]="defaultProtocol" id="protocol"
+                disabled>
+                <mat-option value="0">None</mat-option>
+                <mat-option value="1">HTTP</mat-option>
+                <mat-option value="2">AMQP</mat-option>
+                <mat-option value="3">MQTT</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- <div *ngIf="isEditable">
+              <md-option *ngFor="let protocol of protocols" [value]="protocol.id" id="protocol" >{{protocol.name}}</md-option>
+              <md-input placeholder="Revision" #template="ngModel" [(ngModel)]="templateRevision" name="template" style="width:300px" class="form-group" required></md-input>
+              <div>
+                <small *ngIf="(template.hasError('required') && template.touched) " class="md-text-warn">Template revision number is required.</small>
+              </div>
+            </div> -->
+          </td>
+        </tr>
+
+        <tr *ngIf="isEditable && isNewTemplate">
+          <!-- <td>
+            <p> Tenant :</p>
+          </td> -->
+          <td>
+            <mat-form-field class="">
+              <mat-select placeholder="Select a Tenant" [formControl]="form.controls['TenantId']" [(ngModel)]="tenantId">
+                <mat-option *ngFor="let tenant of tenants" [value]="tenant.Id" id="tenant">{{ tenant.Name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="form.controls['TenantId'].hasError('required')&&
+              form.controls['TenantId'].touched" class="mat-text-warn">Tenant
+              is required.
+            </mat-error>
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <app-template-observations [data]="templateDetails" #templateObservations [units]="templateUnits"
+    (ObservationUpdated)="handleObservationUpdated($event)"></app-template-observations>
+  <app-template-settings [data]="templateDetails" [units]="templateUnits" #templateSettings (settingsUpdated)="handleSettingsUpdated($event)">
+  </app-template-settings>
+  <app-template-commands [data]="templateDetails" #templateCommands (commandsUpdated)="handleCommandsUpdated($event)">
+  </app-template-commands>
+  <app-template-pulses [data]="templateDetails" #templatePulses (PulseUpdated)="handlePulseUpdated($event)">
+  </app-template-pulses>
+  <app-template-enumeration [data]="templateDetails" #templateEnumeration (enumerationUpdated)="handleEnumerationUpdated($event)">
+  </app-template-enumeration>
+
+  <button *ngIf="isEditable && !isNewTemplate" mat-raised-button color="primary" class="mr-1" style="margin-left: 6px;"
+    (click)="submitChanges()"
+    style="margin-left:3px;margin-top:5px;margin-bottom:10px; margin-left:6px;font-size: 15px;" id="submitChangesBtn">
+    Submit Changes
+  </button>
+  <button *ngIf="isNewTemplate" mat-raised-button color="primary" class="mr-1" style="margin-left: 6px;"
+    (click)="createTemplate()"
+    style="margin-left:3px;margin-top:5px;margin-bottom:10px; margin-left:6px;font-size: 15px;" id="submitBtn">
+    Create Template
+  </button>
+  <!-- <app-firmware *ngIf="!isNewTemplate && !isView" [data]="MID"></app-firmware> -->
+</mat-card-content>
+
+<div class="floating-btn" [matMenuTriggerFor]="templateEditMenu">
+  <mat-icon class="material-icons">add</mat-icon>
+</div>
+
+<button *ngIf="isEditable && !isNewTemplate" mat-raised-button color="primary" class="floating-submit"
+  (click)="submitChanges()">
+  Submit Changes
+</button>
+
+<mat-menu #templateEditMenu="matMenu" xPosition="before" class="add-item-menu">
+  <button mat-menu-item (click)="onNewObservationClicked()">New Template Obsevation</button>
+  <button mat-menu-item (click)="onNewSettingClicked()">New Template Setting</button>
+  <button mat-menu-item (click)="onNewCommandClicked()">New Template Command</button>
+  <button mat-menu-item (click)="onNewPulseClicked()">New Template Pulse</button>
+  <button mat-menu-item (click)="onNewEnumerationGroupClicked()">New Enumeration Group</button>
+</mat-menu>

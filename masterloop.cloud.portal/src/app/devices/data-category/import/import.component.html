@@ -1,0 +1,104 @@
+<mat-card> 
+   <!--breadcrumb-->
+   <mat-card-title style="margin-top:10px;margin-bottom:10px;font-size:20px;margin-left:0px">
+        <a [routerLink]="['/devices/all']">Devices </a>   
+        <a [routerLink]="['/devices/general/',MID]">/ {{MID}}</a>  
+      <span>/ Import</span>
+    </mat-card-title> 
+    
+    <mat-card-content>
+        <div class="container" fxLayout fxLayout.xs="column" fxLayoutAlign="center"  fxLayoutGap.xs="0">      
+          <div class="item item-1" fxFlex="30%">
+            <div fxLayout="row" fxLayoutWrap="wrap">
+                <div class="mb-1">
+                    <mat-select name="type" [(ngModel)]="selectDelimeter" placeholder="Select Delimeter *">
+                        <mat-option *ngFor="let delimeter of delimeters" [value]="delimeter.id" id="delimeter">{{delimeter.name}}</mat-option>
+                    </mat-select>                
+                </div>         
+            </div>
+            <br/>
+            <div fxLayout="row" fxLayoutWrap="wrap">
+                <div class="mb-1">
+                    <span>Select first row as column headers   <mat-checkbox [(ngModel)]="selectColumn"></mat-checkbox></span>
+                </div>
+            </div>
+            <br/>
+            <div fxLayout="row" fxLayoutWrap="wrap">
+                <div class="mb-1">
+                        <input type="file" [disabled]="selectDelimeter === '-1'"  #fileImportInput name="File Upload" id="txtFileUpload" class="btn btn-primary" (change)="fileChangeListener($event)" accept=".csv,.txt" style="display:none;"/>
+                         <span class="fileUpload" onclick="document.getElementById('txtFileUpload').click()"> Select file  to upload
+                            
+                        
+                        <button  mat-icon-button>
+                                <mat-icon><i class="material-icons">cloud_upload</i></mat-icon>
+                        </button> 
+                    </span> 
+                </div>
+            </div>
+        </div>                      
+        <div class="item item-4" fxFlex fxFlexOffset="500px"  fxFlexOffset.xs="0">
+                <span *ngIf="detailedObservations?.length && headers?.length" style="padding: 52px">Uncheck to ignore columns.</span> 
+                <br/>
+                <br/>
+            <div fxFlex="1 1 auto" fxLayoutAlign="stretch stretch" *ngIf="detailedObservations?.length && headers?.length">
+                <table class="material selection-cell flex">
+                <tbody>
+                    <tr *ngFor="let header of headers;let i=index">
+                        <td class="skipValues">
+                            <input type="checkbox" name="observation_id"  checked="checked" (change)= "skipValues($event.target.checked, header, i, $event.target.value)"/>
+                            <!-- <mat-checkbox name="{{header}}" id="" (change)="updateHeader"></mat-checkbox> -->
+                        </td>
+                        
+                        <td>{{header}}</td> 
+                        <td>
+                          <select name="observation_id" (change)="updateValue($event.target.value,header, i)">
+                            <option>Select an observation</option>
+                             <option *ngFor="let observation of detailedObservations" [value]="observation.Id">{{observation.Name}}</option>
+                         </select>
+                       </td>
+                     </tr>
+                     <tr></tr>
+                     <tr>
+                       <td></td> 
+                       <td style="padding:16px"><button mat-raised-button color="primary" type="submit" class="mr-1" (click)="import()" id="submitBtns"  [disabled]="!allocatedObservationIdHeader.length" >Confirm & Import</button></td>
+                        <td style="padding:2px">
+                            <!-- <div class="buttons"> -->
+                                <!-- <button mat-raised-button color="primary" type="submit" class="mr-1" (click)="import()" id="submitBtns" >Confirm & Import</button> -->
+                                <button mat-raised-button color="default" type="submit" class="mr-1" (click)="fileReset()" id="submitBtns" >Reset</button>
+                           <!-- </div>  -->
+                        </td>                       
+                     </tr>                     
+                </tbody>
+                </table>
+              </div> 
+              <!-- <button mat-raised-button color="accent" class="mr-1" mat-ripple
+        [mat-ripple-background-color]="'rgba(30, 136, 229, 0.2)'"><span *ngIf="detailedObservations?.length && headers?.length">By default, all the columns of the csv file will be imported.Un tick to stop importing</span>  </button> -->
+        
+                        
+        </div>  
+      </div> <!--End of container-->
+      <div class="mb-1" *ngIf="progress > 0">
+            <br>
+            <br>
+            <p>Overall progress:{{progress}}%</p>
+            <br>
+            <mat-progress-bar mode="buffer" mode="buffer" color="primary" [(value)]="progress"></mat-progress-bar>
+        </div>
+      <br/>
+      <div class="container" fxLayout fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="10px" fxLayoutGap.xs="0" *ngIf="previewTableRows?.length"> 
+         
+          <div class="item item-3" fxFlex>
+              <ngx-datatable
+                  class="material"
+                  [rows]="previewTableRows"
+                  [columnMode]="'force'"
+                  [columns]="columns"
+                  [headerHeight]="50"
+                  [footerHeight]="50"
+                  [rowHeight]="50">
+              </ngx-datatable>           
+
+          </div>        
+      </div>
+ </mat-card-content>
+</mat-card>

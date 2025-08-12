@@ -1,0 +1,115 @@
+<div id="settings" class="result-container" (window:resize)="onResize()">
+  <!--breadcrumb-->
+  <mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+    <div fxLayout="row wrap" fxLayoutAlign="start center">
+      <a [routerLink]="['/devices/all']">Devices </a>
+      <span style="margin: 0 10px;">/</span>
+      <a [routerLink]="['/devices/general/', MID]" fxLayout="row" fxLayoutAlign="start center">{{ MID }}<span
+          class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a>
+      <span style="margin: 0 10px;">/</span>
+      <span>Settings</span>
+    </div>
+    <div fxFlex="1 1 auto"></div>
+    <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+  </mat-card-title>
+
+  <mat-card-content>
+    <div style="margin-left:10px; padding-top: 10px;padding-bottom: 10px;" *ngIf="lastUpdate">
+      Updated On: {{ lastUpdate }}
+    </div>
+
+    <ngx-datatable #deviceSettingsListTable class="material block expandable settings-table striped" [columns]="columns"
+      [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]="settings"
+      [scrollbarV]="true" [scrollbarH]="true">
+
+      <ngx-datatable-row-detail [rowHeight]="140" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+
+        <ng-template let-value="value" let-row="row" ngx-datatable-row-detail-template>
+
+          <div style="padding-left: 20px;">
+            <div>Id: {{ row.Id }}</div>
+            <div style="padding-top:17px;">
+              Data Type: {{ dataTypes[row.DataType] }}
+            </div>
+            <div style="padding-top:17px;">
+              Value: {{ row.Value }}
+              <span class="{{row.ValueTagLabel}}">{{ row.ValueTag }}</span>
+              <span style="padding: 3px; font-size: 12px" *ngIf="row.Value.length == 0" class="menu-badge mat-orange">
+                Undefined
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+
+      <ngx-datatable-column [width]="60" [resizeable]="false" [sortable]="false" [draggable]="false"
+        [canAutoResize]="false" *ngIf="isMobile">
+
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button mat-icon-button (click)="toggleExpandRow(row)">
+            <!-- <i [class.datatable-icon-right]="!row.$$expanded" [class.datatable-icon-down]="row.$$expanded"></i> -->
+            <i class="material-icons" *ngIf="!row.$$expanded">keyboard_arrow_right</i>
+            <i class="material-icons" *ngIf="row.$$expanded">keyboard_arrow_down</i>
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="ID" prop="Id" [width]="50"  *ngIf="!isMobile">
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Name" prop="Name"  [width]="150"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Data Type" prop="DataType"  [width]="100" *ngIf="!isMobile">
+
+        <ng-template ngx-datatable-cell-template let-value="value" let-row="row">{{ dataTypes[value] }}</ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="" prop="ValueTag"  [width]="50" *ngIf="!isMobile">
+        <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+          <div>
+            <span style="padding: 3px; font-size: 12px" class="{{row.ValueTagLabel}}">
+              {{ row.ValueTag }}
+            </span>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Value" prop="Value"  [width]="150" *ngIf="!isMobile">
+
+        <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+          <div>
+            {{ getSettingDisplayValue(row) }} <span class="abbreviation">{{ row.UnitAbbreviation }}</span>
+          </div>
+          <!-- <span
+              style="padding: 3px; font-size: 12px"
+              *ngIf="settings[rowIndex].IsDefaultValue && value.length > 0"
+              class="menu-badge mat-blue"
+            >
+              Default Value
+            </span>
+          </div>
+          <span
+            style="padding: 3px; font-size: 12px"
+            *ngIf="value.length == 0"
+            class="menu-badge mat-orange"
+          >
+            Undefined
+          </span> -->
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name=" " [width]="150" [sortable]="false">
+        <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+          <span matTooltip="Edit Settings" style="padding-left:25px;" mat-icon role="img" class="material-icons"
+            aria-label="mode edit" id="edit" (click)="openSettings(row)">edit</span>
+
+          <a *ngIf="!settings[rowIndex].IsDefaultValue" matTooltip="Reset Settings" style="padding-left:25px;"
+            (click)="resetToDefaultSettings(settings[rowIndex])" mat-icon role="img" class="material-icons"
+            aria-label="delete sweep" id="delete">delete</a>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </mat-card-content>
+
+  <ng-template #hdrTpl let-column="column">
+    <strong>{{ column.name }} </strong>
+  </ng-template>
+</div>

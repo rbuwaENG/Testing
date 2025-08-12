@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>Create new user</h1>
+<div mat-dialog-content>
+    <form class="create-device-form popup-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field class="pb-1">
+            <mat-label>Enter Email Address</mat-label>
+            <input matInput type="email" [(ngModel)]="AccountId" [formControl]="form.controls['AccountId']">
+        </mat-form-field>
+
+        <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start">
+          <!-- <div class="pb-1"  fxFlex="100" fxFlex.gt-xs="50">
+            <mat-checkbox  class="example-margin" [formControl]="form.controls['TenantAdmin']" [(ngModel)]="TenantAdmin" >Make Tenant Admin</mat-checkbox>
+          </div> -->
+          <div class="pb-1"  fxFlex="100" fxFlex.gt-xs="50">
+            <mat-checkbox  class="example-margin" [formControl]="form.controls['CanAdmin']" [(ngModel)]="CanAdmin" >Enable Admin Privilege</mat-checkbox>
+          </div>
+          <div class="pb-1"  fxFlex="100" fxFlex.gt-xs="50">
+            <mat-checkbox  class="example-margin" [formControl]="form.controls['CanControl']" [(ngModel)]="CanControl">Enable Control Privilege</mat-checkbox>
+          </div>
+          <div class="pb-1"  fxFlex="100" fxFlex.gt-xs="50">
+            <mat-checkbox  class="example-margin" [formControl]="form.controls['CanObserve']" [(ngModel)]="CanObserve" >Enable Observation Privilege</mat-checkbox>
+          </div> 
+        </div>
+
+         
+
+          <div class="user-edit-btn-wrapper pt-1" fxLayout="row" fxLayoutAlign="space-between start">
+            <button mat-raised-button color="primary" [mat-dialog-close]="data.TenantId" class="btn-block" type="submit" [disabled]="!form.valid">Add User</button>
+            <button mat-raised-button  type="button"  (click)="onNoClick()" style="margin-left:5px">Cancel</button>
+          </div>
+        
+    </form>
+</div>

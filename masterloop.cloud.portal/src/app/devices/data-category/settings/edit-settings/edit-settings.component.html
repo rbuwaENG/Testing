@@ -1,0 +1,94 @@
+<span class="material-icons settings-close" (click)="dialogRef.close()">close</span>
+<h3><span>{{ MID }}</span> - Device settings</h3>
+<div class="setting-items">
+  <div class="settings-item-row" fxLayout="row" fxLayoutAlign="start start">
+    <div fxFlex="40" fxFlex.gt-sm="25">ID :</div>
+    <div fxFlex="60" fxFlex.gt-sm="75">
+      {{deviceSetting?.Id}}
+    </div>
+  </div>
+  <div class="settings-item-row" fxLayout="row" fxLayoutAlign="start start">
+    <div fxFlex="40" fxFlex.gt-sm="25">Name :</div>
+    <div fxFlex="60" fxFlex.gt-sm="75">
+      {{deviceSetting?.Name}}
+
+    </div>
+  </div>
+  <div class="settings-item-row" fxLayout="row" fxLayoutAlign="start start">
+    <div fxFlex="40" fxFlex.gt-sm="25">Data Type :</div>
+    <div fxFlex="60" fxFlex.gt-sm="75">
+      {{dataTypes[deviceSetting?.DataType]}}
+      <!-- boolean -->
+    </div>
+  </div>
+  <div class="settings-item-row" fxLayout="row" fxLayoutAlign="start start">
+    <div fxFlex="40" fxFlex.gt-sm="25">Default Value :</div>
+    <div fxFlex="60" fxFlex.gt-sm="75" *ngIf="dataTypes[deviceSetting?.DataType] != 'Boolean'">
+      {{getValueForDisplay()}}<span class="abbreviation">{{ deviceSetting?.UnitAbbreviation }}</span>
+    </div>
+    <div fxFlex="60" fxFlex.gt-sm="75" *ngIf="dataTypes[deviceSetting?.DataType] == 'Boolean'">
+      <span *ngIf="deviceDefaultSetting?.DefaultValue == 1"> True</span>
+      <span *ngIf="deviceDefaultSetting?.DefaultValue == 0"> False</span>
+    </div>
+    <!-- <div *ngIf="dataTypes[deviceSetting?.DataType] == 'Position'" fxLayout="column" fxLayoutAlign="start start"
+        style="line-height: 1.91;">
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <div>Latitude :</div>
+          <div> 59.81635923388333</div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <div>Longitude :</div>
+          <div> 5.275564010667793</div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <div>Altitude :</div>
+          <div> 5 m / 16.4 ft</div>
+        </div>
+      </div> -->
+  </div>
+  <div class="settings-item-row" fxLayout="row" fxLayoutAlign="start start">
+    <div fxFlex="40" fxFlex.gt-sm="25">Device Value :</div>
+    <div fxFlex="60" fxFlex.gt-sm="75">
+      <input *ngIf="dataTypes[deviceSetting?.DataType] == 'Integer' && !showEnumItemsInDefaultValue" type="text" [(ngModel)]="deviceSetting.Value"
+        class="settings-input">
+        <mat-select *ngIf="dataTypes[deviceSetting?.DataType] == 'Integer' && showEnumItemsInDefaultValue" [(ngModel)]="deviceSetting.Value">
+          <mat-option *ngFor="let enumItem of enumItemsOfSelectedEnumGroup" [value]="convertValueToString(enumItem.Id)">
+            {{enumItem.Id}} = {{enumItem.Name}} 
+          </mat-option>
+        </mat-select>
+
+      <!-- <mat-checkbox *ngIf="dataTypes[deviceSetting?.DataType] == 'Boolean'" [(ngModel)]="sampleCheck"
+        [checked]="sampleCheck">{{deviceSetting.Value}}</mat-checkbox> -->
+
+      <mat-checkbox *ngIf="dataTypes[deviceSetting?.DataType] == 'Boolean'" class="example-margin"
+        [(ngModel)]="checkboxValue" ></mat-checkbox>
+      <!--Boolean checkbox-->
+      <input *ngIf="dataTypes[deviceSetting?.DataType] == 'Double'" type="number" class="settings-input"
+        [(ngModel)]="deviceSetting.Value">
+      <!-- Double or Integer textbox-->
+      <textarea *ngIf="dataTypes[deviceSetting?.DataType] == 'String'" class="settings-textarea"
+        [(ngModel)]="deviceSetting.Value"></textarea>
+      <!-- String textarea-->
+
+      <div *ngIf="dataTypes[deviceSetting?.DataType] == 'Position'" fxLayout="column" fxLayoutAlign="start start">
+        <div fxLayout="row" fxLayoutAlign="start center" class="position-input-wrapper">
+          <div fxFlex="15">Latitude</div>
+          <div fxFlex="85"><input type="number" class="position-input"></div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start center" class="position-input-wrapper">
+          <div fxFlex="15">Longitude</div>
+          <div fxFlex="85"><input type="number" class="position-input"></div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start center" class="position-input-wrapper">
+          <div fxFlex="15">Altitude</div>
+          <div fxFlex="85"><input type="text" class="position-input"></div>
+        </div>
+      </div>
+      <span class="abbreviation">{{ deviceSetting?.UnitAbbreviation }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="settings-button-wrapper" fxLayout="row" fxLayoutAlign="end start">
+  <button mat-raised-button color="primary" (click)="UpdateDeviceSetting()">Update Settings</button>
+</div>

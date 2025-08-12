@@ -1,0 +1,21 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+a:link {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+    color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+    color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+    color: mat-color($mat-mcs-blue, 500);
+}

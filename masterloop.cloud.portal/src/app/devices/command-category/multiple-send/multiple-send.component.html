@@ -1,0 +1,222 @@
+<!--breadcrumb-->
+<mat-card-title class="title-margin" fxLayout="column" fxLayout.gt-xs="row">
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <a [routerLink]="['/devices/all']" class="bread-crumb">Devices</a>
+    <span style="margin: 0 10px;">/</span>
+    <a [routerLink]="['/devices/general/', MID]" class="bread-crumb"
+    fxLayout="row"  fxLayoutAlign="start center">{{ MID }} <span class="breadcumb-device-status" [style.background-color]="deviceStatusColor"></span></a
+    >
+    <span style="margin: 0 10px;">/</span>
+    <span>
+    Quick Commands
+    </span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutAlign.gt-xs="end center">
+    <button mat-raised-button color="primary" (click)="loadCommandHistory()" style="min-width:100px">
+      History
+    </button>
+    <app-reload-content (reload)="refreshDeviceDetails(); ngOnInit()"></app-reload-content>
+  </div>
+</mat-card-title>
+
+<mat-card-content>
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">General</h5>
+      </mat-card-title>
+    </mat-toolbar>
+  </mat-card>
+
+  <div
+    class="container"
+    fxLayout
+    fxLayout.xs="column"
+    fxLayoutAlign="left"
+    fxLayoutGap="0px"
+    fxLayoutGap.xs="0"
+  >
+    <div fxFlex.gt-sm="50%">
+      <mat-card-title style="margin-bottom:0px">
+        <h6 class="header">Command :</h6>
+      </mat-card-title>
+      <mat-select
+        placeholder="Choose command"
+        [(ngModel)]="commandId"
+        (ngModelChange)="onCommandSelect($event)"
+        class="command-select-box"
+      >
+        <mat-option
+          title="{{ command.Name }}"
+          *ngFor="let command of commandMetaData"
+          [value]="command.Id"
+        >
+         {{command.Id}} - {{ command.Name }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div fxFlex.gt-sm="50%">
+      <mat-card-title style="margin-bottom:0px">
+        <h6 class="header">Expires :</h6>
+      </mat-card-title>
+      <mat-select
+        placeholder="Choose expire time"
+        [(ngModel)]="commandTime"
+        class="time-select-box"
+      >
+        <mat-option *ngFor="let expTime of expireTimes" [value]="expTime.value">
+          {{ expTime.Name }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">Arguments</h5>
+      </mat-card-title>
+    </mat-toolbar>
+  </mat-card>
+
+  <ngx-datatable
+    class="material multiple-send-table"
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+    [rows]="editSendCommands"
+    [scrollbarV]="false"
+    [scrollbarH]="false"
+  >
+    <ngx-datatable-column
+      name="Id"
+      prop="Id"
+      
+      [width]="50"
+      [maxWidth]="100"
+    ></ngx-datatable-column>
+    <ngx-datatable-column
+      name="Name"
+      prop="Name"
+      
+      [width]="200"
+      [maxWidth]="500"
+    ></ngx-datatable-column>
+    <ngx-datatable-column name="Value" prop="Value" >
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span
+          title="Double click to edit"
+          *ngIf="
+            !editing[rowIndex + '-Value'] &&
+            !(row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+        >
+          {{ value }}
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="commandText[rowIndex]"
+          (keyup)="validateTextInput($event, row)"
+          (keydown)="validateTextInput($event, row)"
+          (blur)="updateValue($event, 'Value', value, row, rowIndex)"
+          *ngIf="
+            editing[rowIndex + '-Value'] &&
+            !(row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+          [value]="value"
+          style="width: 60%;"
+        />
+
+        <mat-checkbox
+          [(ngModel)]="checkedState[rowIndex]"
+          (ngModelChange)="onCheckEvent($event, 'Value', row, rowIndex)"
+          *ngIf="
+            editing[rowIndex + '-Value'] &&
+            (row.DataType == 'Binary' || row.DataType == 'Boolean')
+          "
+          (value)="(value)"
+        ></mat-checkbox>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="DataType"
+      prop="DataType"
+      
+      [width]="100"
+    ></ngx-datatable-column>
+  </ngx-datatable>
+  <button
+    *ngIf="hasCommands"
+    mat-raised-button
+    color="primary"
+    class="mr-1"
+    style="margin-left:10px;margin-top:10px;margin-bottom:10px"
+    (click)="sendCommands()"
+  >
+    Send Command
+  </button>
+</mat-card-content>
+
+<mat-card-content>
+  <!-- Command status -->
+  <mat-card>
+    <mat-toolbar class="main-header" color="primary">
+      <mat-card-title>
+        <h5 style="margin-top:0">Command Status</h5>
+      </mat-card-title>
+    </mat-toolbar>
+  </mat-card>
+
+  <ngx-datatable class="material block command-status-table striped" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [rows]="commandResponse" [scrollbarV]="false" [scrollbarH]="true">
+
+    <ngx-datatable-column name="Status" prop="Status"  [width]="50" [minWidth]="50">
+      <ng-template let-value="value" ngx-datatable-cell-template>
+        <span *ngIf="value >= 0" class="menu-badge mat-{{ statuses[value].class }}">{{ statuses[value].title }}</span>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Timestamp" prop="Timestamp"  [width]="140" [minWidth]="140"></ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Command Name"  [width]="100" [minWidth]="100">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <div mat-tooltip="{{ row.Id }}" tooltip-position="below">
+          {{ row.Id }}:{{ row.Name }}
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <!-- <ngx-datatable-column name="Expires At" prop="ExpiresAt"  [width]="50"></ngx-datatable-column> -->
+
+    <ngx-datatable-column name="Arguments" prop="Arguments"  [width]="100" [minWidth]="100">
+      <ng-template let-value="value" ngx-datatable-cell-template>
+        <ul>
+          <li *ngFor="let argument of value">
+            {{ argument.Name }}={{ argument.Value }}
+          </li>
+        </ul>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Delivered At" prop="DeliveredAt"  [width]="140" [minWidth]="140"></ngx-datatable-column>
+
+    <ngx-datatable-column name="Origin Application" prop="OriginApplication"  [width]="150" [minWidth]="150"></ngx-datatable-column>
+
+    <ngx-datatable-column name="" prop=""  [width]="80" [minWidth]="80" [sortable]="false">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" class="content" let-rowIndex="rowIndex">
+        <a md-icon class="material-icons" style="display: inline-block;vertical-align: middle; margin-bottom: 2px;margin-left: 5px;" (click)="open(commandResponse[rowIndex])">open_in_new</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <!-- <ngx-datatable-column name="Was Accepted" prop="WasAccepted" >
+    <ng-template let-value="value" ngx-datatable-cell-template>
+      <span class="column-delivered-at">{{value}}</span>
+    </ng-template>
+  </ngx-datatable-column> -->
+  </ngx-datatable>
+</mat-card-content>
+<ng-template #hdrTpl let-column="column">
+  <strong>{{ column.name }} </strong>
+</ng-template>

@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">Commands</h5>
+    </mat-card-title>
+  </mat-toolbar>
+  <hr />
+  <mat-card-content>
+    <div style="overflow-x:auto;">
+      <table border="0">
+        <tr>
+          <td>
+            <div
+              *ngIf="data['canObserve']"
+              style="text-align:center; width: 100px;"
+            >
+              <a
+                [routerLink]="['../../', MID, 'commands']"
+                mat-icon
+                role="img"
+                class="material-icons"
+                aria-label="History"
+                id="history"
+                >history</a
+              >
+              <p style=" margin:0px">History</p>
+            </div>
+          </td>
+          <td>
+            <div
+              *ngIf="data['canControl']"
+              style="text-align:center; width: 100px;"
+            >
+              <a
+                [routerLink]="['../../multipleSendCommands/', MID]"
+                mat-icon
+                role="img"
+                class="material-icons"
+                aria-label="Quick Commands"
+                id="multiple-send"
+                >send</a
+              >
+              <p style=" margin:0px">Quick Commands</p>
+            </div>
+          </td>
+          <td>
+            <div
+              *ngIf="data['canControl']"
+              style="text-align:center; width: 100px;"
+            >
+              <a
+                [routerLink]="['../../sendCommands/', MID]"
+                mat-icon
+                role="img"
+                class="material-icons"
+                aria-label="Send"
+                id="send"
+                >input</a
+              >
+              <p style=" margin:0px">Send</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

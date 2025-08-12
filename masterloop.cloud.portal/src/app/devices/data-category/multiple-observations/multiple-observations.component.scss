@@ -1,0 +1,94 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+.item-wrapper {
+  display: flex;
+}
+
+.ob-mat-card {
+  // height: 100%;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent #fff #fff transparent;
+  width: 100%;
+}
+
+.ob-mat-title {
+  padding: 10px 0;
+  margin-bottom: 0;
+  font-size: 12px;
+
+  div {
+    line-height: 1.5;
+    padding: 0 10px;
+  }
+}
+
+.ob-mat-content {
+  margin: 0;
+  padding: 20px 10px;
+}
+
+.ob-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.ob-values {
+  padding-top: 2px;
+  font-size: 20px;
+  font-weight: 800;
+  word-break: break-all;
+}
+
+.ob-mat-footer {
+  font-size: 12px;
+  padding: 10px 0;
+}
+
+.long-text {
+  // display: inline-block;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+.example-section {
+  font-size: 14px;
+
+  @media (max-width: 767px) {
+    margin-top: 15px;
+  }
+
+  .mat-checkbox {
+    font-family: "Muli", "Helvetica Neue", Helvetica, sans-serif;
+  }
+}

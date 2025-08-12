@@ -1,0 +1,94 @@
+@import "/src/assets/styles/scss/material.variables";
+
+/* unvisited link */
+a:link {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* visited link */
+a:visited {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+/* mouse over link */
+a:hover {
+  color: dodgerblue;
+}
+
+/* selected link */
+a:active {
+  color: mat-color($mat-mcs-blue, 500);
+}
+
+table {
+  width: 306px;
+  td {
+    p {
+      margin: 0;
+    }
+
+    mat-form-field {
+      font-size: 16px;
+      width: 100%;
+
+      .mat-form-field-underline {
+        background-color: transparent;
+        background-image: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0.26) 0,
+          rgba(0, 0, 0, 0.26) 33%,
+          transparent 0
+        );
+        background-size: 4px 1px;
+        background-repeat: repeat-x;
+        border-top: 0;
+        background-position: 0;
+      }
+    }
+  }
+}
+
+.upload-btn {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.floating-btn {
+  align-items: center;
+  background-color: mat-color($mat-mcs-blue, 500);
+  border-radius: 50%;
+  bottom: 65px;
+  box-shadow: 0 4px 4px 0 rgba(#000, 0.25);
+  cursor: pointer;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  position: fixed;
+  right: 28px;
+  transition: 0.3s;
+  width: 50px;
+  z-index: 9999;
+
+  &:hover {
+    box-shadow: 0 4px 4px 4px rgba(#000, 0.25);
+  }
+
+  .material-icons {
+    color: #fff;
+    font-size: 35px;
+    height: 35px;
+    width: 35px;
+  }
+}
+
+.floating-submit {
+  bottom: 22px;
+  position: fixed;
+  right: 28px;
+  transition: 0.3s;
+  z-index: 9999;
+
+  &:hover {
+    box-shadow: 0 4px 6px 1px rgba(#000, 0.25);
+  }
+}

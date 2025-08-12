@@ -1,0 +1,259 @@
+<div id="device-listings" class="result-container" (window:resize)="onResize()">
+  <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start start" fxLayoutAlign.gt-xs="space-between center"
+    class="device-list-header">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <h4 class="device-list-title" style="">Devices</h4>
+      <button mat-raised-button color="primary" class="btn-new-device" (click)="navigate()">
+        <mat-icon class="material-icons" aria-label="add">add</mat-icon><span class="hide-mobile">New Device</span>
+      </button>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-md="row" fxLayoutAlign="start start" fxLayoutAlign.gt-xs="end center"
+      class="device-filter-wrapper">
+      <div fxLayout="row" fxLayoutAlign="space-between center" class="device-filter-columns">
+        <form class="device-filter-search" appearance="fill">
+          <mat-form-field>
+            <img src="../../../assets/images/filter_inactive.png" class="filter-pre-icon light-icon" width="25" matPrefix />
+            <img src="../../../assets/images/filter_inactive-dark.png" class="filter-pre-icon dark-icon" width="25" matPrefix />
+            <mat-label>Filter device list</mat-label>
+            <input autocomplete="off" matInput type="text" id="deviceFilter" name="deviceFilter"
+              [(ngModel)]="deviceSearch" (ngModelChange)="searchDevice($event)" />
+            <button *ngIf="deviceSearch" matSuffix mat-icon-button aria-label="Clear" (click)="clearDeviceSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+
+        <mat-form-field class="device-status-filter">
+          <mat-label>Filter by status</mat-label>
+          <mat-select [(ngModel)]="deviceStatuses" multiple (selectionChange)="onDeviceFilterColorChange($event)"
+            panelClass="device-status-panel" placeholder="Filter by status">
+            <mat-select-trigger>
+              <span *ngIf="deviceStatuses.length == 1" class="device-filter-color-span"
+                [ngStyle]="{ 'background-color': deviceStatuses[0] }"></span>
+              <div *ngIf="deviceStatuses.length > 1">
+                <span *ngFor="let deviceStatus of deviceStatuses" class="example-additional-selection">
+                  <span class="device-filter-color-span" [ngStyle]="{ 'background-color': deviceStatus }"></span>
+                </span>
+              </div>
+            </mat-select-trigger>
+            <mat-option *ngFor="let status of statuses" [value]="status.Id">{{ status.Label }}
+              <span class="device-filter-color-span" [ngStyle]="{ 'background-color': status.Value }"
+                matTooltip="{{ status.ToolTip }}" matTooltipPosition="right"></span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="end center" class="device-filter-columns">
+        <mat-button-toggle-group name="tableSize" aria-label="Table size" class="table-view-toggle"
+          #group="matButtonToggleGroup" [value]="selectedView" (change)="onValChange(group.value)">
+          <mat-button-toggle value="default-tb" matTooltip="Default table view">
+            <img src="assets/images/default-table-dark.svg" width="24" *ngIf="isCompact" />
+            <img src="assets/images/default-table.svg" width="24" *ngIf="!isCompact" />
+          </mat-button-toggle>
+          <mat-button-toggle value="compact-tb" matTooltip="Compact table view">
+            <img src="assets/images/compact-table-dark.svg" width="24" *ngIf="!isCompact" />
+            <img src="assets/images/compact-table.svg" width="24" *ngIf="isCompact" />
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <app-reload-content (reload)="refreshDeviceList()"></app-reload-content>
+      </div>
+    </div>
+  </div>
+
+  <ngx-datatable #deviceListTable class="material block striped expandable devices-table compact-tb" [columns]="columns"
+    [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="30" [rows]="devices" [scrollbarV]="true"
+    [scrollbarH]="true" *ngIf="isCompact">
+
+    <ngx-datatable-column name="" prop="Status" [width]="50" [maxWidth]="50" [minWidth]="50" [flexGrow]="1"
+      prop="lastDeviceStatus"  [sortable]="true" *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row">
+        <div class="circle" [style.background-color]="value" matTooltip="{{ row.lastDevicePulseTime }}"
+          tooltip-position="below"></div>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="" prop="Status" [width]="20" [maxWidth]="50" [minWidth]="50" [flexGrow]="0.2"
+      prop="lastDeviceStatus"  [sortable]="true" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row">
+        <div class="circle" [style.background-color]="value" matTooltip="{{ row.lastDevicePulseTime }}"
+          tooltip-position="below"></div>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="MID" prop="MID" [width]="150" [maxWidth]="150"  
+      *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color: #007dbd" [routerLink]="['/devices/general/', row.MID]" (click)="navigateToDetails(row.MID)"
+          id="device">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="MID" prop="MID" [width]="75" [minWidth]="75" [maxWidth]="150"  
+      *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color: #007dbd" [routerLink]="['/devices/general/', row.MID]" (click)="navigateToDetails(row.MID)"
+          id="device">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Name" prop="Name" [width]="150"   *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <mat-form-field>
+          <input matInput value="Name" [(ngModel)]="row.Name" [readonly]="!isEditable[rowIndex]" required
+            [ngClass]="{'edit-name': isEditable[rowIndex]}">
+        </mat-form-field>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Name" prop="Name" [width]="730" [minWidth]="405"   
+      *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <input matInput value="Name" [(ngModel)]="row.Name" [readonly]="!isEditable[rowIndex]" required
+          [ngClass]="{'edit-name': isEditable[rowIndex]}">
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Template" prop="TemplateId"   *ngIf="!isMobile"
+      [width]="80" [maxWidth]="150" [minWidth]="115">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a (click)="navigateToDetails(row.MID)">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <ngx-datatable-column name="" prop="isDeviceFavorite" [width]="180" [maxWidth]="80" [minWidth]="80"
+        *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span class="material-icons" *ngIf="!row.isDeviceFavorite" matTooltip="Make Starred"
+          (click)="handleFavorite(row.MID, row.isDeviceFavorite, row.TemplateId)" style="color: #949499">
+          star_border
+        </span>
+        <span class="material-icons" *ngIf="row.isDeviceFavorite" matTooltip="Already Starred"
+          (click)="handleFavorite(row.MID, row.isDeviceFavorite, row.TemplateId)">
+          <span class="material-icons" style="color: #f5a623"> grade </span>
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+    
+    <!-- Column: Editing Mode-->
+    <ngx-datatable-column name="" prop="" [width]="50" [maxWidth]="90" [minWidth]="90" [flexGrow]="1"
+       [sortable]="true" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span class="material-icons" *ngIf="!this.isEditable[rowIndex]"
+          (click)="this.isEditable[rowIndex]=!this.isEditable[rowIndex]">
+          edit
+        </span>
+    
+        <!-- Save/Cancel icons -->
+        <span class="material-icons icon-save" *ngIf="this.isEditable[rowIndex]" title="Save"
+          (click)="saveQuickEdit(row, rowIndex);">save</span>
+    
+        <span class="material-icons icon-cls" *ngIf="this.isEditable[rowIndex]" title="Delete"
+          (click)="cancelQuickEdit(row,rowIndex)">cancel</span>
+      </ng-template>
+    </ngx-datatable-column>
+
+  </ngx-datatable>
+
+  <ngx-datatable #deviceListTable class="material block striped expandable devices-table" [columns]="columns"
+    [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]="devices" [scrollbarV]="true"
+    [scrollbarH]="false" *ngIf="!isCompact">
+    <!--[loadingIndicator]="isLoading"-->    
+
+    <ngx-datatable-column name="" prop="Status" [width]="50" [maxWidth]="50" [minWidth]="50" [flexGrow]="1"
+      prop="lastDeviceStatus"  [sortable]="true" *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row">
+        <div class="circle" [style.background-color]="value" matTooltip="{{ row.lastDevicePulseTime }}"
+          tooltip-position="below"></div>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="" prop="Status" [width]="20" [maxWidth]="50" [minWidth]="50" [flexGrow]="0.2"
+      prop="lastDeviceStatus"  [sortable]="true" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row">
+        <div class="circle" [style.background-color]="value" matTooltip="{{ row.lastDevicePulseTime }}"
+          tooltip-position="below"></div>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="MID" prop="MID" [width]="150" [maxWidth]="150" 
+       *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color: #007dbd" [routerLink]="['/devices/general/', row.MID]" (click)="navigateToDetails(row.MID)"
+          id="device">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="MID" prop="MID" [width]="75" [minWidth]="75" [maxWidth]="150"  
+      *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color: #007dbd" [routerLink]="['/devices/general/', row.MID]" (click)="navigateToDetails(row.MID)"
+          id="device">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name" [width]="150"  
+      *ngIf="isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <mat-form-field>
+          <input matInput value="Name" [(ngModel)]="row.Name" [readonly]="!isEditable[rowIndex]" required
+            [ngClass]="{'edit-name': isEditable[rowIndex]}">
+        </mat-form-field>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Name" prop="Name" [width]="730" [minWidth]="405"   
+      *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <input matInput value="Name" [(ngModel)]="row.Name" [readonly]="!isEditable[rowIndex]" required [ngClass]="{'edit-name': isEditable[rowIndex]}">
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Template" prop="TemplateId"   *ngIf="!isMobile"
+      [width]="80" [maxWidth]="150" [minWidth]="115">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a (click)="navigateToDetails(row.MID)">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="" prop="isDeviceFavorite" [width]="180" [maxWidth]="80" [minWidth]="80"
+        *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <span class="material-icons" *ngIf="!row.isDeviceFavorite" matTooltip="Make Starred"
+          (click)="handleFavorite(row.MID, row.isDeviceFavorite, row.TemplateId)" style="color: #949499">
+          star_border
+        </span>
+        <span class="material-icons" *ngIf="row.isDeviceFavorite" matTooltip="Already Starred"
+          (click)="handleFavorite(row.MID, row.isDeviceFavorite, row.TemplateId)">
+          <span class="material-icons" style="color: #f5a623"> grade </span>
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <!-- Column: Editing Mode-->
+    <ngx-datatable-column name="" prop="" [width]="50" [maxWidth]="90" [minWidth]="90" [flexGrow]="1"
+     [sortable]="true" *ngIf="!isMobile">  
+    <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex"> 
+      <span class="material-icons" *ngIf="!this.isEditable[rowIndex]" matTooltip="Enable Quick Edit" 
+      (click)="this.isEditable[rowIndex]=!this.isEditable[rowIndex]">
+          edit
+      </span> 
+   
+      <!-- Save/Cancel icons -->
+      <span matTooltip="Save Changes" class="material-icons icon-save" *ngIf="this.isEditable[rowIndex]"  
+          (click)="saveQuickEdit(row, rowIndex);">save</span>
+
+      <span matTooltip="Cancel Quick Edit" class="material-icons icon-cls"
+          *ngIf="this.isEditable[rowIndex]"
+          (click)="cancelQuickEdit(row,rowIndex)">cancel</span>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+
+  <ng-template #hdrTpl let-column="column">
+    <strong>{{ column.name }} </strong>
+  </ng-template>
+  <!-- </div> -->
+</div>

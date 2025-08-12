@@ -1,0 +1,7 @@
+<p>{{ title }}</p>
+<p *ngIf="isErrorMessage" >{{ message }}</p>
+<span *ngIf="!isErrorMessage"> <input type="text" placeholder="Enter File name" autofocus="true"[(ngModel)]="fileName" /> </span> <br>
+<span *ngIf="isErrorMessage"> <button type="button" mat-raised-button color="warn" (click)="dialogRef.close(true)">OK</button> </span>
+<span *ngIf="!isErrorMessage"> <button type="button" mat-button (click)="dialogRef.close(fileName)">OK</button></span>
+<span *ngIf="isErrorMessage"><button type="button" mat-button (click)="dialogRef.close()">Cancel</button></span>
+<span *ngIf="!isErrorMessage"><button type="button" mat-button (click)="dialogRef.close(false)">Cancel</button></span>

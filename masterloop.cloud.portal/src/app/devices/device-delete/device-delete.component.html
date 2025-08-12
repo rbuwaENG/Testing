@@ -1,0 +1,11 @@
+<h3 mat-dialog-title>You are about to delete a delete.Please type the MID of the device which you are about to delete</h3>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Type MID</mat-label>
+    <input matInput [(ngModel)]="confirmMID" (input)="onValueChange($event.target.value)">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [disabled]="!MIDMatches" (click)="deleteDevice()" cdkFocusInitial>Delete</button>
+</div>

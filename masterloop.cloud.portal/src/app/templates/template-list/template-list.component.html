@@ -1,0 +1,154 @@
+<div id="template-list" class="result-container" (window:resize)="onResize()">
+  <div class="template-header" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start start"
+    fxLayoutAlign.gt-xs="space-between center">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <h4>
+        Templates
+      </h4>
+
+      <button mat-raised-button color="primary" class="btn-new-device" style="margin-left: 6px;"
+        (click)="navigateToDetails('new')" style="" id="newTemplateBtn">
+        <mat-icon class="material-icons" aria-label="add">add</mat-icon>
+        <span class="hide-mobile">New Template</span>
+      </button>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.gt-xs="end center"
+      class="template-filter-wrapper">
+      <form class="template-filter-search device-filter-search" appearance="fill">
+        <mat-form-field>
+          <img src="../../../assets/images/filter_inactive.png" class="filter-pre-icon light-icon" width="25" matPrefix />
+          <img src="../../../assets/images/filter_inactive-dark.png" class="filter-pre-icon dark-icon" width="25" matPrefix />
+          <input placeholder="Filter template list" autocomplete="off" matInput type="text" id="templateFilter"
+            name="templateFilter" [(ngModel)]="templateSearch" (ngModelChange)="searchTemplate($event)" />
+          <button *ngIf="templateSearch" matSuffix mat-icon-button aria-label="Clear" (click)="clearTemplateSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+
+      <mat-button-toggle-group name="tableSize" aria-label="Table size" class="table-view-toggle"
+        #group="matButtonToggleGroup" [value]="selectedView" (change)="onValChange(group.value)">
+        <mat-button-toggle value="default-tb" matTooltip="Default table view">
+          <img src="assets/images/default-table-dark.svg" width="24" *ngIf="isCompact">
+          <img src="assets/images/default-table.svg" width="24" *ngIf="!isCompact">
+        </mat-button-toggle>
+        <mat-button-toggle value="compact-tb" matTooltip="Compact table view">
+          <img src="assets/images/compact-table-dark.svg" width="24" *ngIf="!isCompact">
+          <img src="assets/images/compact-table.svg" width="24" *ngIf="isCompact">
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <app-reload-content (reload)="ngOnInit()"></app-reload-content>
+    </div>
+  </div>
+
+  <ngx-datatable class="material block expandable template-table striped" #templateListTable [columnMode]="'force'"
+    [headerHeight]="50" [footerHeight]="50" [rowHeight]="28" [rows]="templatesList" [scrollbarV]="true"
+    [scrollbarH]="true" *ngIf="isCompact">
+    <ngx-datatable-row-detail [rowHeight]="50" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-row-detail-template>
+        <div style="padding-left:20px;">
+          <div>Revision: {{ row.Revision }}</div>
+        </div>
+      </ng-template>
+    </ngx-datatable-row-detail>
+
+    <ngx-datatable-column name="TID" prop="Id" [minWidth]="100" [width]="50">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color:#007dbd" (click)="navigateToDetails(templatesList[rowIndex].Id)" id="template">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Name" prop="Name" [minWidth]="200" [width]="100">
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Revision" prop="Revision" [width]="10" >
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="" prop="Id" [minWidth]="100" [width]="50" 
+      [sortable]="false" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="row.CanControl" matTooltip="Navigate to Firmware Manager"
+          (click)="navigateToFirmware(templatesList[rowIndex].Id)"><span class="material-icons">
+            <img src="assets/images/MultiFirmware.svg" class="light-icon" alt="" width="22" />
+            <img src="assets/images/MultiFirmware-light.svg" class="dark-icon" alt="" width="22" />
+          </span></a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="" prop="Id" [minWidth]="100" [width]="50"  [sortable]="false"
+      *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="row.CanControl" matTooltip="Navigate to Dashboard Manager"
+          (click)="navigateToDashboard(templatesList[rowIndex].Id)">
+          <mat-icon>
+            apps
+          </mat-icon>
+        </a>
+      </ng-template>
+    </ngx-datatable-column>
+
+  </ngx-datatable>
+
+  <ngx-datatable class="material block expandable template-table striped" #templateListTable [columnMode]="'force'"
+    [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]="templatesList" [scrollbarV]="true"
+    [scrollbarH]="true" *ngIf="!isCompact">
+    <ngx-datatable-row-detail [rowHeight]="50" #myDetailRow (toggle)="onDetailToggle($event)" *ngIf="isMobile">
+      <ng-template let-row="row" ngx-datatable-row-detail-template>
+        <div style="padding-left:20px;">
+          <div>Revision: {{ row.Revision }}</div>
+        </div>
+      </ng-template>
+    </ngx-datatable-row-detail>
+
+    <ngx-datatable-column name="TID" prop="Id" [minWidth]="100" [width]="50">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a style="color:#007dbd" (click)="navigateToDetails(templatesList[rowIndex].Id)" id="template">{{ value }}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Name" prop="Name" [minWidth]="200" [width]="100">
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Tenant" [width]="10" >
+      <ng-template ngx-datatable-cell-template active let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="getTenantName(templatesList[rowIndex].Id)" style="color:#007dbd" (click)="navigateToTenant(templatesList[rowIndex].Id)" id="template">
+          {{ getTenantName(templatesList[rowIndex].Id) }}
+        </a>
+        <span *ngIf="!getTenantName(templatesList[rowIndex].Id)">N/A</span>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Revision" prop="Revision" [width]="10" >
+    </ngx-datatable-column>
+    <ngx-datatable-column name="" prop="Id" [minWidth]="100" [width]="50" 
+      [sortable]="false" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="row.CanControl" matTooltip="Navigate to Firmware Manager" (click)="navigateToFirmware(templatesList[rowIndex].Id)"><span
+            class="material-icons">
+            <img src="assets/images/MultiFirmware.svg" class="light-icon" alt="" width="22" />
+            <img src="assets/images/MultiFirmware-light.svg" class="dark-icon" alt="" width="22" />
+          </span></a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="" prop="Id" [minWidth]="100" [width]="50" 
+      [sortable]="false" *ngIf="!isMobile">
+      <ng-template ngx-datatable-cell-template active let-value="value" let-row="row" let-rowIndex="rowIndex">
+        <a *ngIf="row.CanControl" matTooltip="Navigate to Dashboard Manager"
+          (click)="navigateToDashboard(templatesList[rowIndex].Id)"><mat-icon>
+            apps
+          </mat-icon></a>
+      </ng-template>
+    </ngx-datatable-column>
+
+  </ngx-datatable>
+
+  <ng-template #hdrTpl let-column="column">
+    <div>
+      <strong>{{ column.name }}</strong>
+      <i (click)="sort(column, true)" class="material-icons mat-14">arrow_upward</i>
+      <i (click)="sort(column, false)" class="material-icons mat-14">arrow_downward</i>
+    </div>
+  </ng-template>
+
+  <ng-template #hdrTplNormal let-column="column">
+    <div>
+      <strong>{{ column.name }}</strong>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,18 @@
+<div mat-dialog-title>Security details - {{deviceSecurityData?.MID}}</div>
+<div mat-dialog-content>
+    <div class="security-row" fxLayout="column" fxLayout.gt-xs="row">
+        <div fxFlex.gt-xs="40">MID :</div>
+        <div fxFlex.gt-xs="60">{{deviceSecurityData?.MID}}</div>
+    </div>
+    <div class="security-row" fxLayout="column" fxLayout.gt-xs="row">
+        <div fxFlex.gt-xs="40">PreSharedKey :</div>
+        <div fxFlex.gt-xs="60">{{deviceSecurityData?.PreSharedKey}}</div>
+    </div>
+    <div class="security-row" fxLayout="column" fxLayout.gt-xs="row">
+        <div fxFlex.gt-xs="40">HTTPAuthenticationKey :</div>
+        <div fxFlex.gt-xs="60">{{deviceSecurityData?.HTTPAuthenticationKey}}</div>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button (click)="onCloseClick()">CLOSE</button>
+</div>

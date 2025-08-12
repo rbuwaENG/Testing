@@ -1,0 +1,128 @@
+<div mat-dialog-content>
+    <h5 class="popup-title">{{title}}</h5>
+    <div class="form-container">
+      <form [formGroup]="addEditEnumerationGroupForm" class="template-edit-form">
+        <div class="template-edit-form-field-wrapper" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start " fxLayoutAlign.gt-xs="space-between start">
+          <div class="field-columns" fxLayout="column" fxLayoutAlign="start " fxFlex="100%" fxFlex.gt-xs="48%">
+            <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+              <mat-label> Id
+              </mat-label>
+              <input matInput formControlName="Id" required>
+              <mat-error *ngIf="addEditEnumerationGroupForm.controls.Id.touched && addEditEnumerationGroupForm.controls.Id.invalid">
+                <span *ngIf="addEditEnumerationGroupForm.controls.Id.errors.required">This field is mandatory.</span>
+              </mat-error>
+              <mat-error *ngIf="addEditEnumerationGroupForm.controls.Id.touched && addEditEnumerationGroupForm.controls.Id.invalid">
+                <span *ngIf="addEditEnumerationGroupForm.controls.Id.errors['duplicateId']">Observation id is duplicated.</span>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" appearance="fill" fxFlex="100%">
+              <mat-label> Name
+              </mat-label>
+              <input matInput formControlName="Name" required>
+              <mat-error *ngIf="addEditEnumerationGroupForm.controls.Name.touched && addEditEnumerationGroupForm.controls.Name.invalid">
+                <span *ngIf="addEditEnumerationGroupForm.controls.Name.errors.required">This field is mandatory.</span>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-columns" fxLayout="column" fxLayoutAlign="start " fxFlex="100%" fxFlex.gt-xs="48%">
+          </div>
+        </div>
+
+        <mat-card class="toolbar-wrapper">
+            <mat-toolbar class="main-header" color="primary">
+              <mat-card-title style="">
+                <h5>Add Enumeration Items</h5>
+              </mat-card-title>
+              <a
+                matTooltip="Add Enumeration Item"
+                style="padding-left:25px;"
+                (click)="addEnumerationItem();"
+                mat-icon
+                role="img"
+                class="material-icons"
+                aria-label="mode edit"
+                id="editEnumerationItems"
+                >add_circle</a
+              >
+            </mat-toolbar>
+          </mat-card>
+          
+          <ngx-datatable
+            id="enumerationItems"
+            class="material add-enum-table"
+            [columnMode]="'force'"
+            [headerHeight]="50"
+            [footerHeight]="0"
+            [rowHeight]="60"
+            [rowHeight]="'auto'"
+            [rows]="enumerationItems"
+            [scrollbarH]="true"
+          >
+            <ngx-datatable-column
+              name="ID"
+              prop="Id"
+              [minWidth]="150" [width]="150"
+            >
+              <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+                <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+                <input
+                  autofocus
+                  *ngIf="editing[rowIndex + '-cell']"
+                  (blur)="updateValue($event, 'Id', value, row, rowIndex)"
+                  type="text"
+                  [value]="value"
+                  id="enumerationItemsId"
+                  style="width:100%"
+                  class="observation-edit-field"
+                />
+              </ng-template>
+            </ngx-datatable-column>
+          
+            <ngx-datatable-column name="Name" prop="Name" [minWidth]="200" [width]="300">
+              <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+                <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+                <input
+                  autofocus
+                  *ngIf="editing[rowIndex + '-cell']"
+                  (blur)="updateValue($event, 'Name', value, row, rowIndex)"
+                  type="text"
+                  [value]="value"
+                  id="enumerationItemsName"
+                  style="width:100%"
+                  class="observation-edit-field"
+                />
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name=" " [width]="150" [minWidth]="75">
+            <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+              <a  matTooltip="Edit Enumeration Item" 
+                  (click)="editing[rowIndex + '-cell'] = true" 
+                  mat-icon
+                  role="img" 
+                  class="material-icons" 
+                  aria-label="mode edit" 
+                  id="edit"
+                  >edit</a>
+                <a
+                  matTooltip="Delete Enumeration Item"
+                  style="padding-left:25px;"
+                  (click)="deleteEnumerationItem(row, rowIndex)"
+                  mat-icon
+                  role="img"
+                  class="material-icons"
+                  aria-label="delete sweep"
+                  id="delete"
+                  >delete</a
+                >
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+
+        <div fxLayout="row" class="enum-button-wrapper" fxLayoutAlign="space-between center">
+          <button mat-raised-button color="primary" [disabled]="addEditEnumerationGroupForm.invalid" (click)="save()">Save</button>
+          <button mat-raised-button (click)="onNoClick()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>

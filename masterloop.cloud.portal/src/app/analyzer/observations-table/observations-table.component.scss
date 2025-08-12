@@ -1,0 +1,287 @@
+
+@import "/src/assets/styles/scss/material.variables";
+
+/**Loader CSS**/
+.popup {
+  position: fixed;
+  width: auto;
+  // background: #ffffff;
+  left: 50%;
+  transform: translate(-50%, 0);
+  top: 10%;
+  z-index: 9000;
+  margin-top: 300px !important;
+}
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+cssload-container {
+  width: 100%;
+  height: 32px;
+  text-align: center;
+}
+
+.cssload-speeding-wheel {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  border: 2px solid rgb(235, 216, 9);
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: cssload-spin 400ms infinite linear;
+  -o-animation: cssload-spin 400ms infinite linear;
+  -ms-animation: cssload-spin 400ms infinite linear;
+  -webkit-animation: cssload-spin 400ms infinite linear;
+  -moz-animation: cssload-spin 400ms infinite linear;
+}
+
+@keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes cssload-spin {
+  100% {
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes cssload-spin {
+  100% {
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes cssload-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes cssload-spin {
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+/**End of loader css*/
+.options,
+.chosen-options {
+  margin: 10px;
+  padding-left: 10px;
+  vertical-align: middle;
+}
+
+.options-observations,
+.chosen-observations {
+  margin: 5px;
+  padding-left: 35px;
+  vertical-align: middle;
+}
+
+.options,
+.options-observations {
+  cursor: pointer;
+}
+
+.options-observations {
+  button {
+    display: flex;
+  }
+}
+
+.chosen-options {
+  padding: 10px;
+  border-bottom: 0.5px solid lightgrey;
+}
+
+.chosen-observations .material-icons {
+  font-size: 14px;
+}
+
+.multiple-select {
+  overflow-y: scroll;
+  height: 500px;
+  width: 350px;
+  border: 1px outset lightgray;
+}
+
+.multiple-select-observations {
+  // width: 300px;
+}
+
+.icons {
+  font-size: 18px;
+}
+
+.btn-style {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  font-size: 20px;
+  white-space: nowrap;
+}
+
+.btn-style-main {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+.datagrid table {
+  border-collapse: collapse;
+  text-align: left;
+  width: 100%;
+}
+
+.datagrid {
+  font: normal 12px/150% "Muli", Helvetica, sans-serif;
+  background: #fff;
+  overflow: hidden;
+  border: 1px solid lightgray;
+}
+
+.datagrid table td,
+.datagrid table th {
+  padding: 10px 5px;
+}
+
+.datagrid table thead th:first-child {
+  border: none;
+}
+
+.datagrid table tbody td {
+  color: black;
+  border-left: 1px solid #e1eef4;
+  font-size: 13px;
+  border-bottom: 1px solid #e1eef4;
+  font-weight: normal;
+}
+
+.datagrid table tbody .alt td {
+  background: #e1eef4;
+  color: lightgray;
+}
+
+.datagrid table tbody td:first-child {
+  border-left: none;
+}
+
+.datagrid table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.block {
+  height: -webkit-calc(100vh - 200px);
+  height: -moz-calc(100vh - 200px);
+  height: calc(100vh - 200px);
+}
+
+mat-tab-group {
+  display: grid;
+}
+
+mat-sidenav-container,
+.my-content {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.example-sidenav-fab-container mat-sidenav {
+  min-width: 75%;
+  max-width: 75%;
+}
+
+.analyzer .header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 8px;
+}
+
+.analyzer .content {
+  height: calc(100vh - 121px);
+}
+
+.options-toggle {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 10px 0;
+  border-bottom: 0.5px solid lightgrey;
+  background: transparent;
+}
+
+.options-toggle.selected {
+  background: white;
+  font-weight: bold;
+}
+
+.options button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+}
+
+app-infograph-table {
+  display: block;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  flex: none;
+}
+
+.example-viewport {
+  height: 100%;
+}
+
+.mat-input-element {
+  border: 0 none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  // margin: 16px 0 !important;
+
+  &:focus {
+    border-bottom: 1px solid mat-color($mat-mcs-blue, 500);
+    outline: 0 none;
+  }
+}

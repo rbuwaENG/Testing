@@ -1,0 +1,22 @@
+.custom-footer {
+    width: 100%;
+  
+    &__count {
+      color: rgba(0, 0, 0, 0.87);
+      font-size: 16px;
+      padding: 0;
+    }
+  
+    &__add-template {
+      color: #000;
+      font-size: 20px;
+      font-weight: 600;
+      opacity: 0.5;
+  
+      span {
+        margin-bottom: 0;
+        margin-left: 5px;
+      }
+    }
+  }
+  

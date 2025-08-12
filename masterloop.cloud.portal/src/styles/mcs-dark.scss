@@ -1,0 +1,274 @@
+.dark-icon {
+    display: none;
+
+    .app-dark & {
+        display: block;
+    }
+}
+
+.app-dark {
+    color: mat-color($dark-foreground, base);
+
+    .light-icon {
+        display: none;
+    }
+
+    .mat-radio-button {
+        label {
+            color: mat-color($dark-foreground, base);
+        }
+    }
+
+    .mat-divider {
+        border-top: 1px solid mat-color($background, divider) !important;
+    }
+
+    .sidebar-panel {
+        .mat-expansion-panel {
+            &-content {
+                background-color: darken(mat-color($dark-background, card), 5%) !important;
+            }
+        }
+    }
+
+    .mat-sidenav-content {
+        background-color: darken(mat-color($dark-background, card), 5%) !important;
+    }
+
+    .ngx-datatable.material {
+        .datatable {
+            &-header {
+                &-cell {
+                    background: mat-color($dark-background, card) !important;
+                    color: mat-color($dark-foreground, base) !important;
+
+                    .sort-btn {
+                        &::before {
+                            color: mat-color($dark-foreground, base) !important;
+                        }
+                    }
+                }
+            }
+
+            &-body {
+                .datatable-group-header {
+                    background: mat-color($dark-background, card) !important;
+                    border-color: mat-color($dark-background, card) !important;
+                }
+
+                &-cell {
+                    color: mat-color($dark-foreground, base) !important;
+
+                    a {
+                        color: mat-color($dark-foreground, base) !important;
+                        text-decoration: underline;
+
+                        &.material-icons {
+                            text-decoration: none;
+                        }
+                    }
+
+                    .material-icons {
+                        color: mat-color($dark-foreground, base);
+                    }
+                }
+
+                .mat-input-element {
+                    color: mat-color($dark-foreground, base);
+                }
+            }
+
+            &-footer-inner {
+                .page-count {
+                    color: mat-color($dark-foreground, base) !important;
+                }
+            }
+        }
+    }
+
+    mat-toolbar.main-header .search-bar .search-form {
+        .material-icons {
+            color: mat-color($dark-foreground, base) !important;
+        }
+
+        input {
+            background: mat-color($dark-search) !important;
+            color: mat-color($dark-foreground, base) !important;
+
+            &::-webkit-input-placeholder {
+                color: mat-color($dark-foreground, base);
+            }
+        }
+    }
+
+    .command-item-wrapper {
+        @media (min-width: 600px) {
+            background: mat-color($dark-background, card) !important;
+        }
+    }
+
+    .command-item {
+        background: mat-color($dark-background, card) !important;
+    }
+
+    .device-filter-search,
+    .device-status-filter {
+    .mat-form-field-infix,
+        .mat-form-field-wrapper {
+            .mat-form-field-label {
+                color: mat-color($dark-foreground, base) !important;
+            }
+        }
+    }
+    
+    .owl-dt-container {
+        background: mat-color($dark-background, card) !important;
+
+        *:not(.owl-dt-timer-input) {
+            color: mat-color($dark-foreground, base) !important;
+        }
+    }
+
+    table td mat-form-field .mat-form-field-underline {
+        background: mat-color($dark-foreground, base) !important;
+    }
+
+    .mat-drawer-side {
+        border: 0 none;
+    }
+
+    .ob-mat-card {
+        border-color: transparent transparent mat-color($dark-background, base) mat-color($dark-background, base) !important;
+    }
+
+    .mat-primary {
+        .mat-option {
+            &.mat-selected {
+                &:not(.mat-option-disabled) {
+                    color: mat-color($dark-foreground, base) !important;
+                }
+            }
+        }
+    }
+
+    .custom-footer {
+        &__count,
+        &__add-template {
+            color: mat-color($dark-foreground, base) !important;
+            opacity: 1 !important;
+        }
+    }
+
+    .observation-edit-field {
+        background-color: mat-color($dark-background, card) !important;
+        border-color: mat-color($dark-foreground, base) !important;
+        color: mat-color($dark-foreground, base) !important;
+    }
+
+    .options-toggle.selected {
+        background-color: darken(mat-color($dark-background, card), 10%) !important;
+    }
+
+    .btn-style-main {
+        color: mat-color($dark-foreground, base) !important;
+    }
+
+    .legendkey {
+        table {
+            tr {
+                td {
+                    border-color: mat-color($dark-background, card) !important;
+                }
+            }
+        }
+    }
+
+    .analyzer-query-inputs {
+        border-color: mat-color($dark-foreground, base) !important;
+    }
+
+    .analyzer-search-device {
+        border-color: mat-color($dark-foreground, base) !important;
+    }
+
+    .options-observations {
+        button {
+            color: mat-color($dark-foreground, base) !important;
+        }
+    }
+
+    .device-status-panel {
+        .mat-option-text {
+            color: mat-color($dark-foreground, base) !important;
+        }
+    }
+
+    .mat-pseudo-checkbox{
+        &::after {
+            color: mat-color($dark-foreground, base) !important;
+        }
+    }
+
+    .highcharts-container,
+    .highcharts-container * {
+        font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
+    }
+    
+    .settings-input,
+    .position-input {
+        background-color: mat-color($dark-background, card) !important;
+        border: 1px solid mat-color($dark-foreground, base);
+        color: mat-color($dark-foreground, base) !important;
+    }
+
+    .export .mat-form-field,
+    .mat-input-element {
+        border-color: mat-color($dark-foreground, base) !important;
+        transition: 0.2s;
+
+        &:focus {
+            border-color: mat-color($primary) !important;
+        }
+    }
+
+    input {
+        color: mat-color($dark-foreground, base) !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px mat-color($dark-background, card) inset !important;
+        -webkit-text-fill-color: mat-color($dark-foreground, base) !important;
+    }
+
+    .inner-popup-table {
+        background-color: mat-color($dark-background, card);
+    }
+
+    ::-webkit-scrollbar {
+        width: 15px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: $dark-dividers;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: $light-disabled-text;
+    }
+
+    .abbreviation {
+        color: $light-disabled-text;
+    }
+
+    .devices-table .mat-form-field-underline,
+    .template-table .mat-form-field-underline {
+        background-color: transparent;
+    }
+
+    .ngx-datatable.material .datatable-body .datatable-row-detail {
+        background-color: mat-color($background, "hover");
+    }
+}

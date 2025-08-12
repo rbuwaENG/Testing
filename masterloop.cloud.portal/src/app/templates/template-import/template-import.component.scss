@@ -1,0 +1,27 @@
+h4 {
+  margin: 0 0 20px;
+}
+
+mat-radio-button {
+  margin-bottom: 10px;
+}
+
+.firmware-upload-btn {
+  margin-top: 20px;
+}
+
+.diff-wrapper {
+  max-height: 460px;
+  overflow-x: unset;
+  overflow-y: auto;
+}
+
+.mat-dialog-actions {
+  margin: 15px 0 0;
+  min-height: unset;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(100% - 48px);
+  padding: 10px 24px 24px;
+}

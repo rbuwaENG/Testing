@@ -1,0 +1,156 @@
+<mat-card-title class="title-margin" id="templatesView" fxLayout="column" fxLayout.gt-xs="row"
+  fxLayoutAlign="start start" fxLayoutAlign.gt-xs="space-between center">
+  <div>
+    <a [routerLink]="['/templates']">Templates</a><span style="margin: 0 10px;">/</span>
+    <a routerLink="/templates/details/edit/{{TID}}">{{ TID }}</a><span style="margin: 0 10px;">/</span>
+    <a routerLink="/templates/{{TID}}/dashboards">Dashboards</a>
+    <span> / {{title}}</span>
+  </div>
+  <div fxFlex="1 1 auto"></div>
+</mat-card-title>
+<mat-card-content>
+  <div class="form-container">
+    <form [formGroup]="addEditDashboardForm" class="dashboard-add-edit-form" appearance="fill">
+      <div class="dashboard-add-edit-form-field-wrapper" fxLayout="row wrap" fxLayoutAlign="start center">
+        <mat-form-field class="form-field">
+          <mat-label> Dashboard Name
+          </mat-label>
+          <input matInput formControlName="Name" required>
+          <mat-error *ngIf="addEditDashboardForm.controls.Name.touched && addEditDashboardForm.controls.Name.invalid">
+            <span *ngIf="addEditDashboardForm.controls.Name.errors.required">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="dashboard-add-edit-form-field-wrapper" fxLayout="row wrap" fxLayoutAlign="start center">
+        <mat-form-field class="form-field">
+          <mat-label> Index
+          </mat-label>
+          <input type="number" min="0" matInput formControlName="Index" required>
+          <mat-error *ngIf="addEditDashboardForm.controls.Index.touched && addEditDashboardForm.controls.Index.invalid">
+            <span *ngIf="addEditDashboardForm.controls.Index.errors.required">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="dashboard-add-edit-form-field-wrapper" fxLayout="row wrap" fxLayoutAlign="start center">
+        <mat-form-field class="form-field">
+          <mat-label> Columns
+          </mat-label>
+          <input type="number" min="1" matInput formControlName="Columns" required>
+          <mat-error *ngIf="addEditDashboardForm.controls.Columns.touched && addEditDashboardForm.controls.Columns.invalid">
+            <span *ngIf="addEditDashboardForm.controls.Columns.errors.required">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="dashboard-add-edit-form-field-wrapper" fxLayout="row wrap" fxLayoutAlign="start center">
+        <mat-form-field class="form-field">
+          <mat-label> Rows
+          </mat-label>
+          <input type="number" min="1" matInput formControlName="Rows" required>
+          <mat-error *ngIf="addEditDashboardForm.controls.Rows.touched && addEditDashboardForm.controls.Rows.invalid">
+            <span *ngIf="addEditDashboardForm.controls.Rows.errors.required">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="dashboard-add-edit-form-field-wrapper" fxLayout="row wrap" fxLayoutAlign="start center">
+        <mat-checkbox formControlName="IsLive" >Is Live</mat-checkbox>
+      </div>
+      <mat-card>
+        <mat-toolbar class="main-header" color="primary">
+          <mat-card-title style="margin:0">
+            <h5 style="margin-top:0">Dashboard Observations</h5>
+          </mat-card-title>
+          <a matTooltip="Add Observation" style="padding-left:25px;" (click)="addObservations(); scrollDown()" mat-icon
+            role="img" class="material-icons" aria-label="mode edit" id="editObs">add_circle</a>
+        </mat-toolbar>
+      </mat-card>
+      <ngx-datatable id="observations" class="material add-edit-observation striped" [columnMode]="'force'" [headerHeight]="52"
+        [footerHeight]="50" [rowHeight]="65" [rows]="selectedObservations" [scrollbarH]="true">
+        <ngx-datatable-column name="ID" prop="Id" [minWidth]="50" [width]="50" [maxWidth]="70">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Observation Name" prop="Id" [minWidth]="150" [width]="150">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{row.ObservationName}}</span>
+            <select *ngIf="editing[rowIndex + '-cell']" (change)="updateValue($event, 'ObsId', value, row, rowIndex)"
+              [value]="value" id="obsData">
+              <option *ngFor="let observation of selectedTemplateObservations" [value]="observation.Id" [selected]="observation.Id == value">
+                {{observation.Name}}</option>
+            </select>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Control Type" prop="ControlType" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ controlTypes[value].name }}</span>
+            <select *ngIf="editing[rowIndex + '-cell']"
+              (change)="updateValue($event, 'ControlType', value, row, rowIndex)" [value]="value" id="obsData">
+              <option value=0>Table</option>
+              <option value=1>Plot</option>
+              <option value=2>Map</option>
+            </select>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Duration (s)" prop="Timespan.Duration" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Timespan.Duration', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="Duration" />
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- <ngx-datatable-column name="Resolution (s)" prop="Timespan.Resolution" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Timespan.Resolution', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="Resolution" />
+          </ng-template>
+        </ngx-datatable-column> -->
+        <ngx-datatable-column name="Column" prop="Placement.Column" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Placement.Column', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="Column" />
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Row" prop="Placement.Row" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Placement.Row', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="Row" />
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="ColumnSpan" prop="Placement.ColumnSpan" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Placement.ColumnSpan', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="ColumnSpan" />
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="RowSpan" prop="Placement.RowSpan" [width]="80" [minWidth]="90">
+          <ng-template ngx-datatable-cell-template let-value="value" let-row="row" let-rowIndex="rowIndex">
+            <span *ngIf="!editing[rowIndex + '-cell']">{{ value }}</span>
+            <input type="number" min="1" autofocus *ngIf="editing[rowIndex + '-cell']"
+              (blur)="updateValue($event, 'Placement.RowSpan', value, row, rowIndex)" type="number" style="width:300px"
+              [value]="value" id="RowSpan" />
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name=" " [width]="70" [minWidth]="100">
+          <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+            <a *ngIf="isEdit" matTooltip="Edit Observation" (click)="editing[rowIndex + '-cell'] = true" mat-icon
+              role="img" class="material-icons" aria-label="mode edit" id="edit">edit</a>
+            <a matTooltip="Delete Observation" style="padding-left:10px;" (click)="deleteObservation(row, rowIndex)"
+              mat-icon role="img" class="material-icons" aria-label="delete sweep" id="delete">delete</a>
+          </ng-template> 
+        </ngx-datatable-column>
+      </ngx-datatable>
+      <div mat-dialog-actions fxLayout="row" fxLayoutAlign="start center" class="button-wrapper">
+        <button mat-raised-button color="warn" (click)="onNoClick()">Cancel</button>
+        <button mat-raised-button color="primary" style="margin-right: 10px" [disabled]="addEditDashboardForm.invalid" (click)="previewClick()">Preview</button>
+        <button mat-raised-button color="primary" [disabled]="addEditDashboardForm.invalid"
+          (click)="saveDashboard()">Save</button>
+      </div>
+    </form>
+  </div>
+</mat-card-content>

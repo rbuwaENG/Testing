@@ -1,0 +1,84 @@
+<mat-card>
+  <mat-toolbar class="main-header" color="primary">
+    <mat-card-title>
+      <h5 style="margin-top:0">
+        Current Firmware
+      </h5>
+    </mat-card-title>
+  </mat-toolbar>
+  <hr>
+  <mat-card-content>
+    <p *ngIf="!serviceDataAvilable">No firmware releases found for this template.</p>
+    <p *ngIf="!serviceDataAvilable"><button mat-raised-button color="primary" class="mr-1" style="margin-left: 6px;"
+        [routerLink]="['../../../firmwareRelease/', data]" id="newRelease"> New Release </button></p>
+    <table border="0" *ngIf="serviceDataAvilable">
+      <tr>
+        <td>
+          <p> ID :</p>
+        </td>
+        <td>
+          <p>
+            <!-- <select [(ngModel)]="selectedReleaseId" style=" height:28px; margin-bottom: 10px; margin-right: 15px;">
+              <option *ngFor="let releaseId of releaseIds" [value]="releaseId['id']" [selected]="releaseId['selected'] == 1">{{releaseId['value']}}</option>
+            </select> -->
+
+            <mat-form-field class="firmware-select">
+              <mat-label>Select</mat-label>
+              <mat-select [(ngModel)]="selectedReleaseId">
+                <mat-option *ngFor="let releaseId of releaseIds" [value]="releaseId['id']" [selected]="releaseId['selected'] == 1">{{releaseId['value']}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" class="mr-1 set-current" id="currentRelease" (click)="setCurrent()" style="margin-right: 10px;">
+              Set
+              Current </button>
+            <button mat-raised-button color="primary" class="mr-1" [routerLink]="['../../../firmwareRelease/', data]" id="newRelease"
+              >
+              New Release </button>
+          </p>
+
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> Version :</p>
+        </td>
+        <td>
+          <p> {{currentFirmware.VersionNo}} </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> Release Date :</p>
+        </td>
+        <td>
+          <p> {{currentFirmware.ReleaseDate }} </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> Size :</p>
+        </td>
+        <td>
+          <p *ngIf="currentFirmware.Size > 0"> {{currentFirmware.Size}} bytes</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p> MD5 (base64 encoded) :</p>
+        </td>
+        <td>
+          <p> {{currentFirmware.FirmwareMD5}} </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+          <a mat-raised-button color="primary" class="download" href="{{currentFirmware.Url}}"> Download</a>
+        </td>
+      </tr>
+    </table>
+
+  </mat-card-content>
+</mat-card>
