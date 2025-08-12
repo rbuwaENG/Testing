@@ -60,4 +60,46 @@ namespace Masterloop.Cloud.WebAPI.Models
         [Required]
         public string TotpCode { get; set; }
     }
+
+    // Admin-specific models
+    public class AdminEnableTwoFactorRequest
+    {
+        [Required]
+        public string UserEmail { get; set; }
+        
+        [Required]
+        public string AdminEmail { get; set; }
+        
+        [Required]
+        public string AdminPassword { get; set; }
+    }
+
+    public class AdminDisableTwoFactorRequest
+    {
+        [Required]
+        public string UserEmail { get; set; }
+        
+        [Required]
+        public string AdminEmail { get; set; }
+        
+        [Required]
+        public string AdminPassword { get; set; }
+    }
+
+    public class UserTwoFactorStatus
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public bool IsAdmin { get; set; }
+    }
+
+    public class AdminTwoFactorManagementResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string SecretKey { get; set; }
+        public string QrCodeUrl { get; set; }
+    }
 }

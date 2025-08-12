@@ -213,5 +213,124 @@ namespace Masterloop.Cloud.WebAPI.Controllers
                 return StatusCode(500, new { error = "An error occurred during authentication" });
             }
         }
+
+        // Admin endpoints
+        /// <summary>
+        /// Admin endpoint to enable two-factor authentication for a specific user
+        /// </summary>
+        /// <param name="request">Admin request containing user email and admin credentials</param>
+        /// <returns>Admin management response</returns>
+        [HttpPost("admin/enable")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AdminTwoFactorManagementResponse>> AdminEnableTwoFactor([FromBody] AdminEnableTwoFactorRequest request)
+        {
+            try
+            {
+                var response = await _twoFactorAuthService.AdminEnableTwoFactorAsync(
+                    request.UserEmail, 
+                    request.AdminEmail, 
+                    request.AdminPassword);
+
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while enabling two-factor authentication" });
+            }
+        }
+
+        /// <summary>
+        /// Admin endpoint to disable two-factor authentication for a specific user
+        /// </summary>
+        /// <param name="request">Admin request containing user email and admin credentials</param>
+        /// <returns>Admin management response</returns>
+        [HttpPost("admin/disable")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AdminTwoFactorManagementResponse>> AdminDisableTwoFactor([FromBody] AdminDisableTwoFactorRequest request)
+        {
+            try
+            {
+                var response = await _twoFactorAuthService.AdminDisableTwoFactorAsync(
+                    request.UserEmail, 
+                    request.AdminEmail, 
+                    request.AdminPassword);
+
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while disabling two-factor authentication" });
+            }
+        }
+
+        /// <summary>
+        /// Admin endpoint to get all users' two-factor authentication status
+        /// </summary>
+        /// <param name="adminEmail">Admin email</param>
+        /// <param name="adminPassword">Admin password</param>
+        /// <returns>List of user 2FA statuses</returns>
+        [HttpGet("admin/users-status")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAllUsersTwoFactorStatus([FromQuery] string adminEmail, [FromQuery] string adminPassword)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
+                {
+                    return BadRequest(new { error = "Admin email and password are required" });
+                }
+
+                var userStatuses = await _twoFactorAuthService.GetAllUsersTwoFactorStatusAsync(adminEmail, adminPassword);
+                return Ok(userStatuses);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { error = "Access denied. Admin credentials required." });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while retrieving user statuses" });
+            }
+        }
+
+        /// <summary>
+        /// Admin endpoint to check if a user is an admin
+        /// </summary>
+        /// <param name="email">User email</param>
+        /// <param name="password">User password</param>
+        /// <returns>Admin status</returns>
+        [HttpGet("admin/check-admin")]
+        [AllowAnonymous]
+        public async Task<ActionResult> CheckAdminStatus([FromQuery] string email, [FromQuery] string password)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                {
+                    return BadRequest(new { error = "Email and password are required" });
+                }
+
+                var isAdmin = await _twoFactorAuthService.IsUserAdminAsync(email, password);
+                return Ok(new { email, isAdmin });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while checking admin status" });
+            }
+        }
     }
 }

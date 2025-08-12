@@ -1,4 +1,5 @@
 using Masterloop.Cloud.WebAPI.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Masterloop.Cloud.WebAPI.Services
@@ -12,5 +13,11 @@ namespace Masterloop.Cloud.WebAPI.Services
         Task<bool> IsTwoFactorEnabledAsync(string email);
         Task<string> GetTwoFactorSecretAsync(string email);
         Task<bool> SendTwoFactorCodeEmailAsync(string email);
+        
+        // Admin methods
+        Task<AdminTwoFactorManagementResponse> AdminEnableTwoFactorAsync(string userEmail, string adminEmail, string adminPassword);
+        Task<AdminTwoFactorManagementResponse> AdminDisableTwoFactorAsync(string userEmail, string adminEmail, string adminPassword);
+        Task<List<UserTwoFactorStatus>> GetAllUsersTwoFactorStatusAsync(string adminEmail, string adminPassword);
+        Task<bool> IsUserAdminAsync(string email, string password);
     }
 }
