@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, Observer, ConnectableObservable } from 'rxjs';
-import { publish } from 'rxjs/operators';
+import { Observable, Observer, ConnectableObservable, from } from 'rxjs';
+import { publish, switchMap } from 'rxjs/operators';
 import { BaseService } from './base.service';
 import { AppSettings } from './app.settings';
 import {
@@ -71,19 +71,70 @@ export class AuthenticationService extends BaseService {
     );
   }
 
+  private async generateCodeVerifier(): Promise<string> {
+    const array = new Uint8Array(64);
+    crypto.getRandomValues(array);
+    return this.base64UrlEncode(array);
+  }
+
+  private async generateCodeChallenge(verifier: string): Promise<string> {
+    const data = new TextEncoder().encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return this.base64UrlEncode(new Uint8Array(digest));
+  }
+
+  private base64UrlEncode(buffer: Uint8Array): string {
+    let str = '';
+    buffer.forEach(b => (str += String.fromCharCode(b)));
+    return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
   protected _authenticate(
     observer: Observer<boolean>,
     credentials: AuthenticationCredentials
   ): void {
-    const headers = new HttpHeaders();
-    headers.set('Content-Type', 'application/x-www-form-urlencoded');
-    headers.append('Content-Type', 'charset=utf-8');
+    from(this.generateCodeVerifier())
+      .pipe(
+        switchMap((verifier: string) => {
+          const codeVerifier = verifier;
+          return from(this.generateCodeChallenge(codeVerifier)).pipe(
+            switchMap((challenge: string) => {
+              // Step 1: Authorize to get authorization code
+              const authorizeBody = {
+                response_type: 'code',
+                client_id: 'portal',
+                redirect_uri: window.location.origin + '/auth/callback',
+                scope: 'openid profile',
+                state: this.base64UrlEncode(new Uint8Array([Date.now() & 0xff])),
+                code_challenge: challenge,
+                code_challenge_method: 'S256',
+                username: credentials.username,
+                password: credentials.password
+              };
 
-    this.http
-      .post(
-        this.appSettings.api_url + 'token',
-        credentials.parseAsURLSearchParams()
-        // { headers: headers }
+              return this.http.post<any>(
+                this.appSettings.api_url + 'oauth/authorize',
+                authorizeBody
+              ).pipe(
+                switchMap((authzResponse: any) => {
+                  const code = authzResponse.code;
+                  const tokenBody = {
+                    grant_type: 'authorization_code',
+                    code: code,
+                    redirect_uri: authorizeBody.redirect_uri,
+                    client_id: authorizeBody.client_id,
+                    code_verifier: codeVerifier
+                  };
+                  // Step 2: Exchange code for token
+                  return this.http.post<any>(
+                    this.appSettings.api_url + 'oauth/token',
+                    tokenBody
+                  );
+                })
+              );
+            })
+          );
+        })
       )
       .subscribe(
         response => {
@@ -128,11 +179,6 @@ export class AuthenticationService extends BaseService {
       localStorage.removeItem(LocalStorageKeys.CURRENT_POSITION);
       
     });
-    //this.cache.clearDeviceListCache();
-    // localStorage.removeItem(LocalStorageKeys.LAST_SYNC_DEVICE_LIST);
-    // localStorage.removeItem(LocalStorageKeys.CACHED_TEMPLATES);
-    // sessionStorage.removeItem(LocalStorageKeys.DEVICE_DETAILS);
-    // localStorage.removeItem(LocalStorageKeys.CURRENT_POSITION);
   }
   
   public forgotPassword(email: string, resetURL: string): Observable<any> {
