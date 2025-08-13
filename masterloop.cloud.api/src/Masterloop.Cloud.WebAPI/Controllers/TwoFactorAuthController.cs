@@ -215,6 +215,47 @@ namespace Masterloop.Cloud.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Check if 2FA is required for a user and send initial code
+        /// </summary>
+        /// <param name="email">User email</param>
+        /// <returns>Whether 2FA is required</returns>
+        [HttpPost("check-required")]
+        [AllowAnonymous]
+        public async Task<ActionResult> CheckTwoFactorRequired([FromBody] TwoFactorAuthSetupRequest request)
+        {
+            try
+            {
+                var isEnabled = await _twoFactorAuthService.IsTwoFactorEnabledAsync(request.Email);
+                
+                if (isEnabled)
+                {
+                    // Send initial TOTP code
+                    var codeSent = await _twoFactorAuthService.SendTwoFactorCodeEmailAsync(request.Email);
+                    
+                    if (codeSent)
+                    {
+                        return Ok(new { 
+                            isRequired = true, 
+                            message = "Two-factor authentication code sent to your email" 
+                        });
+                    }
+                    else
+                    {
+                        return BadRequest(new { error = "Failed to send two-factor authentication code" });
+                    }
+                }
+                else
+                {
+                    return Ok(new { isRequired = false });
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while checking two-factor authentication requirement" });
+            }
+        }
+
+        /// <summary>
         /// Get two-factor authentication status for all users (for user list display)
         /// </summary>
         /// <returns>List of user 2FA statuses</returns>
