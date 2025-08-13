@@ -21,6 +21,63 @@
       <div class="user-edit-checkbox pb-1" fxFlex="100" fxFlex.gt-xs="50">
         <mat-checkbox class="example-margin" [formControl]="form.controls['isAdmin']" [(ngModel)]="data.isAdmin" [checked]="data.isAdmin">Make Admin User</mat-checkbox>
       </div>
+
+      <!-- Two-Factor Authentication Section -->
+      <div class="two-factor-section pb-1" fxFlex="100" fxFlex.gt-xs="50">
+        <div class="two-factor-header" fxLayout="row" fxLayoutAlign="space-between center">
+          <h4 style="margin: 0; color: #2c3e50;">Two-Factor Authentication</h4>
+          <button 
+            mat-button 
+            color="primary" 
+            (click)="toggleTwoFactor()"
+            type="button">
+            {{ showTwoFactorToggle ? 'Cancel' : 'Toggle 2FA' }}
+          </button>
+        </div>
+        
+        <div class="two-factor-status" style="margin: 10px 0;">
+          <span class="status-label" [ngClass]="isTwoFactorEnabled ? 'active': 'inactive'">
+            {{ isTwoFactorEnabled ? 'Enabled' : 'Disabled' }}
+          </span>
+        </div>
+
+        <div *ngIf="showTwoFactorToggle" class="two-factor-toggle" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef;">
+          <p style="margin: 0 0 15px 0; color: #6c757d; font-size: 14px;">
+            Enter admin credentials to {{ isTwoFactorEnabled ? 'disable' : 'enable' }} two-factor authentication for this user.
+          </p>
+          
+          <mat-form-field class="pb-1" fxFlex="100">
+            <mat-label>Admin Email</mat-label>
+            <input matInput [(ngModel)]="adminEmail" placeholder="Enter admin email">
+          </mat-form-field>
+
+          <mat-form-field class="pb-1" fxFlex="100">
+            <mat-label>Admin Password</mat-label>
+            <input matInput type="password" [(ngModel)]="adminPassword" placeholder="Enter admin password">
+          </mat-form-field>
+
+          <div class="two-factor-actions" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+            <button 
+              *ngIf="!isTwoFactorEnabled"
+              mat-raised-button 
+              color="primary" 
+              (click)="enableTwoFactor()"
+              type="button"
+              [disabled]="!adminEmail || !adminPassword">
+              Enable 2FA
+            </button>
+            <button 
+              *ngIf="isTwoFactorEnabled"
+              mat-raised-button 
+              color="warn" 
+              (click)="disableTwoFactor()"
+              type="button"
+              [disabled]="!adminEmail || !adminPassword">
+              Disable 2FA
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="user-edit-btn-wrapper" fxLayout="row" fxLayoutAlign="space-between start">

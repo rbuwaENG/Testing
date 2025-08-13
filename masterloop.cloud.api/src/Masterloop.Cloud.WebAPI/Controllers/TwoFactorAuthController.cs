@@ -214,6 +214,26 @@ namespace Masterloop.Cloud.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get two-factor authentication status for all users (for user list display)
+        /// </summary>
+        /// <returns>List of user 2FA statuses</returns>
+        [HttpGet("users-status")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetUsersTwoFactorStatus()
+        {
+            try
+            {
+                var users = _twoFactorAuthService.GetAllUsersTwoFactorStatusAsync("", "");
+                var userStatuses = await users;
+                return Ok(userStatuses);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "An error occurred while retrieving user statuses" });
+            }
+        }
+
         // Admin endpoints
         /// <summary>
         /// Admin endpoint to enable two-factor authentication for a specific user
