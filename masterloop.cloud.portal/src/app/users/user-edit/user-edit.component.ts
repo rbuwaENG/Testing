@@ -5,6 +5,7 @@ import { LoggerService } from 'src/app/services';
 import { UserService } from 'src/app/services/user.service';
 import { userPermissionService } from 'src/app/services/user-permission.service';
 import { UserData } from '../user-list/user-list.component';
+import { LocalStorageKeys } from 'src/app/core/constants';
 
 @Component({
   selector: 'app-user-edit',
@@ -36,8 +37,17 @@ export class UserEditComponent implements OnInit {
   }
 
   private checkCurrentUserAdminStatus() {
-    this.currentUserEmail = localStorage.getItem('currentUserEmail') || '';
-    this.currentUserIsAdmin = this.userPermissionService.isAdminUser();
+    // Get current user email from LOGIN_USER key
+    this.currentUserEmail = localStorage.getItem(LocalStorageKeys.LOGIN_USER) || '';
+    
+    // Get user permission from localStorage to check if current user is admin
+    const userPermission = this.userPermissionService.getUserPermissionFromLocalStorage();
+    if (userPermission) {
+      this.currentUserIsAdmin = userPermission.IsSystemAdmin || false;
+    } else {
+      this.currentUserIsAdmin = false;
+    }
+    
     this.isEditingOwnProfile = this.currentUserEmail === this.data.eMail;
   }
 
