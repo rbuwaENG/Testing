@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -44,7 +44,8 @@ namespace Masterloop.Cloud.BusinessLayer.Managers
                         EMail = secureUser.EMail,
                         FirstName = secureUser.FirstName,
                         LastName = secureUser.LastName,
-                        IsAdmin = secureUser.IsAdmin
+                        IsAdmin = secureUser.IsAdmin,
+                        IsTwoFactorEnabled = secureUser.IsTwoFactorEnabled
                     };
                     users.Add(user);
                 }
@@ -93,6 +94,7 @@ namespace Masterloop.Cloud.BusinessLayer.Managers
                 existingUser.FirstName = user.FirstName;
                 existingUser.LastName = user.LastName;
                 existingUser.IsAdmin = user.IsAdmin;
+                existingUser.IsTwoFactorEnabled = user.IsTwoFactorEnabled;
                 return _userRepository.Update(existingUser);
             }
             else

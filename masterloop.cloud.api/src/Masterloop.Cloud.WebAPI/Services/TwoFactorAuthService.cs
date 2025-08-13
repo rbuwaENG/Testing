@@ -295,6 +295,8 @@ namespace Masterloop.Cloud.WebAPI.Services
                 foreach (var user in users)
                 {
                     var isTwoFactorEnabled = await IsTwoFactorEnabledAsync(user.EMail);
+                    // keep runtime mirror to help UIs (if they use User)
+                    user.IsTwoFactorEnabled = isTwoFactorEnabled;
                     userStatuses.Add(new UserTwoFactorStatus
                     {
                         Email = user.EMail,
