@@ -294,11 +294,8 @@ namespace Masterloop.Cloud.WebAPI.Controllers
                     return Unauthorized(new { error = "User not authenticated" });
                 }
 
-                // Prevent users from managing their own 2FA
-                if (currentUserEmail.Equals(request.UserEmail, StringComparison.OrdinalIgnoreCase))
-                {
-                    return BadRequest(new { error = "Users cannot manage their own two-factor authentication" });
-                }
+                // Allow admins to manage their own 2FA
+                // (removed the restriction that prevented self-management)
 
                 // Verify current user is admin
                 if (!await _twoFactorAuthService.IsUserAdminAsync(currentUserEmail, ""))
@@ -344,11 +341,8 @@ namespace Masterloop.Cloud.WebAPI.Controllers
                     return Unauthorized(new { error = "User not authenticated" });
                 }
 
-                // Prevent users from managing their own 2FA
-                if (currentUserEmail.Equals(request.UserEmail, StringComparison.OrdinalIgnoreCase))
-                {
-                    return BadRequest(new { error = "Users cannot manage their own two-factor authentication" });
-                }
+                // Allow admins to manage their own 2FA
+                // (removed the restriction that prevented self-management)
 
                 // Verify current user is admin
                 if (!await _twoFactorAuthService.IsUserAdminAsync(currentUserEmail, ""))

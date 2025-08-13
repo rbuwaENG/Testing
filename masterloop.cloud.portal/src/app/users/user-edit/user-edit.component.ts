@@ -17,6 +17,7 @@ export class UserEditComponent implements OnInit {
   public isTwoFactorEnabled: boolean = false;
   public currentUserIsAdmin: boolean = false;
   public currentUserEmail: string = '';
+  public isEditingOwnProfile: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<UserEditComponent>,
@@ -37,6 +38,7 @@ export class UserEditComponent implements OnInit {
   private checkCurrentUserAdminStatus() {
     this.currentUserEmail = localStorage.getItem('currentUserEmail') || '';
     this.currentUserIsAdmin = this.userPermissionService.isAdminUser();
+    this.isEditingOwnProfile = this.currentUserEmail === this.data.eMail;
   }
 
   private loadTwoFactorStatus() {
@@ -64,13 +66,8 @@ export class UserEditComponent implements OnInit {
       return;
     }
 
-    // Prevent users from managing their own 2FA
-    if (this.currentUserEmail === this.data.eMail) {
-      this.loggerService.showErrorMessage('Users cannot manage their own two-factor authentication.');
-      // Reset the checkbox to its previous state
-      this.isTwoFactorEnabled = !checked;
-      return;
-    }
+    // Allow admins to manage their own 2FA
+    // (removed the restriction that prevented self-management)
 
     try {
       if (checked) {
