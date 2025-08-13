@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Masterloop.Cloud.Storage.Providers;
 
 namespace Masterloop.Cloud.WebAPI.Services
 {
@@ -14,19 +15,24 @@ namespace Masterloop.Cloud.WebAPI.Services
         private readonly ITotpService _totpService;
         private readonly IEmailService _emailService;
         private readonly ISecurityManager _securityManager;
+        private readonly ICacheProvider _cacheProvider;
         
         // In-memory storage for 2FA secrets - in production, use database
         private static readonly ConcurrentDictionary<string, string> _twoFactorSecrets = new ConcurrentDictionary<string, string>();
         private static readonly ConcurrentDictionary<string, bool> _twoFactorEnabled = new ConcurrentDictionary<string, bool>();
 
+        private const string TwoFactorRedisKeyPrefix = "User2FA:"; // User2FA:{email}
+
         public TwoFactorAuthService(
             ITotpService totpService,
             IEmailService emailService,
-            ISecurityManager securityManager)
+            ISecurityManager securityManager,
+            ICacheProvider cacheProvider)
         {
             _totpService = totpService;
             _emailService = emailService;
             _securityManager = securityManager;
+            _cacheProvider = cacheProvider;
         }
 
         public async Task<TwoFactorAuthSetupResponse> SetupTwoFactorAsync(string email)
@@ -82,6 +88,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
             // Mark 2FA as enabled
             _twoFactorEnabled[email] = true;
+            PersistTwoFactorStatusToRedis(email, true);
             
             // In production, store this in the database
             // await _userRepository.UpdateTwoFactorEnabled(email, true);
@@ -99,6 +106,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
             // Mark 2FA as disabled
             _twoFactorEnabled[email] = false;
+            PersistTwoFactorStatusToRedis(email, false);
             
             // Remove the secret
             _twoFactorSecrets.TryRemove(email, out _);
@@ -186,6 +194,10 @@ namespace Masterloop.Cloud.WebAPI.Services
                 // Store the secret
                 _twoFactorSecrets[userEmail] = secretKey;
 
+                // Mark enabled immediately (admin action toggles on)
+                _twoFactorEnabled[userEmail] = true;
+                PersistTwoFactorStatusToRedis(userEmail, true);
+
                 // Send setup email to user using existing EmailService
                 await SendTwoFactorSetupEmailAsync(userEmail, secretKey);
 
@@ -244,6 +256,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
                 // Disable 2FA
                 _twoFactorEnabled[userEmail] = false;
+                PersistTwoFactorStatusToRedis(userEmail, false);
                 _twoFactorSecrets.TryRemove(userEmail, out _);
 
                 return new AdminTwoFactorManagementResponse
@@ -339,6 +352,23 @@ namespace Masterloop.Cloud.WebAPI.Services
             var bodyHtml = GenerateTwoFactorCodeHtml(totpCode);
             
             await _emailService.SendEmailAsync(email, subject, bodyHtml);
+        }
+
+        private void PersistTwoFactorStatusToRedis(string email, bool enabled)
+        {
+            try
+            {
+                var db = _cacheProvider.GetDatabase(RedisTables.User);
+                if (db != null)
+                {
+                    var key = $"{TwoFactorRedisKeyPrefix}{email}";
+                    db.StringSet(key, enabled ? "1" : "0");
+                }
+            }
+            catch
+            {
+                // swallow cache errors; do not break main flow
+            }
         }
 
         private string GenerateTwoFactorSetupHtml(string secretKey)
