@@ -50,18 +50,14 @@ namespace Masterloop.Cloud.WebAPI.Services
             // Store the secret temporarily (in production, store in database)
             _twoFactorSecrets[email] = secretKey;
 
-            // Generate QR code URL
-            var qrCodeUrl = _totpService.GenerateQrCodeUrl(email, secretKey);
-            var manualEntryKey = _totpService.GenerateManualEntryKey(secretKey);
-
-            // Send setup email using existing EmailService
-            await SendTwoFactorSetupEmailAsync(email, secretKey, qrCodeUrl);
+            // Send setup email with instructions
+            await SendTwoFactorSetupEmailAsync(email, secretKey);
 
             return new TwoFactorAuthSetupResponse
             {
                 SecretKey = secretKey,
-                QrCodeUrl = qrCodeUrl,
-                ManualEntryKey = manualEntryKey
+                QrCodeUrl = "", // Not needed for email-based 2FA
+                ManualEntryKey = secretKey
             };
         }
 
@@ -190,18 +186,15 @@ namespace Masterloop.Cloud.WebAPI.Services
                 // Store the secret
                 _twoFactorSecrets[userEmail] = secretKey;
 
-                // Generate QR code URL
-                var qrCodeUrl = _totpService.GenerateQrCodeUrl(userEmail, secretKey);
-
                 // Send setup email to user using existing EmailService
-                await SendTwoFactorSetupEmailAsync(userEmail, secretKey, qrCodeUrl);
+                await SendTwoFactorSetupEmailAsync(userEmail, secretKey);
 
                 return new AdminTwoFactorManagementResponse
                 {
                     Success = true,
                     Message = $"Two-factor authentication enabled for {userEmail}. Setup email sent.",
                     SecretKey = secretKey,
-                    QrCodeUrl = qrCodeUrl
+                    QrCodeUrl = ""
                 };
             }
             catch (Exception ex)
@@ -211,7 +204,7 @@ namespace Masterloop.Cloud.WebAPI.Services
                     Success = false,
                     Message = $"Error: {ex.Message}"
                 };
-            }
+                }
         }
 
         public async Task<AdminTwoFactorManagementResponse> AdminDisableTwoFactorAsync(string userEmail, string adminEmail, string adminPassword)
@@ -321,10 +314,10 @@ namespace Masterloop.Cloud.WebAPI.Services
         }
 
         // Helper methods for email sending using existing EmailService
-        private async Task SendTwoFactorSetupEmailAsync(string email, string secretKey, string qrCodeUrl)
+        private async Task SendTwoFactorSetupEmailAsync(string email, string secretKey)
         {
             var subject = "Two-Factor Authentication Setup - Masterloop Cloud";
-            var bodyHtml = GenerateTwoFactorSetupHtml(secretKey, qrCodeUrl);
+            var bodyHtml = GenerateTwoFactorSetupHtml(secretKey);
             
             await _emailService.SendEmailAsync(email, subject, bodyHtml);
         }
@@ -337,7 +330,7 @@ namespace Masterloop.Cloud.WebAPI.Services
             await _emailService.SendEmailAsync(email, subject, bodyHtml);
         }
 
-        private string GenerateTwoFactorSetupHtml(string secretKey, string qrCodeUrl)
+        private string GenerateTwoFactorSetupHtml(string secretKey)
         {
             return $@"
                 <html>
@@ -345,36 +338,28 @@ namespace Masterloop.Cloud.WebAPI.Services
                     <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
                         <h2 style='color: #2c3e50;'>Two-Factor Authentication Setup</h2>
                         <p>Hello,</p>
-                        <p>You have requested to set up two-factor authentication for your Masterloop Cloud account.</p>
+                        <p>Two-factor authentication has been enabled for your Masterloop Cloud account.</p>
                         
                         <div style='background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'>
-                            <h3 style='color: #2c3e50; margin-top: 0;'>Setup Instructions:</h3>
+                            <h3 style='color: #2c3e50; margin-top: 0;'>How it works:</h3>
                             <ol>
-                                <li>Install an authenticator app (like Google Authenticator, Authy, or Microsoft Authenticator)</li>
-                                <li>Scan the QR code below or manually enter the secret key</li>
-                                <li>Enter the 6-digit code from your authenticator app to complete setup</li>
+                                <li>When you log in, you'll receive a 6-digit code via email</li>
+                                <li>Enter this code along with your username and password</li>
+                                <li>The code expires in 30 seconds for security</li>
                             </ol>
                         </div>
 
                         <div style='text-align: center; margin: 30px 0;'>
-                            <h4>Secret Key:</h4>
+                            <h4>Your Secret Key:</h4>
                             <div style='background-color: #e9ecef; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 18px; letter-spacing: 2px;'>
                                 {secretKey}
                             </div>
-                        </div>
-
-                        <div style='text-align: center; margin: 30px 0;'>
-                            <h4>QR Code:</h4>
-                            <p style='color: #6c757d; font-size: 14px;'>Scan this QR code with your authenticator app:</p>
-                            <div style='background-color: #e9ecef; padding: 20px; border-radius: 8px; display: inline-block;'>
-                                <img src='data:image/svg+xml;base64,{Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(GenerateQrCodeSvg(qrCodeUrl)))}' 
-                                     alt='QR Code' style='max-width: 200px; height: auto;' />
-                            </div>
+                            <p style='color: #6c757d; font-size: 14px; margin-top: 10px;'>Keep this key secure - you may need it for account recovery</p>
                         </div>
 
                         <div style='background-color: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; margin: 20px 0;'>
-                            <strong>Important:</strong> Keep your secret key secure and don't share it with anyone. 
-                            If you lose access to your authenticator app, you may need to contact support to regain access to your account.
+                            <strong>Important:</strong> Your account is now more secure! 
+                            You'll receive a new code via email each time you log in.
                         </div>
 
                         <p>Best regards,<br>Masterloop Cloud Team</p>
@@ -411,17 +396,6 @@ namespace Masterloop.Cloud.WebAPI.Services
                     </div>
                 </body>
                 </html>";
-        }
-
-        private string GenerateQrCodeSvg(string qrCodeUrl)
-        {
-            // Simple SVG QR code representation - in a real implementation, you'd use a proper QR code library
-            return $@"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'>
-                <rect width='200' height='200' fill='white'/>
-                <text x='100' y='100' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='12' fill='black'>
-                    QR Code for: {qrCodeUrl}
-                </text>
-            </svg>";
         }
     }
 }

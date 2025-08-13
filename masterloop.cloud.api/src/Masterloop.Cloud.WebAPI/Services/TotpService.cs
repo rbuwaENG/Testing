@@ -1,6 +1,5 @@
 using OtpNet;
 using System;
-using System.Web;
 
 namespace Masterloop.Cloud.WebAPI.Services
 {
@@ -47,20 +46,6 @@ namespace Masterloop.Cloud.WebAPI.Services
             {
                 return false;
             }
-        }
-
-        public string GenerateQrCodeUrl(string email, string secretKey, string issuer = "Masterloop Cloud")
-        {
-            var manualEntryKey = GenerateManualEntryKey(secretKey, issuer);
-            var encodedIssuer = HttpUtility.UrlEncode(issuer);
-            var encodedEmail = HttpUtility.UrlEncode(email);
-            
-            return $"otpauth://totp/{encodedIssuer}:{encodedEmail}?secret={secretKey}&issuer={encodedIssuer}&algorithm=SHA1&digits={TotpDigits}&period={TotpPeriod}";
-        }
-
-        public string GenerateManualEntryKey(string secretKey, string issuer = "Masterloop Cloud")
-        {
-            return $"{issuer}:{secretKey}";
         }
     }
 }
