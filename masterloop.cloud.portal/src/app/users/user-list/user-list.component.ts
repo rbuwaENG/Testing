@@ -11,6 +11,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   isAdmin: boolean;
+  isTwoFactorEnabled?: boolean;
 }
 
 @Component({
@@ -71,6 +72,32 @@ export class UserListComponent implements OnInit {
       if(users != null) {
         this.usersList = users;
         this.usersList.sort((a,b) => a.EMail.localeCompare(b.EMail));
+        // Get 2FA status for all users
+        this.getTwoFactorStatusForUsers();
+      }
+    });
+  }
+
+  getTwoFactorStatusForUsers() {
+    this.userService.getUsersTwoFactorStatus().subscribe(twoFactorStatuses => {
+      if (twoFactorStatuses && this.usersList) {
+        // Merge 2FA status with user list
+        this.usersList.forEach(user => {
+          const twoFactorStatus = twoFactorStatuses.find(status => status.email === user.EMail);
+          if (twoFactorStatus) {
+            user.isTwoFactorEnabled = twoFactorStatus.isTwoFactorEnabled;
+          } else {
+            user.isTwoFactorEnabled = false;
+          }
+        });
+      }
+    }, error => {
+      console.error('Failed to get 2FA status:', error);
+      // Set default 2FA status if API call fails
+      if (this.usersList) {
+        this.usersList.forEach(user => {
+          user.isTwoFactorEnabled = false;
+        });
       }
     });
   }
@@ -82,7 +109,8 @@ export class UserListComponent implements OnInit {
         eMail : row.EMail,
         firstName : row.FirstName,
         lastName : row.LastName,
-        isAdmin: row.IsAdmin
+        isAdmin: row.IsAdmin,
+        isTwoFactorEnabled: row.isTwoFactorEnabled
       }
     });
 

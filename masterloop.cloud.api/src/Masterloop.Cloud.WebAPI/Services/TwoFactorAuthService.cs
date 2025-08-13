@@ -12,7 +12,7 @@ namespace Masterloop.Cloud.WebAPI.Services
     public class TwoFactorAuthService : ITwoFactorAuthService
     {
         private readonly ITotpService _totpService;
-        private readonly ISmtpEmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly ISecurityManager _securityManager;
         
         // In-memory storage for 2FA secrets - in production, use database
@@ -21,7 +21,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
         public TwoFactorAuthService(
             ITotpService totpService,
-            ISmtpEmailService emailService,
+            IEmailService emailService,
             ISecurityManager securityManager)
         {
             _totpService = totpService;
@@ -50,18 +50,14 @@ namespace Masterloop.Cloud.WebAPI.Services
             // Store the secret temporarily (in production, store in database)
             _twoFactorSecrets[email] = secretKey;
 
-            // Generate QR code URL
-            var qrCodeUrl = _totpService.GenerateQrCodeUrl(email, secretKey);
-            var manualEntryKey = _totpService.GenerateManualEntryKey(secretKey);
-
-            // Send setup email
-            await _emailService.SendTwoFactorSetupEmailAsync(email, secretKey, qrCodeUrl);
+            // Send setup email with instructions
+            await SendTwoFactorSetupEmailAsync(email, secretKey);
 
             return new TwoFactorAuthSetupResponse
             {
                 SecretKey = secretKey,
-                QrCodeUrl = qrCodeUrl,
-                ManualEntryKey = manualEntryKey
+                QrCodeUrl = "", // Not needed for email-based 2FA
+                ManualEntryKey = secretKey
             };
         }
 
@@ -137,8 +133,8 @@ namespace Masterloop.Cloud.WebAPI.Services
                 // Generate current TOTP code
                 var totpCode = _totpService.GenerateTotpCode(secretKey);
                 
-                // Send email with the code
-                await _emailService.SendTwoFactorCodeEmailAsync(email, totpCode);
+                // Send email with the code using existing EmailService
+                await SendTwoFactorCodeEmailAsync(email, totpCode);
                 
                 return true;
             }
@@ -190,18 +186,15 @@ namespace Masterloop.Cloud.WebAPI.Services
                 // Store the secret
                 _twoFactorSecrets[userEmail] = secretKey;
 
-                // Generate QR code URL
-                var qrCodeUrl = _totpService.GenerateQrCodeUrl(userEmail, secretKey);
-
-                // Send setup email to user
-                await _emailService.SendTwoFactorSetupEmailAsync(userEmail, secretKey, qrCodeUrl);
+                // Send setup email to user using existing EmailService
+                await SendTwoFactorSetupEmailAsync(userEmail, secretKey);
 
                 return new AdminTwoFactorManagementResponse
                 {
                     Success = true,
                     Message = $"Two-factor authentication enabled for {userEmail}. Setup email sent.",
                     SecretKey = secretKey,
-                    QrCodeUrl = qrCodeUrl
+                    QrCodeUrl = ""
                 };
             }
             catch (Exception ex)
@@ -211,7 +204,7 @@ namespace Masterloop.Cloud.WebAPI.Services
                     Success = false,
                     Message = $"Error: {ex.Message}"
                 };
-            }
+                }
         }
 
         public async Task<AdminTwoFactorManagementResponse> AdminDisableTwoFactorAsync(string userEmail, string adminEmail, string adminPassword)
@@ -311,13 +304,109 @@ namespace Masterloop.Cloud.WebAPI.Services
         {
             try
             {
-                var account = _securityManager.Authenticate(email, password);
-                return account?.IsAdmin == true;
+                // If password is provided, authenticate normally
+                if (!string.IsNullOrEmpty(password))
+                {
+                    var account = _securityManager.Authenticate(email, password);
+                    return account?.IsAdmin == true;
+                }
+                else
+                {
+                    // If no password provided, check admin status from user list
+                    var users = _securityManager.GetUsers();
+                    var user = users?.FirstOrDefault(u => u.EMail.Equals(email, StringComparison.OrdinalIgnoreCase));
+                    return user?.IsAdmin == true;
+                }
             }
             catch
             {
                 return false;
             }
+        }
+
+        // Helper methods for email sending using existing EmailService
+        private async Task SendTwoFactorSetupEmailAsync(string email, string secretKey)
+        {
+            var subject = "Two-Factor Authentication Setup - Masterloop Cloud";
+            var bodyHtml = GenerateTwoFactorSetupHtml(secretKey);
+            
+            await _emailService.SendEmailAsync(email, subject, bodyHtml);
+        }
+
+        private async Task SendTwoFactorCodeEmailAsync(string email, string totpCode)
+        {
+            var subject = "Your Two-Factor Authentication Code - Masterloop Cloud";
+            var bodyHtml = GenerateTwoFactorCodeHtml(totpCode);
+            
+            await _emailService.SendEmailAsync(email, subject, bodyHtml);
+        }
+
+        private string GenerateTwoFactorSetupHtml(string secretKey)
+        {
+            return $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+                    <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                        <h2 style='color: #2c3e50;'>Two-Factor Authentication Setup</h2>
+                        <p>Hello,</p>
+                        <p>Two-factor authentication has been enabled for your Masterloop Cloud account.</p>
+                        
+                        <div style='background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+                            <h3 style='color: #2c3e50; margin-top: 0;'>How it works:</h3>
+                            <ol>
+                                <li>When you log in, you'll receive a 6-digit code via email</li>
+                                <li>Enter this code along with your username and password</li>
+                                <li>The code expires in 30 seconds for security</li>
+                            </ol>
+                        </div>
+
+                        <div style='text-align: center; margin: 30px 0;'>
+                            <h4>Your Secret Key:</h4>
+                            <div style='background-color: #e9ecef; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 18px; letter-spacing: 2px;'>
+                                {secretKey}
+                            </div>
+                            <p style='color: #6c757d; font-size: 14px; margin-top: 10px;'>Keep this key secure - you may need it for account recovery</p>
+                        </div>
+
+                        <div style='background-color: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; margin: 20px 0;'>
+                            <strong>Important:</strong> Your account is now more secure! 
+                            You'll receive a new code via email each time you log in.
+                        </div>
+
+                        <p>Best regards,<br>Masterloop Cloud Team</p>
+                    </div>
+                </body>
+                </html>";
+        }
+
+        private string GenerateTwoFactorCodeHtml(string totpCode)
+        {
+            return $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+                    <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                        <h2 style='color: #2c3e50;'>Your Two-Factor Authentication Code</h2>
+                        <p>Hello,</p>
+                        <p>You have requested a two-factor authentication code for your Masterloop Cloud account.</p>
+                        
+                        <div style='text-align: center; margin: 30px 0;'>
+                            <h3 style='color: #2c3e50;'>Your Code:</h3>
+                            <div style='background-color: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #c3e6cb;'>
+                                <span style='font-family: monospace; font-size: 32px; font-weight: bold; color: #155724; letter-spacing: 4px;'>
+                                    {totpCode}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div style='background-color: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; margin: 20px 0;'>
+                            <strong>Security Note:</strong> This code will expire in 30 seconds. 
+                            If you didn't request this code, please ignore this email and consider changing your password.
+                        </div>
+
+                        <p>Best regards,<br>Masterloop Cloud Team</p>
+                    </div>
+                </body>
+                </html>";
         }
     }
 }

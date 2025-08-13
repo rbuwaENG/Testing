@@ -21,6 +21,25 @@
       <div class="user-edit-checkbox pb-1" fxFlex="100" fxFlex.gt-xs="50">
         <mat-checkbox class="example-margin" [formControl]="form.controls['isAdmin']" [(ngModel)]="data.isAdmin" [checked]="data.isAdmin">Make Admin User</mat-checkbox>
       </div>
+
+      <div class="user-edit-checkbox pb-1" fxFlex="100" fxFlex.gt-xs="50">
+        <mat-checkbox 
+          class="example-margin" 
+          [checked]="isTwoFactorEnabled" 
+          (change)="toggleTwoFactor($event.checked)"
+          [disabled]="!currentUserIsAdmin">
+          Two-Factor Authentication
+        </mat-checkbox>
+        <p style="color: #6c757d; font-size: 12px; margin: 5px 0 0 0;">
+          {{ isTwoFactorEnabled ? 'User will receive 6-digit codes via email when logging in' : 'User can log in with just username and password' }}
+          <span *ngIf="currentUserIsAdmin && isEditingOwnProfile" style="color: #007bff;">
+            (You can manage your own 2FA as an admin)
+          </span>
+          <span *ngIf="currentUserIsAdmin && !isEditingOwnProfile" style="color: #007bff;">
+            (Admin users can manage 2FA for any user)
+          </span>
+        </p>
+      </div>
     </div>
 
     <div class="user-edit-btn-wrapper" fxLayout="row" fxLayoutAlign="space-between start">

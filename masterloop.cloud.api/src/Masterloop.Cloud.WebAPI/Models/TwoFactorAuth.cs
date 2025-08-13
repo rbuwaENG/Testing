@@ -24,8 +24,7 @@ namespace Masterloop.Cloud.WebAPI.Models
     public class TwoFactorAuthSetupResponse
     {
         public string SecretKey { get; set; }
-        public string QrCodeUrl { get; set; }
-        public string ManualEntryKey { get; set; }
+        public string Message { get; set; }
     }
 
     public class TwoFactorAuthVerifyRequest
@@ -66,24 +65,12 @@ namespace Masterloop.Cloud.WebAPI.Models
     {
         [Required]
         public string UserEmail { get; set; }
-        
-        [Required]
-        public string AdminEmail { get; set; }
-        
-        [Required]
-        public string AdminPassword { get; set; }
     }
 
     public class AdminDisableTwoFactorRequest
     {
         [Required]
         public string UserEmail { get; set; }
-        
-        [Required]
-        public string AdminEmail { get; set; }
-        
-        [Required]
-        public string AdminPassword { get; set; }
     }
 
     public class UserTwoFactorStatus
@@ -100,6 +87,5 @@ namespace Masterloop.Cloud.WebAPI.Models
         public bool Success { get; set; }
         public string Message { get; set; }
         public string SecretKey { get; set; }
-        public string QrCodeUrl { get; set; }
     }
 }

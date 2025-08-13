@@ -107,6 +107,19 @@
         </span>
     </ng-template>
     </ngx-datatable-column> 
+
+      <ngx-datatable-column
+        name="2FA Status"
+        prop="isTwoFactorEnabled"
+        [minWidth]="100"
+        [width]="100"
+      >
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <span class="status-label" [ngClass]="row.isTwoFactorEnabled ? 'active': 'inactive'" style="display: inline-block;margin-left: 5px;">
+            {{ row.isTwoFactorEnabled ? 'Enabled' : 'Disabled' }}
+        </span>
+    </ng-template>
+    </ngx-datatable-column> 
       
       <ngx-datatable-column
       name=""

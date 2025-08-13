@@ -130,7 +130,6 @@ namespace Masterloop.Cloud.WebAPI
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITotpService, TotpService>();
-            services.AddScoped<ISmtpEmailService, SmtpEmailService>();
             services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
             services.AddSingleton<IAuthorizationCodeStore, InMemoryAuthorizationCodeStore>();
             services.AddTransient<ForgotPasswordTemplates>();
