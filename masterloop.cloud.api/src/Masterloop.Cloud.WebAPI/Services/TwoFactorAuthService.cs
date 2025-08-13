@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Masterloop.Cloud.Storage.Providers;
 
 namespace Masterloop.Cloud.WebAPI.Services
 {
@@ -15,24 +14,19 @@ namespace Masterloop.Cloud.WebAPI.Services
         private readonly ITotpService _totpService;
         private readonly IEmailService _emailService;
         private readonly ISecurityManager _securityManager;
-        private readonly ICacheProvider _cacheProvider;
         
         // In-memory storage for 2FA secrets - in production, use database
         private static readonly ConcurrentDictionary<string, string> _twoFactorSecrets = new ConcurrentDictionary<string, string>();
         private static readonly ConcurrentDictionary<string, bool> _twoFactorEnabled = new ConcurrentDictionary<string, bool>();
 
-        private const string TwoFactorRedisKeyPrefix = "User2FA:"; // User2FA:{email}
-
         public TwoFactorAuthService(
             ITotpService totpService,
             IEmailService emailService,
-            ISecurityManager securityManager,
-            ICacheProvider cacheProvider)
+            ISecurityManager securityManager)
         {
             _totpService = totpService;
             _emailService = emailService;
             _securityManager = securityManager;
-            _cacheProvider = cacheProvider;
         }
 
         public async Task<TwoFactorAuthSetupResponse> SetupTwoFactorAsync(string email)
@@ -88,11 +82,8 @@ namespace Masterloop.Cloud.WebAPI.Services
 
             // Mark 2FA as enabled
             _twoFactorEnabled[email] = true;
-            PersistTwoFactorStatusToRedis(email, true);
+            UpdateTwoFactorStatusInUser(email, true);
             
-            // In production, store this in the database
-            // await _userRepository.UpdateTwoFactorEnabled(email, true);
-
             return true;
         }
 
@@ -106,15 +97,11 @@ namespace Masterloop.Cloud.WebAPI.Services
 
             // Mark 2FA as disabled
             _twoFactorEnabled[email] = false;
-            PersistTwoFactorStatusToRedis(email, false);
+            UpdateTwoFactorStatusInUser(email, false);
             
             // Remove the secret
             _twoFactorSecrets.TryRemove(email, out _);
             
-            // In production, update database
-            // await _userRepository.UpdateTwoFactorEnabled(email, false);
-            // await _userRepository.RemoveTwoFactorSecret(email);
-
             return true;
         }
 
@@ -196,7 +183,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
                 // Mark enabled immediately (admin action toggles on)
                 _twoFactorEnabled[userEmail] = true;
-                PersistTwoFactorStatusToRedis(userEmail, true);
+                UpdateTwoFactorStatusInUser(userEmail, true);
 
                 // Send setup email to user using existing EmailService
                 await SendTwoFactorSetupEmailAsync(userEmail, secretKey);
@@ -256,7 +243,7 @@ namespace Masterloop.Cloud.WebAPI.Services
 
                 // Disable 2FA
                 _twoFactorEnabled[userEmail] = false;
-                PersistTwoFactorStatusToRedis(userEmail, false);
+                UpdateTwoFactorStatusInUser(userEmail, false);
                 _twoFactorSecrets.TryRemove(userEmail, out _);
 
                 return new AdminTwoFactorManagementResponse
@@ -356,20 +343,21 @@ namespace Masterloop.Cloud.WebAPI.Services
             await _emailService.SendEmailAsync(email, subject, bodyHtml);
         }
 
-        private void PersistTwoFactorStatusToRedis(string email, bool enabled)
+        private void UpdateTwoFactorStatusInUser(string email, bool enabled)
         {
             try
             {
-                var db = _cacheProvider.GetDatabase(RedisTables.User);
-                if (db != null)
+                var users = _securityManager.GetUsers();
+                var existing = users?.FirstOrDefault(u => u.EMail.Equals(email, StringComparison.OrdinalIgnoreCase));
+                if (existing != null)
                 {
-                    var key = $"{TwoFactorRedisKeyPrefix}{email}";
-                    db.StringSet(key, enabled ? "1" : "0");
+                    existing.IsTwoFactorEnabled = enabled;
+                    _securityManager.UpdateUser(existing);
                 }
             }
             catch
             {
-                // swallow cache errors; do not break main flow
+                // swallow persistence errors; do not break main flow
             }
         }
 
