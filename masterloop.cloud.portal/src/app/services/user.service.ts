@@ -57,19 +57,15 @@ import { LocalStorageService } from './local-storage.service';
         return this.http.get(this.appSettings.api_url + 'api/TwoFactorAuth/users-status');
       }
 
-      adminEnableTwoFactor(userEmail: string, adminEmail: string, adminPassword: string) {
+      adminEnableTwoFactor(userEmail: string) {
         return this.http.post(this.appSettings.api_url + 'api/TwoFactorAuth/admin/enable', {
-          userEmail: userEmail,
-          adminEmail: adminEmail,
-          adminPassword: adminPassword
+          userEmail: userEmail
         });
       }
 
-      adminDisableTwoFactor(userEmail: string, adminEmail: string, adminPassword: string) {
+      adminDisableTwoFactor(userEmail: string) {
         return this.http.post(this.appSettings.api_url + 'api/TwoFactorAuth/admin/disable', {
-          userEmail: userEmail,
-          adminEmail: adminEmail,
-          adminPassword: adminPassword
+          userEmail: userEmail
         });
       }
   } 

@@ -65,24 +65,12 @@ namespace Masterloop.Cloud.WebAPI.Models
     {
         [Required]
         public string UserEmail { get; set; }
-        
-        [Required]
-        public string AdminEmail { get; set; }
-        
-        [Required]
-        public string AdminPassword { get; set; }
     }
 
     public class AdminDisableTwoFactorRequest
     {
         [Required]
         public string UserEmail { get; set; }
-        
-        [Required]
-        public string AdminEmail { get; set; }
-        
-        [Required]
-        public string AdminPassword { get; set; }
     }
 
     public class UserTwoFactorStatus

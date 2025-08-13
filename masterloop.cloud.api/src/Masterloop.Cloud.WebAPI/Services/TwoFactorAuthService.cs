@@ -304,8 +304,19 @@ namespace Masterloop.Cloud.WebAPI.Services
         {
             try
             {
-                var account = _securityManager.Authenticate(email, password);
-                return account?.IsAdmin == true;
+                // If password is provided, authenticate normally
+                if (!string.IsNullOrEmpty(password))
+                {
+                    var account = _securityManager.Authenticate(email, password);
+                    return account?.IsAdmin == true;
+                }
+                else
+                {
+                    // If no password provided, check admin status from user list
+                    var users = _securityManager.GetUsers();
+                    var user = users?.FirstOrDefault(u => u.EMail.Equals(email, StringComparison.OrdinalIgnoreCase));
+                    return user?.IsAdmin == true;
+                }
             }
             catch
             {

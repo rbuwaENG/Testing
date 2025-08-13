@@ -238,18 +238,37 @@ namespace Masterloop.Cloud.WebAPI.Controllers
         /// <summary>
         /// Admin endpoint to enable two-factor authentication for a specific user
         /// </summary>
-        /// <param name="request">Admin request containing user email and admin credentials</param>
+        /// <param name="request">Admin request containing user email</param>
         /// <returns>Admin management response</returns>
         [HttpPost("admin/enable")]
-        [AllowAnonymous]
+        [Authorize] // Require authentication
         public async Task<ActionResult<AdminTwoFactorManagementResponse>> AdminEnableTwoFactor([FromBody] AdminEnableTwoFactorRequest request)
         {
             try
             {
+                // Get current user from JWT token
+                var currentUserEmail = User.Identity.Name;
+                if (string.IsNullOrEmpty(currentUserEmail))
+                {
+                    return Unauthorized(new { error = "User not authenticated" });
+                }
+
+                // Prevent users from managing their own 2FA
+                if (currentUserEmail.Equals(request.UserEmail, StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest(new { error = "Users cannot manage their own two-factor authentication" });
+                }
+
+                // Verify current user is admin
+                if (!await _twoFactorAuthService.IsUserAdminAsync(currentUserEmail, ""))
+                {
+                    return Forbid();
+                }
+
                 var response = await _twoFactorAuthService.AdminEnableTwoFactorAsync(
                     request.UserEmail, 
-                    request.AdminEmail, 
-                    request.AdminPassword);
+                    currentUserEmail, 
+                    ""); // No password needed since we're using JWT
 
                 if (response.Success)
                 {
@@ -269,18 +288,37 @@ namespace Masterloop.Cloud.WebAPI.Controllers
         /// <summary>
         /// Admin endpoint to disable two-factor authentication for a specific user
         /// </summary>
-        /// <param name="request">Admin request containing user email and admin credentials</param>
+        /// <param name="request">Admin request containing user email</param>
         /// <returns>Admin management response</returns>
         [HttpPost("admin/disable")]
-        [AllowAnonymous]
+        [Authorize] // Require authentication
         public async Task<ActionResult<AdminTwoFactorManagementResponse>> AdminDisableTwoFactor([FromBody] AdminDisableTwoFactorRequest request)
         {
             try
             {
+                // Get current user from JWT token
+                var currentUserEmail = User.Identity.Name;
+                if (string.IsNullOrEmpty(currentUserEmail))
+                {
+                    return Unauthorized(new { error = "User not authenticated" });
+                }
+
+                // Prevent users from managing their own 2FA
+                if (currentUserEmail.Equals(request.UserEmail, StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest(new { error = "Users cannot manage their own two-factor authentication" });
+                }
+
+                // Verify current user is admin
+                if (!await _twoFactorAuthService.IsUserAdminAsync(currentUserEmail, ""))
+                {
+                    return Forbid();
+                }
+
                 var response = await _twoFactorAuthService.AdminDisableTwoFactorAsync(
                     request.UserEmail, 
-                    request.AdminEmail, 
-                    request.AdminPassword);
+                    currentUserEmail, 
+                    ""); // No password needed since we're using JWT
 
                 if (response.Success)
                 {

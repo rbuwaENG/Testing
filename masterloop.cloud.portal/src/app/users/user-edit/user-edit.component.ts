@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LoggerService } from 'src/app/services';
 import { UserService } from 'src/app/services/user.service';
+import { userPermissionService } from 'src/app/services/user-permission.service';
 import { UserData } from '../user-list/user-list.component';
 
 @Component({
@@ -15,20 +16,31 @@ export class UserEditComponent implements OnInit {
   public form: FormGroup;
   public isTwoFactorEnabled: boolean;
   public showTwoFactorToggle: boolean = false;
-  public adminEmail: string = '';
-  public adminPassword: string = '';
+  public currentUserIsAdmin: boolean = false;
+  public currentUserEmail: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<UserEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserData,
     private fb: FormBuilder,
     private userService: UserService,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
+    private userPermissionService: userPermissionService
   ) { }
 
   ngOnInit(): void {
     this.buildForm();
     this.isTwoFactorEnabled = this.data.isTwoFactorEnabled || false;
+    this.checkCurrentUserAdminStatus();
+  }
+
+  checkCurrentUserAdminStatus() {
+    // Get current user info from localStorage
+    const userInfo = this.userPermissionService.getUserPermissionFromLocalStorage();
+    if (userInfo) {
+      this.currentUserIsAdmin = userInfo.isAdmin || false;
+      this.currentUserEmail = userInfo.email || '';
+    }
   }
 
   onSubmit() {
@@ -46,30 +58,34 @@ export class UserEditComponent implements OnInit {
   }
 
   toggleTwoFactor() {
+    // Only allow admin users to toggle 2FA
+    if (!this.currentUserIsAdmin) {
+      this.loggerService.showErrorMessage('Only admin users can manage two-factor authentication.');
+      return;
+    }
     this.showTwoFactorToggle = !this.showTwoFactorToggle;
   }
 
   async enableTwoFactor() {
-    if (!this.adminEmail || !this.adminPassword) {
-      this.loggerService.showErrorMessage('Please enter admin credentials to enable 2FA.');
+    if (!this.currentUserIsAdmin) {
+      this.loggerService.showErrorMessage('Only admin users can manage two-factor authentication.');
       return;
     }
 
     try {
-      this.userService.adminEnableTwoFactor(this.data.eMail, this.adminEmail, this.adminPassword).subscribe(
+      // Use current user's credentials automatically
+      this.userService.adminEnableTwoFactor(this.data.eMail).subscribe(
         (result: any) => {
           if (result && result.success) {
             this.loggerService.showSuccessfulMessage('Two-factor authentication enabled successfully!');
             this.isTwoFactorEnabled = true;
             this.showTwoFactorToggle = false;
-            this.adminEmail = '';
-            this.adminPassword = '';
           } else {
             this.loggerService.showErrorMessage(result?.message || 'Failed to enable 2FA.');
           }
         },
         error => {
-          this.loggerService.showErrorMessage('Failed to enable 2FA. Please check admin credentials.');
+          this.loggerService.showErrorMessage('Failed to enable 2FA. Please try again.');
         }
       );
     } catch (error) {
@@ -78,26 +94,29 @@ export class UserEditComponent implements OnInit {
   }
 
   async disableTwoFactor() {
-    if (!this.adminEmail || !this.adminPassword) {
-      this.loggerService.showErrorMessage('Please enter admin credentials to disable 2FA.');
+    if (!this.currentUserIsAdmin) {
+      this.loggerService.showErrorMessage('Only admin users can manage two-factor authentication.');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to disable two-factor authentication for this user? This will make their account less secure.')) {
       return;
     }
 
     try {
-      this.userService.adminDisableTwoFactor(this.data.eMail, this.adminEmail, this.adminPassword).subscribe(
+      // Use current user's credentials automatically
+      this.userService.adminDisableTwoFactor(this.data.eMail).subscribe(
         (result: any) => {
           if (result && result.success) {
             this.loggerService.showSuccessfulMessage('Two-factor authentication disabled successfully!');
             this.isTwoFactorEnabled = false;
             this.showTwoFactorToggle = false;
-            this.adminEmail = '';
-            this.adminPassword = '';
           } else {
             this.loggerService.showErrorMessage(result?.message || 'Failed to disable 2FA.');
           }
         },
         error => {
-          this.loggerService.showErrorMessage('Failed to disable 2FA. Please check admin credentials.');
+          this.loggerService.showErrorMessage('Failed to disable 2FA. Please try again.');
         }
       );
     } catch (error) {
